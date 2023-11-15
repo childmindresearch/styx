@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "app-name"
+name = "styx"
 version = "0.1.0"
-description = "A beautiful description."
-authors = ["Reinder Vos de Wael <reinder.vosdewael@childmind.org>"]
+description = "Boutiques code generator"
+authors = ["Florian Rupprecht <floruppr@gmail.com>"]
 license = "LGPL-2.1"
 readme = "README.md"
-packages = [{include = "APP_NAME", from = "src"}]
+packages = [{include = "styx", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
