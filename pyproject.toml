@@ -9,6 +9,7 @@ packages = [{include = "styx", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+pydantic = "^2.4.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
@@ -70,6 +71,11 @@ select = ["ANN", "D", "E", "F", "I"]
 ignore = [
   "ANN101", # self should not be annotated.
   "ANN102", # cls should not be annotated.
+  "D100", # Missing docstring in public module.
+  "D101", # Missing docstring in public class.
+  "D102", # Missing docstring in public method.
+  "D103", # Missing docstring in public function.
+  "D107", # Missing docstring in __init__.
 ]
 fixable = ["ALL"]
 unfixable = []
