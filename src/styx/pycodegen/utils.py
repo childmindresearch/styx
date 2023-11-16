@@ -1,6 +1,8 @@
 import keyword
 import re
 
+_RX_ENSURE_CAMEL = re.compile(r"(?<=[A-Z])(?!$)(?!_)(?![A-Z])")
+
 
 def ensure_python_symbol(name: str) -> str:
     """Ensure that a string is a valid Python symbol.
@@ -33,7 +35,7 @@ def ensure_snake_case(string: str) -> str:
     Returns:
         The converted string.
     """
-    return re.sub(r"(?<=[A-Z])(?!$)(?!_)(?![A-Z])", "_", string[::-1]).lower()[::-1]
+    return _RX_ENSURE_CAMEL.sub("_", string[::-1]).lower()[::-1]
 
 
 def ensure_camel_case(string: str) -> str:
@@ -45,11 +47,9 @@ def ensure_camel_case(string: str) -> str:
     Returns:
         The converted string.
     """
-    return (
-        re.sub(r"(?<=[A-Z])(?!$)(?!_)(?![A-Z])", "_", string).title().replace("_", "")
-    )
+    return _RX_ENSURE_CAMEL.sub("_", string).title().replace("_", "")
 
 
-def enquote(s: str) -> str:
-    """Enquote a string."""
+def enquote(s: str) -> str:  # noqa
+    """Put a string in "quotes"."""
     return f'"{s}"'
