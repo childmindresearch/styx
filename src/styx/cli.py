@@ -4,7 +4,7 @@ import argparse
 import json
 import pathlib as pl
 
-from styx.boutiques import model
+from styx.boutiques.utils import boutiques_from_dict
 from styx.compiler.core import compile_descriptor
 from styx.compiler.settings import CompilerSettings
 
@@ -39,9 +39,8 @@ def _cli() -> None:
     with open(path_descriptor, "r") as json_file:
         json_data = json.load(json_file)
 
-    data = model.Tool(**json_data)  # type: ignore
-
-    compiled_module = compile_descriptor(data, settings)
+    descriptor = boutiques_from_dict(json_data)
+    compiled_module = compile_descriptor(descriptor, settings)
 
     if path_output is None:
         print(compiled_module)

@@ -3,9 +3,9 @@ from enum import Enum
 
 from styx.boutiques import model as bt
 from styx.boutiques.utils import boutiques_split_command
-from styx.compiler.settings import CompilerSettings
+from styx.compiler.settings import CompilerSettings, DefsMode
 from styx.pycodegen.core import INDENT as PY_INDENT
-from styx.pycodegen.core import PyArg, PyFunc, PyModule, indent
+from styx.pycodegen.core import PyArg, PyFunc, PyModule, collapse, indent
 from styx.pycodegen.utils import (
     as_py_literal,
     enquote,
@@ -235,7 +235,7 @@ class BtInput:
         return buf
 
 
-def text_from_boutiques_json(tool: bt.Tool) -> str:  # type: ignore
+def text_from_boutiques_json(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
     mod = PyModule()
 
     # Python names
@@ -258,8 +258,7 @@ def text_from_boutiques_json(tool: bt.Tool) -> str:  # type: ignore
 
     # Sort arguments by occurrence in command line
     cmd = boutiques_split_command(tool.command_line)
-    cmd_lookup = {v: i for i, v in enumerate(cmd)}
-    args.sort(key=lambda a: cmd_lookup[a.bt_ref])
+    args_lookup = {a.bt_ref: a for a in args}
 
     pyargs = [
         PyArg(
@@ -270,17 +269,27 @@ def text_from_boutiques_json(tool: bt.Tool) -> str:  # type: ignore
         PyArg(name=i.name, type=i.py_type, default=i.py_default, docstring=i.docstring)
         for i in args
     ]
-    for i in args:
-        buf_body.extend(i.py_expr)
+    for segment in cmd:
+        if segment in args_lookup:
+            i = args_lookup[segment]
+            buf_body.extend(i.py_expr)
+        else:
+            buf_body.append(f"cargs.append({enquote(segment)})")
 
     buf_body.append("execution.run(cargs)")
 
-    # named tuple return
+    # Definitions
+    if settings.defs_mode == DefsMode.INLINE:
+        defs = RUNTIME_DECLARATIONS
+    elif settings.defs_mode == DefsMode.IMPORT:
+        defs = ["from styx.runners.styxdefs import *"]
+    else:
+        return collapse(RUNTIME_DECLARATIONS)
 
     buf_header = []
     buf_header.extend(
         [
-            *RUNTIME_DECLARATIONS,
+            *defs,
             "",
             "",
             f"class {py_output_class_name}(typing.NamedTuple, typing.Generic[R]):",
@@ -294,6 +303,7 @@ def text_from_boutiques_json(tool: bt.Tool) -> str:  # type: ignore
         ]
     )
 
+    # Outputs
     for o in tool.output_files:
         # Field
         buf_header.append(f"{PY_INDENT}{o.id}: R")
@@ -336,6 +346,6 @@ def text_from_boutiques_json(tool: bt.Tool) -> str:  # type: ignore
     return mod.text()
 
 
-def compile_descriptor(descriptor: bt.Tool, _settings: CompilerSettings) -> str:  # type: ignore
+def compile_descriptor(descriptor: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
     """Compile a Boutiques descriptor to Python code."""
-    return text_from_boutiques_json(descriptor)
+    return text_from_boutiques_json(descriptor, settings)
