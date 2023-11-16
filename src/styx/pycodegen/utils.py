@@ -53,3 +53,11 @@ def ensure_camel_case(string: str) -> str:
 def enquote(s: str) -> str:  # noqa
     """Put a string in "quotes"."""
     return f'"{s}"'
+
+
+def as_py_literal(obj: str | float | int | bool) -> str:
+    """Convert an object to a Python literal expression."""
+    if isinstance(obj, str):
+        return enquote(obj)
+    else:
+        return str(obj)

@@ -7,6 +7,7 @@ from styx.compiler.settings import CompilerSettings
 from styx.pycodegen.core import INDENT as PY_INDENT
 from styx.pycodegen.core import PyArg, PyFunc, PyModule, indent
 from styx.pycodegen.utils import (
+    as_py_literal,
     enquote,
     ensure_camel_case,
     ensure_python_symbol,
@@ -234,18 +235,12 @@ class BtInput:
         return buf
 
 
-def as_py_literal(obj: str | float | int | bool) -> str:
-    if isinstance(obj, str):
-        return enquote(obj)
-    else:
-        return str(obj)
-
-
 def text_from_boutiques_json(tool: bt.Tool) -> str:  # type: ignore
     mod = PyModule()
 
-    # Function name
-    name = ensure_snake_case(ensure_python_symbol(tool.name))
+    # Python names
+    py_func_name = ensure_snake_case(ensure_python_symbol(tool.name))
+    py_output_class_name = f"{ensure_camel_case(tool.name)}Outputs"
 
     # Arguments
     args: list[BtInput] = []
@@ -282,19 +277,17 @@ def text_from_boutiques_json(tool: bt.Tool) -> str:  # type: ignore
 
     # named tuple return
 
-    out_cls = f"{ensure_camel_case(tool.name)}Outputs"
-
     buf_header = []
     buf_header.extend(
         [
             *RUNTIME_DECLARATIONS,
             "",
             "",
-            f"class {out_cls}(typing.NamedTuple, typing.Generic[R]):",
+            f"class {py_output_class_name}(typing.NamedTuple, typing.Generic[R]):",
             *indent(
                 [
                     '"""',
-                    f"Output object returned when calling `{name}(...)`.",
+                    f"Output object returned when calling `{py_func_name}(...)`.",
                     '"""',
                 ]
             ),
@@ -307,7 +300,7 @@ def text_from_boutiques_json(tool: bt.Tool) -> str:  # type: ignore
         # Docstring
         buf_header.append(f'{PY_INDENT}"""{o.description}"""')
 
-    buf_body.append(f"ret = {out_cls}(")
+    buf_body.append(f"ret = {py_output_class_name}(")
     for o in tool.output_files:
         s = o.path_template
         for i in args:
@@ -315,18 +308,23 @@ def text_from_boutiques_json(tool: bt.Tool) -> str:  # type: ignore
 
         buf_body.append(f"{PY_INDENT}{o.id}=execution.output_file(f{enquote(s)}),")
 
-    buf_body.append(")")
-    buf_body.append("execution.finalize()")
-    buf_body.append("return ret")
+    buf_body.extend(
+        [
+            ")",
+            "execution.finalize()",
+            "return ret",
+        ]
+    )
 
     mod.header.extend(buf_header)
 
     mod.funcs.append(
         PyFunc(
-            name=name,
+            name=py_func_name,
             args=pyargs,
-            return_type=f"{out_cls}[R]",
-            return_descr=f"NamedTuple of outputs (described in `{out_cls}`).",
+            return_type=f"{py_output_class_name}[R]",
+            return_descr=f"NamedTuple of outputs "
+            f"(described in `{py_output_class_name}`).",
             docstring_body=docstring,
             body=buf_body,
         )
