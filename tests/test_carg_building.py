@@ -24,7 +24,7 @@ def _dynamic_module(source_code: str, module_name: str) -> ModuleType:
     return module
 
 
-def _boutiques_dummy(descriptor: dict, dummy_output: bool = True) -> dict:
+def _boutiques_dummy(descriptor: dict) -> dict:
     """Add required meta data placeholders to a boutiques descriptor."""
     dummy = {
         "name": "dummy",
@@ -40,9 +40,7 @@ def _boutiques_dummy(descriptor: dict, dummy_output: bool = True) -> dict:
                 "name": "Dummy output",
                 "path-template": "dummy_output.txt",
             }
-        ]
-        if dummy_output
-        else [],
+        ],
     }
 
     dummy.update(descriptor)
@@ -236,3 +234,119 @@ def test_list_of_strings_arg() -> None:
 
     assert dummy_runner.last_cargs is not None
     assert dummy_runner.last_cargs == ["dummy", "my_string1 my_string2"]
+
+
+def test_list_of_numbers_arg() -> None:
+    """List of numbers."""
+    settings = styx.compiler.settings.CompilerSettings(
+        defs_mode=styx.compiler.settings.DefsMode.IMPORT
+    )
+    model = styx.boutiques.utils.boutiques_from_dict(
+        _boutiques_dummy(
+            {
+                "command-line": "dummy [X]",
+                "inputs": [
+                    {
+                        "id": "x",
+                        "name": "The x",
+                        "value-key": "[X]",
+                        "type": _BT_TYPE_NUMBER,
+                        "list": True,
+                    }
+                ],
+            }
+        )
+    )
+
+    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+
+    test_module = _dynamic_module(compiled_module, "test_module")
+    dummy_runner = styx.runners.core.DummyRunner()
+    test_module.dummy(runner=dummy_runner, x=[1, 2])
+
+    assert dummy_runner.last_cargs is not None
+    assert dummy_runner.last_cargs == ["dummy", "1 2"]
+
+
+def test_static_args() -> None:
+    """Static arguments."""
+    settings = styx.compiler.settings.CompilerSettings(
+        defs_mode=styx.compiler.settings.DefsMode.IMPORT
+    )
+    model = styx.boutiques.utils.boutiques_from_dict(
+        _boutiques_dummy(
+            {
+                "command-line": "dummy -a 1 -b 2 [X] -c 3 -d 4",
+                "inputs": [
+                    {
+                        "id": "x",
+                        "name": "The x",
+                        "value-key": "[X]",
+                        "type": _BT_TYPE_STRING,
+                    }
+                ],
+            }
+        )
+    )
+
+    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+
+    test_module = _dynamic_module(compiled_module, "test_module")
+    dummy_runner = styx.runners.core.DummyRunner()
+    test_module.dummy(runner=dummy_runner, x="my_string")
+
+    assert dummy_runner.last_cargs is not None
+    assert dummy_runner.last_cargs == [
+        "dummy",
+        "-a",
+        "1",
+        "-b",
+        "2",
+        "my_string",
+        "-c",
+        "3",
+        "-d",
+        "4",
+    ]
+
+
+def test_arg_order() -> None:
+    """Argument order.
+
+    The wrapper should respect the order of the arguments
+    in the Boutiques descriptor input array.
+    """
+    settings = styx.compiler.settings.CompilerSettings(
+        defs_mode=styx.compiler.settings.DefsMode.IMPORT
+    )
+    model = styx.boutiques.utils.boutiques_from_dict(
+        _boutiques_dummy(
+            {
+                "command-line": "[B] [A]",
+                "inputs": [
+                    {
+                        "id": "a",
+                        "name": "The a",
+                        "value-key": "[A]",
+                        "type": _BT_TYPE_STRING,
+                    },
+                    {
+                        "id": "b",
+                        "name": "The b",
+                        "value-key": "[B]",
+                        "type": _BT_TYPE_STRING,
+                    },
+                ],
+            }
+        )
+    )
+
+    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+    print(compiled_module)
+
+    test_module = _dynamic_module(compiled_module, "test_module")
+    dummy_runner = styx.runners.core.DummyRunner()
+    test_module.dummy(dummy_runner, "aaa", "bbb")
+
+    assert dummy_runner.last_cargs is not None
+    assert dummy_runner.last_cargs == ["bbb", "aaa"]
