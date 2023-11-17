@@ -4,8 +4,9 @@ from enum import Enum
 from styx.boutiques import model as bt
 from styx.boutiques.utils import boutiques_split_command
 from styx.compiler.settings import CompilerSettings, DefsMode
+from styx.compiler.utils import optional_float_to_int
 from styx.pycodegen.core import INDENT as PY_INDENT
-from styx.pycodegen.core import PyArg, PyFunc, PyModule, collapse, indent
+from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, PyModule, collapse, indent
 from styx.pycodegen.utils import (
     as_py_literal,
     enquote,
@@ -45,8 +46,7 @@ RUNTIME_DECLARATIONS = [
                 [
                     '"""',
                     "Run the command.",
-                    "Called after all `Execution.input_file()` calls and "
-                    "before `Execution.output_file()` calls.",
+                    "Called after all `Execution.input_file()` calls and " "before `Execution.output_file()` calls.",
                     '"""',
                     "...",
                 ]
@@ -57,8 +57,7 @@ RUNTIME_DECLARATIONS = [
                     '"""',
                     "Resolve local output files.",
                     "Returns a host filepath.",
-                    "Called (potentially multiple times) after "
-                    "`Runner.run()` and before `Execution.finalize()`.",
+                    "Called (potentially multiple times) after " "`Runner.run()` and before `Execution.finalize()`.",
                     '"""',
                     "...",
                 ]
@@ -82,8 +81,7 @@ RUNTIME_DECLARATIONS = [
         [
             '"""',
             "Runner object used to execute commands.",
-            "Possible examples would be `LocalRunner`, "
-            "`DockerRunner`, `DebugRunner`, ...",
+            "Possible examples would be `LocalRunner`, " "`DockerRunner`, `DebugRunner`, ...",
             "Used as a factory for `Execution` objects.",
             '"""',
             "def start_execution(self, tool_name: str) -> Execution[P, R]:",
@@ -123,9 +121,27 @@ class BtInput:
         self.name = ensure_snake_case(ensure_python_symbol(bt_input.id))
         self.docstring = bt_input.description
         self.command_line_flag = bt_input.command_line_flag
-        self.list_separator = (
-            bt_input.list_separator if bt_input.list_separator is not None else " "
-        )
+        self.list_separator = bt_input.list_separator if bt_input.list_separator is not None else " "
+
+        # Validation
+
+        self.minimum: float | int | None = None
+        self.minimum_exclusive: bool = False
+        self.maximum: float | int | None = None
+        self.maximum_exclusive: bool = False
+        self.list_minimum: int | None = None
+        self.list_maximum: int | None = None
+
+        if bt_input.type == bt.Type4.Number:  # type: ignore
+            if bt_input.minimum is not None:
+                self.minimum = int(bt_input.minimum) if bt_input.integer else bt_input.minimum
+                self.minimum_exclusive = bt_input.exclusive_minimum is True
+            if bt_input.maximum is not None:
+                self.maximum = int(bt_input.maximum) if bt_input.integer else bt_input.maximum
+                self.maximum_exclusive = bt_input.exclusive_maximum is True
+        if bt_input.list is True:
+            self.list_minimum = optional_float_to_int(bt_input.min_list_entries)
+            self.list_maximum = optional_float_to_int(bt_input.max_list_entries)
 
         # Resolve type
 
@@ -133,22 +149,16 @@ class BtInput:
         bt_is_optional = bt_input.optional is True
         bt_is_enum = bt_input.value_choices is not None
         if bt_input.type == bt.Type4.String:  # type: ignore
-            self.type = BtType(
-                BtPrimitive.String, bt_is_list, bt_is_optional, bt_is_enum
-            )
+            self.type = BtType(BtPrimitive.String, bt_is_list, bt_is_optional, bt_is_enum)
         elif bt_input.type == bt.Type4.File:  # type: ignore
             assert not bt_is_enum
             self.type = BtType(BtPrimitive.File, bt_is_list, bt_is_optional, False)
         elif bt_input.type == bt.Type4.Flag:  # type: ignore
             self.type = BtType(BtPrimitive.Flag, False, True, False)
         elif bt_input.type == bt.Type4.Number and not bt_input.integer:  # type: ignore
-            self.type = BtType(
-                BtPrimitive.Number, bt_is_list, bt_is_optional, bt_is_enum
-            )
+            self.type = BtType(BtPrimitive.Number, bt_is_list, bt_is_optional, bt_is_enum)
         elif bt_input.type == bt.Type4.Number and bt_input.integer:  # type: ignore
-            self.type = BtType(
-                BtPrimitive.Integer, bt_is_list, bt_is_optional, bt_is_enum
-            )
+            self.type = BtType(BtPrimitive.Integer, bt_is_list, bt_is_optional, bt_is_enum)
         else:
             raise NotImplementedError
 
@@ -235,7 +245,168 @@ class BtInput:
         return buf
 
 
-def text_from_boutiques_json(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
+def _generate_raise_value_err(obj: str, expectation: str, reality: str | None = None) -> LineBuffer:
+    fstr = ""
+    if "{" in obj or "{" in expectation or (reality is not None and "{" in reality):
+        fstr = "f"
+
+    return (
+        [f'raise ValueError({fstr}"{obj} must be {expectation} but was {reality}")']
+        if reality is not None
+        else [f'raise ValueError({fstr}"{obj} must be {expectation}")']
+    )
+
+
+def _generate_validation_expr(
+    buf: LineBuffer,
+    bt_input: BtInput,
+) -> None:
+    val_opt = ""
+    if bt_input.type.is_optional:
+        val_opt = f"{bt_input.name} is not None and "
+
+    # List argument length validation
+    if bt_input.list_minimum is not None and bt_input.list_maximum is not None:
+        assert bt_input.list_minimum <= bt_input.list_maximum
+        if bt_input.list_minimum == bt_input.list_maximum:
+            buf.extend(
+                [
+                    f"if {val_opt}(len({bt_input.name}) != {bt_input.list_minimum}): ",
+                    *indent(
+                        _generate_raise_value_err(
+                            f"Length of '{bt_input.name}'",
+                            f"{bt_input.list_minimum}",
+                            f"{{len({bt_input.name})}}",
+                        )
+                    ),
+                ]
+            )
+        else:
+            buf.extend(
+                [
+                    f"if {val_opt}not ({bt_input.list_minimum} <= len({bt_input.name}) <= {bt_input.list_maximum}): ",
+                    *indent(
+                        _generate_raise_value_err(
+                            f"Length of '{bt_input.name}'",
+                            f"between {bt_input.list_minimum} and {bt_input.list_maximum}",
+                            f"{{len({bt_input.name})}}",
+                        )
+                    ),
+                ]
+            )
+    elif bt_input.list_minimum is not None:
+        buf.extend(
+            [
+                f"if {val_opt}not ({bt_input.list_minimum} <= len({bt_input.name})): ",
+                *indent(
+                    _generate_raise_value_err(
+                        f"Length of '{bt_input.name}'",
+                        f"greater than {bt_input.list_minimum}",
+                        f"{{len({bt_input.name})}}",
+                    )
+                ),
+            ]
+        )
+    elif bt_input.list_maximum is not None:
+        buf.extend(
+            [
+                f"if {val_opt}not (len({bt_input.name}) <= {bt_input.list_maximum}): ",
+                *indent(
+                    _generate_raise_value_err(
+                        f"Length of '{bt_input.name}'",
+                        f"less than {bt_input.list_maximum}",
+                        f"{{len({bt_input.name})}}",
+                    )
+                ),
+            ]
+        )
+
+    # Numeric argument range validation
+    op_min = "<" if bt_input.minimum_exclusive else "<="
+    op_max = "<" if bt_input.maximum_exclusive else "<="
+    if bt_input.minimum is not None and bt_input.maximum is not None:
+        assert bt_input.minimum <= bt_input.maximum
+        if bt_input.type.is_list:
+            buf.extend(
+                [
+                    f"if {val_opt}not ({bt_input.minimum} {op_min} min({bt_input.name}) "
+                    f"and max({bt_input.name}) {op_max} {bt_input.maximum}): ",
+                    *indent(
+                        _generate_raise_value_err(
+                            f"All elements of '{bt_input.name}'",
+                            f"between {bt_input.minimum} {op_min} x {op_max} {bt_input.maximum}",
+                        )
+                    ),
+                ]
+            )
+        else:
+            buf.extend(
+                [
+                    f"if {val_opt}not ({bt_input.minimum} {op_min} {bt_input.name} {op_max} {bt_input.maximum}): ",
+                    *indent(
+                        _generate_raise_value_err(
+                            f"'{bt_input.name}'",
+                            f"between {bt_input.minimum} {op_min} x {op_max} {bt_input.maximum}",
+                            f"{{{bt_input.name}}}",
+                        )
+                    ),
+                ]
+            )
+    elif bt_input.minimum is not None:
+        if bt_input.type.is_list:
+            buf.extend(
+                [
+                    f"if {val_opt}not ({bt_input.minimum} {op_min} min({bt_input.name})): ",
+                    *indent(
+                        _generate_raise_value_err(
+                            f"All elements of '{bt_input.name}'",
+                            f"greater than {bt_input.minimum} {op_min} x",
+                        )
+                    ),
+                ]
+            )
+        else:
+            buf.extend(
+                [
+                    f"if {val_opt}not ({bt_input.minimum} {op_min} {bt_input.name}): ",
+                    *indent(
+                        _generate_raise_value_err(
+                            f"'{bt_input.name}'",
+                            f"greater than {bt_input.minimum} {op_min} x",
+                            f"{{{bt_input.name}}}",
+                        )
+                    ),
+                ]
+            )
+    elif bt_input.maximum is not None:
+        if bt_input.type.is_list:
+            buf.extend(
+                [
+                    f"if {val_opt}not (max({bt_input.name}) {op_max} {bt_input.maximum}): ",
+                    *indent(
+                        _generate_raise_value_err(
+                            f"All elements of '{bt_input.name}'",
+                            f"less than x {op_max} {bt_input.maximum}",
+                        )
+                    ),
+                ]
+            )
+        else:
+            buf.extend(
+                [
+                    f"if {val_opt}not ({bt_input.name} {op_max} {bt_input.maximum}): ",
+                    *indent(
+                        _generate_raise_value_err(
+                            f"'{bt_input.name}'",
+                            f"less than x {op_max} {bt_input.maximum}",
+                            f"{{{bt_input.name}}}",
+                        )
+                    ),
+                ]
+            )
+
+
+def py_from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
     mod = PyModule()
 
     # Python names
@@ -256,19 +427,18 @@ def text_from_boutiques_json(tool: bt.Tool, settings: CompilerSettings) -> str: 
         "cargs = []",
     ]
 
-    # Sort arguments by occurrence in command line
+    # Arguments
     cmd = boutiques_split_command(tool.command_line)
     args_lookup = {a.bt_ref: a for a in args}
 
-    pyargs = [
-        PyArg(
-            name="runner", type="Runner[P, R]", default=None, docstring="Command runner"
-        )
-    ]
-    pyargs += [
-        PyArg(name=i.name, type=i.py_type, default=i.py_default, docstring=i.docstring)
-        for i in args
-    ]
+    pyargs = [PyArg(name="runner", type="Runner[P, R]", default=None, docstring="Command runner")]
+    pyargs += [PyArg(name=i.name, type=i.py_type, default=i.py_default, docstring=i.docstring) for i in args]
+
+    # Input validation
+    for i in args:
+        _generate_validation_expr(buf_body, i)
+
+    # Command line args building
     for segment in cmd:
         if segment in args_lookup:
             i = args_lookup[segment]
@@ -333,8 +503,7 @@ def text_from_boutiques_json(tool: bt.Tool, settings: CompilerSettings) -> str: 
             name=py_func_name,
             args=pyargs,
             return_type=f"{py_output_class_name}[R]",
-            return_descr=f"NamedTuple of outputs "
-            f"(described in `{py_output_class_name}`).",
+            return_descr=f"NamedTuple of outputs " f"(described in `{py_output_class_name}`).",
             docstring_body=docstring,
             body=buf_body,
         )
@@ -348,4 +517,4 @@ def text_from_boutiques_json(tool: bt.Tool, settings: CompilerSettings) -> str: 
 
 def compile_descriptor(descriptor: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
     """Compile a Boutiques descriptor to Python code."""
-    return text_from_boutiques_json(descriptor, settings)
+    return py_from_boutiques(descriptor, settings)

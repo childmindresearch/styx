@@ -52,9 +52,7 @@ class ContainerImageItem1(BaseModel):
         extra="forbid",
     )
     type: Type1
-    url: constr(min_length=1) = Field(
-        ..., description="URL where the image is available."
-    )
+    url: constr(min_length=1) = Field(..., description="URL where the image is available.")
     working_directory: Optional[Any] = Field(None, alias="working-directory")
     container_hash: Optional[Any] = Field(None, alias="container-hash")
 
@@ -95,9 +93,7 @@ class EnvironmentVariable(BaseModel):
         description='The environment variable name (identifier) containing only alphanumeric characters and underscores. Example: "PROGRAM_PATH".',
     )
     value: str = Field(..., description="The value of the environment variable.")
-    description: Optional[str] = Field(
-        None, description="Description of the environment variable."
-    )
+    description: Optional[str] = Field(None, description="Description of the environment variable.")
 
 
 class Group(BaseModel):
@@ -108,12 +104,8 @@ class Group(BaseModel):
         ...,
         description='A short, unique, informative identifier containing only alphanumeric characters and underscores. Typically used to generate variable names. Example: "outfile_group".',
     )
-    name: constr(min_length=1) = Field(
-        ..., description="A human-readable name for the input group."
-    )
-    description: Optional[str] = Field(
-        None, description="Description of the input group."
-    )
+    name: constr(min_length=1) = Field(..., description="A human-readable name for the input group.")
+    description: Optional[str] = Field(None, description="Description of the input group.")
     members: List[constr(pattern=r"^[0-9,_,a-z,A-Z]*$", min_length=1)] = Field(
         ..., description="IDs of the inputs belonging to this group."
     )
@@ -172,9 +164,7 @@ class Inputs(Input):
         ...,
         description='A short, unique, informative identifier containing only alphanumeric characters and underscores. Typically used to generate variable names. Example: "data_file".',
     )
-    name: constr(min_length=1) = Field(
-        ..., description="A human-readable input name. Example: 'Data file'."
-    )
+    name: constr(min_length=1) = Field(..., description="A human-readable input name. Example: 'Data file'.")
     type: Type4 = Field(..., description="Input type.")
     description: Optional[str] = Field(None, description="Input description.")
     value_key: Optional[str] = Field(
@@ -279,9 +269,7 @@ class Inputs1(Input1):
         ...,
         description='A short, unique, informative identifier containing only alphanumeric characters and underscores. Typically used to generate variable names. Example: "data_file".',
     )
-    name: constr(min_length=1) = Field(
-        ..., description="A human-readable input name. Example: 'Data file'."
-    )
+    name: constr(min_length=1) = Field(..., description="A human-readable input name. Example: 'Data file'.")
     type: Type4 = Field(..., description="Input type.")
     description: Optional[str] = Field(None, description="Input description.")
     value_key: Optional[str] = Field(
@@ -384,9 +372,7 @@ class Test(BaseModel):
 
 
 class OutputFile(BaseModel):
-    file_template: Optional[List[str]] = Field(
-        None, alias="file-template", min_length=1
-    )
+    file_template: Optional[List[str]] = Field(None, alias="file-template", min_length=1)
     list: Optional[ListModel] = None
 
 
@@ -410,9 +396,7 @@ class OutputFiles(OutputFile):
         ...,
         description='A short, unique, informative identifier containing only alphanumeric characters and underscores. Typically used to generate variable names. Example: "data_file"',
     )
-    name: constr(min_length=1) = Field(
-        ..., description="A human-readable output name. Example: 'Data file'"
-    )
+    name: constr(min_length=1) = Field(..., description="A human-readable output name. Example: 'Data file'")
     description: Optional[str] = Field(None, description="Output description.")
     value_key: Optional[str] = Field(
         None,
@@ -436,9 +420,7 @@ class OutputFiles(OutputFile):
         description='List of file extensions that will be stripped from the input values before being substituted in the path template. Example: [".nii",".nii.gz"].',
     )
     list: Optional[bool] = Field(None, description="True if output is a list of value.")
-    optional: Optional[bool] = Field(
-        None, description="True if output may not be produced by the tool."
-    )
+    optional: Optional[bool] = Field(None, description="True if output may not be produced by the tool.")
     command_line_flag: Optional[str] = Field(
         None,
         alias="command-line-flag",
@@ -470,9 +452,7 @@ class OutputFiles1(OutputFile1):
         ...,
         description='A short, unique, informative identifier containing only alphanumeric characters and underscores. Typically used to generate variable names. Example: "data_file"',
     )
-    name: constr(min_length=1) = Field(
-        ..., description="A human-readable output name. Example: 'Data file'"
-    )
+    name: constr(min_length=1) = Field(..., description="A human-readable output name. Example: 'Data file'")
     description: Optional[str] = Field(None, description="Output description.")
     value_key: Optional[str] = Field(
         None,
@@ -496,9 +476,7 @@ class OutputFiles1(OutputFile1):
         description='List of file extensions that will be stripped from the input values before being substituted in the path template. Example: [".nii",".nii.gz"].',
     )
     list: Optional[bool] = Field(None, description="True if output is a list of value.")
-    optional: Optional[bool] = Field(
-        None, description="True if output may not be produced by the tool."
-    )
+    optional: Optional[bool] = Field(None, description="True if output may not be produced by the tool.")
     command_line_flag: Optional[str] = Field(
         None,
         alias="command-line-flag",
@@ -561,27 +539,21 @@ class Tool(BaseModel):
         extra="forbid",
     )
     name: constr(min_length=1) = Field(..., description="Tool name.")
-    tool_version: constr(min_length=1) = Field(
-        ..., alias="tool-version", description="Tool version."
-    )
+    tool_version: constr(min_length=1) = Field(..., alias="tool-version", description="Tool version.")
     description: constr(min_length=1) = Field(..., description="Tool description.")
     deprecated_by_doi: Optional[Union[constr(min_length=1), bool]] = Field(
         None,
         alias="deprecated-by-doi",
         description="doi of the tool that deprecates the current one. May be set to 'true' if the current tool is deprecated but no specific tool deprecates it.",
     )
-    author: Optional[constr(min_length=1)] = Field(
-        None, description="Tool author name(s)."
-    )
+    author: Optional[constr(min_length=1)] = Field(None, description="Tool author name(s).")
     url: Optional[constr(min_length=1)] = Field(None, description="Tool URL.")
     descriptor_url: Optional[constr(min_length=1)] = Field(
         None,
         alias="descriptor-url",
         description="Link to the descriptor itself (e.g. the GitHub repo where it is hosted).",
     )
-    doi: Optional[constr(min_length=1)] = Field(
-        None, description="DOI of the descriptor (not of the tool itself)."
-    )
+    doi: Optional[constr(min_length=1)] = Field(None, description="DOI of the descriptor (not of the tool itself).")
     shell: Optional[constr(min_length=1)] = Field(
         None,
         description="Absolute path of the shell interpreter to use in the container (defaults to /bin/sh).",
@@ -595,9 +567,7 @@ class Tool(BaseModel):
         description='A string that describes the tool command line, where input and output values are identified by "keys". At runtime, command-line keys are substituted with flags and values.',
     )
     container_image: Optional[ContainerImage] = Field(None, alias="container-image")
-    schema_version: SchemaVersion = Field(
-        ..., alias="schema-version", description="Version of the schema used."
-    )
+    schema_version: SchemaVersion = Field(..., alias="schema-version", description="Version of the schema used.")
     environment_variables: Optional[List[EnvironmentVariable]] = Field(
         None,
         alias="environment-variables",
@@ -616,13 +586,9 @@ class Tool(BaseModel):
         alias="online-platform-urls",
         description="Online platform URLs from which the tool can be executed.",
     )
-    output_files: Optional[List[Union[OutputFiles, OutputFiles1]]] = Field(
-        None, alias="output-files", min_length=1
-    )
+    output_files: Optional[List[Union[OutputFiles, OutputFiles1]]] = Field(None, alias="output-files", min_length=1)
     invocation_schema: Optional[Dict[str, Any]] = Field(None, alias="invocation-schema")
-    suggested_resources: Optional[SuggestedResources] = Field(
-        None, alias="suggested-resources"
-    )
+    suggested_resources: Optional[SuggestedResources] = Field(None, alias="suggested-resources")
     tags: Optional[Dict[str, List[str]]] = Field(
         None,
         description="A set of key-value pairs specifying tags describing the pipeline. The tag names are open, they might be more constrained in the future.",

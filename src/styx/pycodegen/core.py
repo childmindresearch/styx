@@ -118,11 +118,7 @@ class PyModule(PyGen):
                 ),
                 *blank_before(self.imports),
                 *blank_before(self.header),
-                *[
-                    line
-                    for func in self.funcs
-                    for line in blank_before(func.generate(), 2)
-                ],
+                *[line for func in self.funcs for line in blank_before(func.generate(), 2)],
                 *blank_before(self.footer),
             ]
         )

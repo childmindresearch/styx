@@ -1,59 +1,25 @@
 """Test command line argument building."""
 
-import importlib.util
-from types import ModuleType
 
 import styx.boutiques.utils
 import styx.compiler.core
 import styx.compiler.settings
 import styx.runners.core
-
-_BT_TYPE_STRING = "String"
-_BT_TYPE_NUMBER = "Number"
-_BT_TYPE_FILE = "File"
-_BT_TYPE_FLAG = "Flag"
-
-
-def _dynamic_module(source_code: str, module_name: str) -> ModuleType:
-    """Create a dynamic module."""
-    module_spec = importlib.util.spec_from_loader(module_name, loader=None)
-    assert module_spec is not None  # mypy
-    module = importlib.util.module_from_spec(module_spec)
-    exec(source_code, module.__dict__)
-    # TODO: Does this module need to be unloaded somehow after use?
-    return module
-
-
-def _boutiques_dummy(descriptor: dict) -> dict:
-    """Add required meta data placeholders to a boutiques descriptor."""
-    dummy = {
-        "name": "dummy",
-        "tool-version": "1.0",
-        "description": "Dummy description",
-        "command-line": "dummy",
-        "schema-version": "0.5",
-        "container-image": {"type": "docker", "image": "dummy/dummy"},
-        "inputs": [],
-        "output-files": [
-            {
-                "id": "dummy_output",
-                "name": "Dummy output",
-                "path-template": "dummy_output.txt",
-            }
-        ],
-    }
-
-    dummy.update(descriptor)
-    return dummy
+from tests.utils.dynmodule import (
+    BT_TYPE_FILE,
+    BT_TYPE_FLAG,
+    BT_TYPE_NUMBER,
+    BT_TYPE_STRING,
+    boutiques_dummy,
+    dynamic_module,
+)
 
 
 def test_positional_string_arg() -> None:
     """Positional string argument."""
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT
-    )
+    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        _boutiques_dummy(
+        boutiques_dummy(
             {
                 "command-line": "dummy [X]",
                 "inputs": [
@@ -61,7 +27,7 @@ def test_positional_string_arg() -> None:
                         "id": "x",
                         "name": "The x",
                         "value-key": "[X]",
-                        "type": _BT_TYPE_STRING,
+                        "type": BT_TYPE_STRING,
                     }
                 ],
             }
@@ -70,7 +36,7 @@ def test_positional_string_arg() -> None:
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
-    test_module = _dynamic_module(compiled_module, "test_module")
+    test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="my_string")
 
@@ -80,11 +46,9 @@ def test_positional_string_arg() -> None:
 
 def test_positional_number_arg() -> None:
     """Positional number argument."""
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT
-    )
+    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        _boutiques_dummy(
+        boutiques_dummy(
             {
                 "command-line": "dummy [X]",
                 "inputs": [
@@ -92,7 +56,7 @@ def test_positional_number_arg() -> None:
                         "id": "x",
                         "name": "The x",
                         "value-key": "[X]",
-                        "type": _BT_TYPE_NUMBER,
+                        "type": BT_TYPE_NUMBER,
                     }
                 ],
             }
@@ -101,7 +65,7 @@ def test_positional_number_arg() -> None:
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
-    test_module = _dynamic_module(compiled_module, "test_module")
+    test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="123")
 
@@ -111,11 +75,9 @@ def test_positional_number_arg() -> None:
 
 def test_positional_file_arg() -> None:
     """Positional file argument."""
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT
-    )
+    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        _boutiques_dummy(
+        boutiques_dummy(
             {
                 "command-line": "dummy [X]",
                 "inputs": [
@@ -123,7 +85,7 @@ def test_positional_file_arg() -> None:
                         "id": "x",
                         "name": "The x",
                         "value-key": "[X]",
-                        "type": _BT_TYPE_FILE,
+                        "type": BT_TYPE_FILE,
                     }
                 ],
             }
@@ -132,7 +94,7 @@ def test_positional_file_arg() -> None:
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
-    test_module = _dynamic_module(compiled_module, "test_module")
+    test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="/my/file.txt")
 
@@ -142,11 +104,9 @@ def test_positional_file_arg() -> None:
 
 def test_flag_arg() -> None:
     """Flag argument."""
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT
-    )
+    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        _boutiques_dummy(
+        boutiques_dummy(
             {
                 "command-line": "dummy [X]",
                 "inputs": [
@@ -154,7 +114,7 @@ def test_flag_arg() -> None:
                         "id": "x",
                         "name": "The x",
                         "value-key": "[X]",
-                        "type": _BT_TYPE_FLAG,
+                        "type": BT_TYPE_FLAG,
                         "command-line-flag": "-x",
                     }
                 ],
@@ -164,7 +124,7 @@ def test_flag_arg() -> None:
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
-    test_module = _dynamic_module(compiled_module, "test_module")
+    test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="my_string")
 
@@ -174,11 +134,9 @@ def test_flag_arg() -> None:
 
 def test_named_arg() -> None:
     """Named argument."""
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT
-    )
+    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        _boutiques_dummy(
+        boutiques_dummy(
             {
                 "command-line": "dummy [X]",
                 "inputs": [
@@ -186,7 +144,7 @@ def test_named_arg() -> None:
                         "id": "x",
                         "name": "The x",
                         "value-key": "[X]",
-                        "type": _BT_TYPE_STRING,
+                        "type": BT_TYPE_STRING,
                         "command-line-flag": "-x",
                     }
                 ],
@@ -196,7 +154,7 @@ def test_named_arg() -> None:
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
-    test_module = _dynamic_module(compiled_module, "test_module")
+    test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="my_string")
 
@@ -206,11 +164,9 @@ def test_named_arg() -> None:
 
 def test_list_of_strings_arg() -> None:
     """List of strings."""
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT
-    )
+    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        _boutiques_dummy(
+        boutiques_dummy(
             {
                 "command-line": "dummy [X]",
                 "inputs": [
@@ -218,7 +174,7 @@ def test_list_of_strings_arg() -> None:
                         "id": "x",
                         "name": "The x",
                         "value-key": "[X]",
-                        "type": _BT_TYPE_STRING,
+                        "type": BT_TYPE_STRING,
                         "list": True,
                     }
                 ],
@@ -228,7 +184,7 @@ def test_list_of_strings_arg() -> None:
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
-    test_module = _dynamic_module(compiled_module, "test_module")
+    test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
     test_module.dummy(runner=dummy_runner, x=["my_string1", "my_string2"])
 
@@ -238,11 +194,9 @@ def test_list_of_strings_arg() -> None:
 
 def test_list_of_numbers_arg() -> None:
     """List of numbers."""
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT
-    )
+    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        _boutiques_dummy(
+        boutiques_dummy(
             {
                 "command-line": "dummy [X]",
                 "inputs": [
@@ -250,7 +204,7 @@ def test_list_of_numbers_arg() -> None:
                         "id": "x",
                         "name": "The x",
                         "value-key": "[X]",
-                        "type": _BT_TYPE_NUMBER,
+                        "type": BT_TYPE_NUMBER,
                         "list": True,
                     }
                 ],
@@ -260,7 +214,7 @@ def test_list_of_numbers_arg() -> None:
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
-    test_module = _dynamic_module(compiled_module, "test_module")
+    test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
     test_module.dummy(runner=dummy_runner, x=[1, 2])
 
@@ -270,11 +224,9 @@ def test_list_of_numbers_arg() -> None:
 
 def test_static_args() -> None:
     """Static arguments."""
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT
-    )
+    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        _boutiques_dummy(
+        boutiques_dummy(
             {
                 "command-line": "dummy -a 1 -b 2 [X] -c 3 -d 4",
                 "inputs": [
@@ -282,7 +234,7 @@ def test_static_args() -> None:
                         "id": "x",
                         "name": "The x",
                         "value-key": "[X]",
-                        "type": _BT_TYPE_STRING,
+                        "type": BT_TYPE_STRING,
                     }
                 ],
             }
@@ -291,7 +243,7 @@ def test_static_args() -> None:
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
-    test_module = _dynamic_module(compiled_module, "test_module")
+    test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="my_string")
 
@@ -316,11 +268,9 @@ def test_arg_order() -> None:
     The wrapper should respect the order of the arguments
     in the Boutiques descriptor input array.
     """
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT
-    )
+    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        _boutiques_dummy(
+        boutiques_dummy(
             {
                 "command-line": "[B] [A]",
                 "inputs": [
@@ -328,13 +278,13 @@ def test_arg_order() -> None:
                         "id": "a",
                         "name": "The a",
                         "value-key": "[A]",
-                        "type": _BT_TYPE_STRING,
+                        "type": BT_TYPE_STRING,
                     },
                     {
                         "id": "b",
                         "name": "The b",
                         "value-key": "[B]",
-                        "type": _BT_TYPE_STRING,
+                        "type": BT_TYPE_STRING,
                     },
                 ],
             }
@@ -344,7 +294,7 @@ def test_arg_order() -> None:
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
     print(compiled_module)
 
-    test_module = _dynamic_module(compiled_module, "test_module")
+    test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
     test_module.dummy(dummy_runner, "aaa", "bbb")
 
