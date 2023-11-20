@@ -1,13 +1,4 @@
-"""Input validation tests.
-
-Non-goals:
-- Argument types. -> typing
-
-Goals:
-- Numeric ranges of values.
-- Mutually exclusive arguments.
-
-"""
+"""Numeric ranges tests."""
 
 import styx.boutiques.utils
 import styx.compiler.core
@@ -183,13 +174,13 @@ def test_outside_range() -> None:
     try:
         test_module.dummy(runner=dummy_runner, x=11)
     except ValueError as e:
-        assert "must be less than" in str(e)
+        assert "must be between" in str(e)
     else:
         assert False, "Expected ValueError"
 
     try:
         test_module.dummy(runner=dummy_runner, x=4)
     except ValueError as e:
-        assert "must be greater than" in str(e)
+        assert "must be between" in str(e)
     else:
         assert False, "Expected ValueError"

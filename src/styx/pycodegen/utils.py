@@ -50,9 +50,12 @@ def ensure_camel_case(string: str) -> str:
     return _RX_ENSURE_CAMEL.sub("_", string).title().replace("_", "")
 
 
-def enquote(s: str) -> str:  # noqa
+def enquote(
+    s: str,
+    quote: str = '"',
+) -> str:  # noqa
     """Put a string in "quotes"."""
-    return f'"{s}"'
+    return f"{quote}{s}{quote}"
 
 
 def as_py_literal(obj: str | float | int | bool) -> str:

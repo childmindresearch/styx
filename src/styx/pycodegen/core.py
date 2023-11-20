@@ -25,6 +25,11 @@ def collapse(lines: LineBuffer) -> str:
     return "\n".join(lines)
 
 
+def expand(text: str) -> LineBuffer:
+    """Expand a string into a LineBuffer."""
+    return text.splitlines()
+
+
 def blank_before(lines: LineBuffer, blanks: int = 1) -> LineBuffer:
     """Add blank lines at the beginning of a LineBuffer if it is not empty."""
     return [*([""] * blanks), *lines] if len(lines) > 0 else lines

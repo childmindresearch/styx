@@ -3,10 +3,11 @@ from enum import Enum
 
 from styx.boutiques import model as bt
 from styx.boutiques.utils import boutiques_split_command
+from styx.compiler.defs import STYX_DEFINITIONS
 from styx.compiler.settings import CompilerSettings, DefsMode
 from styx.compiler.utils import optional_float_to_int
 from styx.pycodegen.core import INDENT as PY_INDENT
-from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, PyModule, collapse, indent
+from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, PyModule, collapse, expand, indent
 from styx.pycodegen.utils import (
     as_py_literal,
     enquote,
@@ -14,89 +15,6 @@ from styx.pycodegen.utils import (
     ensure_python_symbol,
     ensure_snake_case,
 )
-
-RUNTIME_DECLARATIONS = [
-    'P = typing.TypeVar("P")',
-    '"""Input host file type."""',
-    'R = typing.TypeVar("R")',
-    '"""Output host file type."""',
-    "",
-    "",
-    "class Execution(typing.Protocol[P, R]):",
-    *indent(
-        [
-            '"""',
-            "Execution object used to execute commands.",
-            "Created by `Runner.start_execution()`.",
-            '"""',
-            "def input_file(self, host_file: P) -> str:",
-            *indent(
-                [
-                    '"""',
-                    "Resolve host input files.",
-                    "Returns a local filepath.",
-                    "Called (potentially multiple times) after "
-                    "`Runner.start_execution()` and before `Runner.run()`.",
-                    '"""',
-                    "...",
-                ]
-            ),
-            "def run(self, cargs: list[str]) -> None:",
-            *indent(
-                [
-                    '"""',
-                    "Run the command.",
-                    "Called after all `Execution.input_file()` calls and " "before `Execution.output_file()` calls.",
-                    '"""',
-                    "...",
-                ]
-            ),
-            "def output_file(self, local_file: str) -> R:",
-            *indent(
-                [
-                    '"""',
-                    "Resolve local output files.",
-                    "Returns a host filepath.",
-                    "Called (potentially multiple times) after " "`Runner.run()` and before `Execution.finalize()`.",
-                    '"""',
-                    "...",
-                ]
-            ),
-            "def finalize(self) -> None:",
-            *indent(
-                [
-                    '"""',
-                    "Finalize the execution.",
-                    "Called after all `Execution.output_file()` calls.",
-                    '"""',
-                    "...",
-                ]
-            ),
-        ]
-    ),
-    "",
-    "",
-    "class Runner(typing.Protocol[P, R]):",
-    *indent(
-        [
-            '"""',
-            "Runner object used to execute commands.",
-            "Possible examples would be `LocalRunner`, " "`DockerRunner`, `DebugRunner`, ...",
-            "Used as a factory for `Execution` objects.",
-            '"""',
-            "def start_execution(self, tool_name: str) -> Execution[P, R]:",
-            *indent(
-                [
-                    '"""',
-                    "Start an execution.",
-                    "Called before any `Execution.input_file()` calls.",
-                    '"""',
-                    "...",
-                ]
-            ),
-        ]
-    ),
-]
 
 
 class BtPrimitive(Enum):
@@ -257,7 +175,7 @@ def _generate_raise_value_err(obj: str, expectation: str, reality: str | None = 
     )
 
 
-def _generate_validation_expr(
+def _generate_range_validation_expr(
     buf: LineBuffer,
     bt_input: BtInput,
 ) -> None:
@@ -267,6 +185,7 @@ def _generate_validation_expr(
 
     # List argument length validation
     if bt_input.list_minimum is not None and bt_input.list_maximum is not None:
+        # Case: len(list[]) == X
         assert bt_input.list_minimum <= bt_input.list_maximum
         if bt_input.list_minimum == bt_input.list_maximum:
             buf.extend(
@@ -282,6 +201,7 @@ def _generate_validation_expr(
                 ]
             )
         else:
+            # Case: X <= len(list[]) <= Y
             buf.extend(
                 [
                     f"if {val_opt}not ({bt_input.list_minimum} <= len({bt_input.name}) <= {bt_input.list_maximum}): ",
@@ -295,6 +215,7 @@ def _generate_validation_expr(
                 ]
             )
     elif bt_input.list_minimum is not None:
+        # Case len(list[]) >= X
         buf.extend(
             [
                 f"if {val_opt}not ({bt_input.list_minimum} <= len({bt_input.name})): ",
@@ -308,6 +229,7 @@ def _generate_validation_expr(
             ]
         )
     elif bt_input.list_maximum is not None:
+        # Case len(list[]) <= X
         buf.extend(
             [
                 f"if {val_opt}not (len({bt_input.name}) <= {bt_input.list_maximum}): ",
@@ -325,6 +247,7 @@ def _generate_validation_expr(
     op_min = "<" if bt_input.minimum_exclusive else "<="
     op_max = "<" if bt_input.maximum_exclusive else "<="
     if bt_input.minimum is not None and bt_input.maximum is not None:
+        # Case: X <= arg <= Y
         assert bt_input.minimum <= bt_input.maximum
         if bt_input.type.is_list:
             buf.extend(
@@ -353,6 +276,7 @@ def _generate_validation_expr(
                 ]
             )
     elif bt_input.minimum is not None:
+        # Case: X <= arg
         if bt_input.type.is_list:
             buf.extend(
                 [
@@ -379,6 +303,7 @@ def _generate_validation_expr(
                 ]
             )
     elif bt_input.maximum is not None:
+        # Case: arg <= X
         if bt_input.type.is_list:
             buf.extend(
                 [
@@ -406,7 +331,79 @@ def _generate_validation_expr(
             )
 
 
-def py_from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
+def _generate_group_constraint_expr(
+    buf: LineBuffer,
+    group: bt.Group,  # type: ignore
+) -> None:
+    if group.mutually_exclusive:
+        txt_members = [enquote(x) for x in expand(",\\n\n".join(group.members))]
+        check_members = expand(" +\n".join([f"({x} is not None)" for x in group.members]))
+        buf.extend(["if ("])
+        buf.extend(indent(check_members))
+        buf.extend(
+            [
+                ") > 1:",
+                *indent(
+                    [
+                        "raise ValueError(",
+                        *indent(
+                            [
+                                '"Only one of the following arguments can be specified:\\n"',
+                                *txt_members,
+                            ]
+                        ),
+                        ")",
+                    ]
+                ),
+            ]
+        )
+    if group.all_or_none:
+        txt_members = [enquote(x) for x in expand(",\\n\n".join(group.members))]
+        check_members = expand(" ==\n".join([f"({x} is None)" for x in group.members]))
+        buf.extend(["if not ("])
+        buf.extend(indent(check_members))
+        buf.extend(
+            [
+                "):",
+                *indent(
+                    [
+                        "raise ValueError(",
+                        *indent(
+                            [
+                                '"All or none of the following arguments must be specified:\\n"',
+                                *txt_members,
+                            ]
+                        ),
+                        ")",
+                    ]
+                ),
+            ]
+        )
+    if group.one_is_required:
+        txt_members = [enquote("- " + x) for x in expand("\\n\n".join(group.members))]
+        check_members = expand(" or\n".join([f"({x} is not None)" for x in group.members]))
+        buf.extend(["if not ("])
+        buf.extend(indent(check_members))
+        buf.extend(
+            [
+                "):",
+                *indent(
+                    [
+                        "raise ValueError(",
+                        *indent(
+                            [
+                                '"One of the following arguments must be specified:\\n"',
+                                *txt_members,
+                            ]
+                        ),
+                        ")",
+                    ]
+                ),
+            ]
+        )
+
+
+def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
     mod = PyModule()
 
     # Python names
@@ -436,7 +433,11 @@ def py_from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type
 
     # Input validation
     for i in args:
-        _generate_validation_expr(buf_body, i)
+        _generate_range_validation_expr(buf_body, i)
+
+    if tool.groups is not None:
+        for group in tool.groups:
+            _generate_group_constraint_expr(buf_body, group)
 
     # Command line args building
     for segment in cmd:
@@ -450,11 +451,11 @@ def py_from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type
 
     # Definitions
     if settings.defs_mode == DefsMode.INLINE:
-        defs = RUNTIME_DECLARATIONS
+        defs = STYX_DEFINITIONS
     elif settings.defs_mode == DefsMode.IMPORT:
         defs = ["from styx.runners.styxdefs import *"]
     else:
-        return collapse(RUNTIME_DECLARATIONS)
+        return collapse(STYX_DEFINITIONS)
 
     buf_header = []
     buf_header.extend(
@@ -517,4 +518,4 @@ def py_from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type
 
 def compile_descriptor(descriptor: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
     """Compile a Boutiques descriptor to Python code."""
-    return py_from_boutiques(descriptor, settings)
+    return _from_boutiques(descriptor, settings)
