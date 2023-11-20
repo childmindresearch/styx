@@ -118,17 +118,20 @@
 </span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="k">return</span> <span class="n">_RX_ENSURE_CAMEL</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
 </span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="k">def</span> <span class="nf">enquote</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in &quot;quotes&quot;.&quot;&quot;&quot;</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="k">def</span> <span class="nf">as_py_literal</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an object to a Python literal expression.&quot;&quot;&quot;</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>        <span class="k">return</span> <span class="n">enquote</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="k">def</span> <span class="nf">enquote</span><span class="p">(</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in &quot;quotes&quot;.&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quote</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">quote</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="k">def</span> <span class="nf">as_py_literal</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an object to a Python literal expression.&quot;&quot;&quot;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="n">enquote</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -273,15 +276,18 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">enquote</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">s</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">enquote</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">s</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="enquote-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#enquote"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="enquote-54"><a href="#enquote-54"><span class="linenos">54</span></a><span class="k">def</span> <span class="nf">enquote</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
-</span><span id="enquote-55"><a href="#enquote-55"><span class="linenos">55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in &quot;quotes&quot;.&quot;&quot;&quot;</span>
-</span><span id="enquote-56"><a href="#enquote-56"><span class="linenos">56</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="enquote-54"><a href="#enquote-54"><span class="linenos">54</span></a><span class="k">def</span> <span class="nf">enquote</span><span class="p">(</span>
+</span><span id="enquote-55"><a href="#enquote-55"><span class="linenos">55</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="enquote-56"><a href="#enquote-56"><span class="linenos">56</span></a>    <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+</span><span id="enquote-57"><a href="#enquote-57"><span class="linenos">57</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
+</span><span id="enquote-58"><a href="#enquote-58"><span class="linenos">58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in &quot;quotes&quot;.&quot;&quot;&quot;</span>
+</span><span id="enquote-59"><a href="#enquote-59"><span class="linenos">59</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quote</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">quote</span><span class="si">}</span><span class="s2">&quot;</span>
 </span></pre></div>
 
 
@@ -301,12 +307,12 @@
 
     </div>
     <a class="headerlink" href="#as_py_literal"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="as_py_literal-59"><a href="#as_py_literal-59"><span class="linenos">59</span></a><span class="k">def</span> <span class="nf">as_py_literal</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="as_py_literal-60"><a href="#as_py_literal-60"><span class="linenos">60</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an object to a Python literal expression.&quot;&quot;&quot;</span>
-</span><span id="as_py_literal-61"><a href="#as_py_literal-61"><span class="linenos">61</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="as_py_literal-62"><a href="#as_py_literal-62"><span class="linenos">62</span></a>        <span class="k">return</span> <span class="n">enquote</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-</span><span id="as_py_literal-63"><a href="#as_py_literal-63"><span class="linenos">63</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="as_py_literal-64"><a href="#as_py_literal-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="as_py_literal-62"><a href="#as_py_literal-62"><span class="linenos">62</span></a><span class="k">def</span> <span class="nf">as_py_literal</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="as_py_literal-63"><a href="#as_py_literal-63"><span class="linenos">63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an object to a Python literal expression.&quot;&quot;&quot;</span>
+</span><span id="as_py_literal-64"><a href="#as_py_literal-64"><span class="linenos">64</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="as_py_literal-65"><a href="#as_py_literal-65"><span class="linenos">65</span></a>        <span class="k">return</span> <span class="n">enquote</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</span><span id="as_py_literal-66"><a href="#as_py_literal-66"><span class="linenos">66</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="as_py_literal-67"><a href="#as_py_literal-67"><span class="linenos">67</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 </span></pre></div>
 
 
