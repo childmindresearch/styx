@@ -23,13 +23,10 @@
 
             <h2>Contents</h2>
             <ul>
-  <li><a href="#cmi-dair-template-python-repository">CMI-DAIR Template Python Repository</a></li>
-  <li><a href="#project-name">Project name</a>
+  <li><a href="#styx">Styx</a>
   <ul>
     <li><a href="#features">Features</a></li>
-    <li><a href="#installation">Installation</a></li>
-    <li><a href="#quick-start">Quick start</a></li>
-    <li><a href="#links-or-references">Links or References</a></li>
+    <li><a href="#boutiques-descriptor-implementation-status-66">Boutiques descriptor implementation status: 66%</a></li>
   </ul></li>
 </ul>
 
@@ -58,24 +55,9 @@
                     <h1 class="modulename">
 styx    </h1>
 
-                        <div class="docstring"><h1 id="cmi-dair-template-python-repository">CMI-DAIR Template Python Repository</h1>
+                        <div class="docstring"><h1 id="styx">Styx</h1>
 
-<p>This is a template repository. Below is a checklist of things you should do to use it:</p>
-
-<ul>
-<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Run <code>setup_template.py</code> to set up the repository.</li>
-<li><input type="checkbox" class="task-list-item-checkbox" disabled> Rewrite this <code>README</code> file.</li>
-<li><input type="checkbox" class="task-list-item-checkbox" disabled> Install the <code>pre-commit</code> hooks.</li>
-<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Update the <code>LICENSE</code> file to your desired license and set the year.</li>
-<li><input type="checkbox" class="task-list-item-checkbox" disabled> Update the supported versions in <code>SECURITY.md</code> or, if not relevant, delete this file.</li>
-<li><input type="checkbox" class="task-list-item-checkbox" disabled> Remove the placeholder src and test files, these are there merely to show how the CI works.</li>
-<li><input type="checkbox" class="task-list-item-checkbox" disabled> Grant third-party app permissions (e.g. Codecov) <a href="https://github.com/organizations/cmi-dair/settings/installations">here</a>, if necessary.</li>
-<li><input type="checkbox" class="task-list-item-checkbox" disabled> Either generate a <code>CODECOV_TOKEN</code> secret <a href="https://github.com/cmi-dair/flowdump/blob/main/.github/workflows/python_tests.yaml">here</a> (if its a private repository) or remove the line <code>token: ${{ secrets.CODECOV_TOKEN }}</code></li>
-<li><input type="checkbox" class="task-list-item-checkbox" disabled> API docs website: After the first successful build, go to the <code>Settings</code> tab of your repository, scroll down to the <code>GitHub Pages</code> section, and select <code>gh-pages</code> as the source. This will generate a link to your API docs.</li>
-<li><input type="checkbox" class="task-list-item-checkbox" disabled> Update stability badge in <code>README.md</code> to reflect the current state of the project. A list of stability badges to copy can be found <a href="https://github.com/orangemug/stability-badges">here</a>. The <a href="https://nodejs.org/docs/latest-v20.x/api/documentation.html#documentation_stability_index">node documentation</a> can be used as a reference for the stability levels.</li>
-</ul>
-
-<h1 id="project-name">Project name</h1>
+<p><img src="docs/logo.png" width="500em" style="display: block; margin-left: auto; margin-right: auto"> </img></p>
 
 <p><a href="https://github.com/cmi-dair/styx/actions/workflows/test.yaml?query=branch%3Amain"><img src="https://github.com/cmi-dair/styx/actions/workflows/test.yaml/badge.svg?branch=main" alt="Build" /></a>
 <a href="https://codecov.io/gh/cmi-dair/styx"><img src="https://codecov.io/gh/cmi-dair/styx/branch/main/graph/badge.svg?token=22HWWFWPW5" alt="codecov" /></a>
@@ -84,47 +66,31 @@ styx    </h1>
 <a href="https://github.com/cmi-dair/styx/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License" /></a>
 <a href="https://cmi-dair.github.io/styx"><img src="https://img.shields.io/badge/api-docs-blue" alt="pages" /></a></p>
 
-<p>What problem does this tool solve?</p>
+<p>Compile Python command line tool wrappers from Boutiques descriptors.</p>
 
 <h2 id="features">Features</h2>
 
 <ul>
-<li>A few</li>
-<li>Cool</li>
-<li>Things</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Modern Python 3.11+ target</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Intellisense &amp; full static type checking for inputs and outputs</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Documentation generation</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Custom execution environments via dependency injection</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Runtime input validation</li>
+<li><input type="checkbox" class="task-list-item-checkbox" disabled> Unit test generation</li>
 </ul>
 
-<h2 id="installation">Installation</h2>
-
-<p>Install this package via :</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>styx
-</code></pre>
-</div>
-
-<p>Or get the newest development version via:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/cmi-dair/styx
-</code></pre>
-</div>
-
-<h2 id="quick-start">Quick start</h2>
-
-<p>Short tutorial, maybe with a</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">import</span> <span class="nn">styx</span>
-
-<span class="n">styx</span><span class="o">.</span><span class="n">short_example</span><span class="p">()</span>
-</code></pre>
-</div>
-
-<h2 id="links-or-references">Links or References</h2>
+<h2 id="boutiques-descriptor-implementation-status-66">Boutiques descriptor implementation status: 66%</h2>
 
 <ul>
-<li><a href="https://www.wikipedia.de">https://www.wikipedia.de</a></li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Documentation</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Types (String, Numerical, File)</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Flags</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Lists</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Enums</li>
+<li><input type="checkbox" class="task-list-item-checkbox" checked disabled> Constraints (Numeric ranges, Groups)</li>
+<li><input type="checkbox" class="task-list-item-checkbox" disabled> (Conditional) outputs</li>
+<li><input type="checkbox" class="task-list-item-checkbox" disabled> Execution meta data</li>
+<li><input type="checkbox" class="task-list-item-checkbox" disabled> Tests</li>
 </ul>
 </div>
 
