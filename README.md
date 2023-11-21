@@ -1,7 +1,8 @@
 # Styx
 
-<img src="docs/logo.png" width="500em" style="display: block; margin-left: auto; margin-right: auto"> </img>
-
+<p align="center">
+  <img src="docs/logo.png" width="500em">
+</p>
 
 [![Build](https://github.com/cmi-dair/styx/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/cmi-dair/styx/actions/workflows/test.yaml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/cmi-dair/styx/branch/main/graph/badge.svg?token=22HWWFWPW5)](https://codecov.io/gh/cmi-dair/styx)
