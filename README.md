@@ -1,19 +1,7 @@
-# CMI-DAIR Template Python Repository
+# Styx
 
-This is a template repository. Below is a checklist of things you should do to use it:
+<img src="docs/logo.png" width="500em" style="display: block; margin-left: auto; margin-right: auto"> </img>
 
-- [x] Run `setup_template.py` to set up the repository.
-- [ ] Rewrite this `README` file.
-- [ ] Install the `pre-commit` hooks.
-- [x] Update the `LICENSE` file to your desired license and set the year.
-- [ ] Update the supported versions in `SECURITY.md` or, if not relevant, delete this file.
-- [ ] Remove the placeholder src and test files, these are there merely to show how the CI works.
-- [ ] Grant third-party app permissions (e.g. Codecov) [here](https://github.com/organizations/cmi-dair/settings/installations), if necessary.
-- [ ] Either generate a `CODECOV_TOKEN` secret [here](https://github.com/cmi-dair/flowdump/blob/main/.github/workflows/python_tests.yaml) (if its a private repository) or remove the line `token: ${{ secrets.CODECOV_TOKEN }}`
-- [ ] API docs website: After the first successful build, go to the `Settings` tab of your repository, scroll down to the `GitHub Pages` section, and select `gh-pages` as the source. This will generate a link to your API docs.
-- [ ] Update stability badge in `README.md` to reflect the current state of the project. A list of stability badges to copy can be found [here](https://github.com/orangemug/stability-badges). The [node documentation](https://nodejs.org/docs/latest-v20.x/api/documentation.html#documentation_stability_index) can be used as a reference for the stability levels.
-
-# Project name
 
 [![Build](https://github.com/cmi-dair/styx/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/cmi-dair/styx/actions/workflows/test.yaml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/cmi-dair/styx/branch/main/graph/badge.svg?token=22HWWFWPW5)](https://codecov.io/gh/cmi-dair/styx)
@@ -22,38 +10,25 @@ This is a template repository. Below is a checklist of things you should do to u
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cmi-dair/styx/blob/main/LICENSE)
 [![pages](https://img.shields.io/badge/api-docs-blue)](https://cmi-dair.github.io/styx)
 
-What problem does this tool solve?
+Compile Python command line tool wrappers from Boutiques descriptors.
 
 ## Features
 
-- A few
-- Cool
-- Things
+- [x] Modern Python 3.11+ target
+- [x] Intellisense &amp; full static type checking for inputs and outputs
+- [x] Documentation generation
+- [x] Custom execution environments via dependency injection
+- [x] Runtime input validation
+- [ ] Unit test generation
 
-## Installation
+## Boutiques descriptor implementation status: 66%
 
-Install this package via :
-
-```sh
-pip install styx
-```
-
-Or get the newest development version via:
-
-```sh
-pip install git+https://github.com/cmi-dair/styx
-```
-
-## Quick start
-
-Short tutorial, maybe with a
-
-```Python
-import styx
-
-styx.short_example()
-```
-
-## Links or References
-
-- [https://www.wikipedia.de](https://www.wikipedia.de)
+- [x] Documentation
+- [x] Types (String, Numerical, File)
+- [x] Flags
+- [x] Lists
+- [x] Enums
+- [x] Constraints (Numeric ranges, Groups)
+- [ ] (Conditional) outputs
+- [ ] Execution meta data
+- [ ] Tests
