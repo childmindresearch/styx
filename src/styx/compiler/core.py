@@ -6,14 +6,13 @@ from styx.boutiques.utils import boutiques_split_command
 from styx.compiler.defs import STYX_DEFINITIONS
 from styx.compiler.settings import CompilerSettings, DefsMode
 from styx.compiler.utils import optional_float_to_int
-from styx.pycodegen.core import INDENT as PY_INDENT
 from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, PyModule, collapse, expand, indent
+from styx.pycodegen.scope import Scope
 from styx.pycodegen.utils import (
     as_py_literal,
     enquote,
-    ensure_camel_case,
-    ensure_python_symbol,
-    ensure_snake_case,
+    python_camelize,
+    python_snakify,
 )
 
 
@@ -34,9 +33,9 @@ class BtType:
 
 
 class BtInput:
-    def __init__(self, bt_input: bt.Inputs) -> None:  # type: ignore
+    def __init__(self, bt_input: bt.Inputs, scope: Scope) -> None:  # type: ignore
         self.bt_ref = bt_input.value_key
-        self.name = ensure_snake_case(ensure_python_symbol(bt_input.id))
+        self.name = scope.add_or_dodge(python_snakify(bt_input.id))
         self.docstring = bt_input.description
         self.command_line_flag = bt_input.command_line_flag
         self.list_separator = bt_input.list_separator if bt_input.list_separator is not None else " "
@@ -403,25 +402,78 @@ def _generate_group_constraint_expr(
         )
 
 
+def _generate_output_file_expr(
+    buf_header: LineBuffer,
+    buf_body: LineBuffer,
+    bt_outputs: list[bt.OutputFiles],  # type: ignore
+    inputs: list[BtInput],
+    py_var_output_class: str,
+    py_var_execution: str,
+    py_var_ret: str,
+) -> None:
+    buf_body.append(f"{py_var_ret} = {py_var_output_class}(")
+
+    for out in bt_outputs:
+        # Declaration
+        buf_header.extend(
+            indent(
+                [
+                    f"{out.id}: R",
+                    f'"""{out.description}"""',
+                ]
+            )
+        )
+
+        # Expression
+        if out.path_template is not None:
+            s = out.path_template
+            for a in inputs:
+                s = s.replace(f"{a.bt_ref}", f"{{{a.name}}}")
+
+            buf_body.extend(indent([f"{out.id}={py_var_execution}.output_file(f{enquote(s)}),"]))
+
+    buf_body.extend([")"])
+
+
+def _boutiques_replace_vars(s: str, key_value: dict[str, str]) -> str:
+    for k, v in key_value.items():
+        s = s.replace(k, v)
+    return s
+
+
 def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
+    module_scope = Scope(parent=Scope.python())
+    function_scope = Scope(parent=module_scope)
+
     mod = PyModule()
 
-    # Python names
-    py_func_name = ensure_snake_case(ensure_python_symbol(tool.name))
-    py_output_class_name = f"{ensure_camel_case(tool.name)}Outputs"
+    # Module level symbols
+    module_scope.add_or_die("styx")
+    module_scope.add_or_die("P")
+    module_scope.add_or_die("R")
+    module_scope.add_or_die("Runner")
+    module_scope.add_or_die("Execution")
+    py_var_function = module_scope.add_or_dodge(python_snakify(tool.name))
+    py_var_output_class = module_scope.add_or_dodge(f"{python_camelize(tool.name)}Outputs")
 
-    # Arguments
+    # Function level symbols
+    py_var_runner = function_scope.add_or_die("runner")
+    py_var_execution = function_scope.add_or_die("execution")
+    py_var_cargs = function_scope.add_or_die("cargs")
+    py_var_ret = function_scope.add_or_die("ret")
+
+    # Function arguments
     args: list[BtInput] = []
     for i in tool.inputs:
-        args.append(BtInput(i))
+        args.append(BtInput(i, scope=function_scope))
 
     # Docstring
     docstring = tool.description
 
     # Function body
     buf_body: list[str] = [
-        f"execution = runner.start_execution({enquote(tool.name)})",
-        "cargs = []",
+        f"{py_var_execution} = {py_var_runner}.start_execution({enquote(tool.name)})",
+        f"{py_var_cargs} = []",
     ]
 
     # Arguments
@@ -445,9 +497,9 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
             i = args_lookup[segment]
             buf_body.extend(i.py_expr)
         else:
-            buf_body.append(f"cargs.append({enquote(segment)})")
+            buf_body.append(f"{py_var_cargs}.append({enquote(segment)})")
 
-    buf_body.append("execution.run(cargs)")
+    buf_body.append(f"{py_var_execution}.run({py_var_cargs})")
 
     # Definitions
     if settings.defs_mode == DefsMode.INLINE:
@@ -463,37 +515,27 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
             *defs,
             "",
             "",
-            f"class {py_output_class_name}(typing.NamedTuple, typing.Generic[R]):",
+            f"class {py_var_output_class}(typing.NamedTuple, typing.Generic[R]):",
             *indent(
                 [
                     '"""',
-                    f"Output object returned when calling `{py_func_name}(...)`.",
+                    f"Output object returned when calling `{py_var_function}(...)`.",
                     '"""',
                 ]
             ),
         ]
     )
 
-    # Outputs
-    for o in tool.output_files:
-        # Field
-        buf_header.append(f"{PY_INDENT}{o.id}: R")
-        # Docstring
-        buf_header.append(f'{PY_INDENT}"""{o.description}"""')
-
-    buf_body.append(f"ret = {py_output_class_name}(")
-    for o in tool.output_files:
-        s = o.path_template
-        for i in args:
-            s = s.replace(f"{i.bt_ref}", f"{{{i.name}}}")
-
-        buf_body.append(f"{PY_INDENT}{o.id}=execution.output_file(f{enquote(s)}),")
+    # Output files
+    if tool.output_files is not None:
+        _generate_output_file_expr(
+            buf_header, buf_body, tool.output_files, args, py_var_output_class, py_var_execution, py_var_ret
+        )
 
     buf_body.extend(
         [
-            ")",
-            "execution.finalize()",
-            "return ret",
+            f"{py_var_execution}.finalize()",
+            f"return {py_var_ret}",
         ]
     )
 
@@ -501,10 +543,10 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
 
     mod.funcs.append(
         PyFunc(
-            name=py_func_name,
+            name=py_var_function,
             args=pyargs,
-            return_type=f"{py_output_class_name}[R]",
-            return_descr=f"NamedTuple of outputs " f"(described in `{py_output_class_name}`).",
+            return_type=f"{py_var_output_class}[R]",
+            return_descr=f"NamedTuple of outputs " f"(described in `{py_var_output_class}`).",
             docstring_body=docstring,
             body=buf_body,
         )

@@ -1,4 +1,3 @@
-import keyword
 import re
 
 _RX_ENSURE_CAMEL = re.compile(r"(?<=[A-Z])(?!$)(?!_)(?![A-Z])")
@@ -17,9 +16,6 @@ def ensure_python_symbol(name: str) -> str:
     name = re.sub(r"[^a-zA-Z0-9_]", "_", name)
     # Prepend 'v_' if name starts with a digit
     name = re.sub(r"^[0-9]", "v_", name)
-    # Avoid python keyword collisions
-    while keyword.iskeyword(name):
-        name = f"{name}_"
 
     return name
 
@@ -48,6 +44,30 @@ def ensure_camel_case(string: str) -> str:
         The converted string.
     """
     return _RX_ENSURE_CAMEL.sub("_", string).title().replace("_", "")
+
+
+def python_camelize(string: str) -> str:
+    """Converts a string to camel case.
+
+    Args:
+        string: The string to convert.
+
+    Returns:
+        The converted string.
+    """
+    return ensure_camel_case(ensure_python_symbol(string))
+
+
+def python_snakify(string: str) -> str:
+    """Converts a string to snake case.
+
+    Args:
+        string: The string to convert.
+
+    Returns:
+        The converted string.
+    """
+    return ensure_snake_case(ensure_python_symbol(string))
 
 
 def enquote(
