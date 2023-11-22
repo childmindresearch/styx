@@ -69,4 +69,4 @@ def test_scope_parent() -> None:
     with pytest.raises(ValueError):
         child.add_or_die("foo")
     with pytest.raises(ValueError):
-        parent.add_or_die("bar")
+        parent.add_or_die("foo")

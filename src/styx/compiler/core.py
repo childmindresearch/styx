@@ -462,6 +462,9 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
     py_var_cargs = function_scope.add_or_die("cargs")
     py_var_ret = function_scope.add_or_die("ret")
 
+    # Function body
+    buf_body: LineBuffer = []
+
     # Function arguments
     args: list[BtInput] = []
     for i in tool.inputs:
@@ -469,12 +472,6 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
 
     # Docstring
     docstring = tool.description
-
-    # Function body
-    buf_body: list[str] = [
-        f"{py_var_execution} = {py_var_runner}.start_execution({enquote(tool.name)})",
-        f"{py_var_cargs} = []",
-    ]
 
     # Arguments
     cmd = boutiques_split_command(tool.command_line)
@@ -490,6 +487,14 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
     if tool.groups is not None:
         for group in tool.groups:
             _generate_group_constraint_expr(buf_body, group)
+
+    # Function body
+    buf_body.extend(
+        [
+            f"{py_var_execution} = {py_var_runner}.start_execution({enquote(tool.name)})",
+            f"{py_var_cargs} = []",
+        ]
+    )
 
     # Command line args building
     for segment in cmd:
