@@ -3,47 +3,47 @@ name: Python Tests
 on:
   push:
     branches:
-      - main
+    - main
   pull_request:
 
 jobs:
   unit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-          cache: poetry
-      - name: Install dependencies
-        run: |
-          poetry install
-      - name: Run tests
-        id: run-tests
-        continue-on-error: true
-        run: >
-          poetry run pytest \
-            --junitxml=pytest.xml \
-            --cov-report=term-missing:skip-covered \
-            --cov-report=xml:coverage.xml \
-            --cov=src tests \
-            > ./pytest-coverage.txt;
-          cat ./pytest-coverage.txt;
-      - name: Upload pytest coverage artifacts.
-        uses: actions/upload-artifact@v3
-        with:
-          name: pytest-coverage
-          path: ./pytest-coverage.txt
-      - name: Upload pytest junitxml artifacts.
-        uses: actions/upload-artifact@v3
-        with:
-          name: pytest-junitxml
-          path: pytest.xml
-      - name: Checking testing success.
-        if: steps.run-tests.outcome != 'success'
-        run: exit 1;
+    - uses: actions/checkout@v4
+    - name: Install poetry
+      run: pipx install poetry
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: poetry
+    - name: Install dependencies
+      run: |
+        poetry install
+    - name: Run tests
+      id: run-tests
+      continue-on-error: true
+      run: >
+        poetry run pytest \
+          --junitxml=pytest.xml \
+          --cov-report=term-missing:skip-covered \
+          --cov-report=xml:coverage.xml \
+          --cov=src tests \
+          > ./pytest-coverage.txt;
+        cat ./pytest-coverage.txt;
+    - name: Upload pytest coverage artifacts.
+      uses: actions/upload-artifact@v3
+      with:
+        name: pytest-coverage
+        path: ./pytest-coverage.txt
+    - name: Upload pytest junitxml artifacts.
+      uses: actions/upload-artifact@v3
+      with:
+        name: pytest-junitxml
+        path: pytest.xml
+    - name: Checking testing success.
+      if: steps.run-tests.outcome != 'success'
+      run: exit 1;
 
   coverage:
     runs-on: ubuntu-latest
@@ -53,42 +53,42 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Get pytest artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: pytest-coverage
-      - name: Get pytest junitxml artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: pytest-junitxml
-      - name: Pytest coverage comment
-        if: github.event_name == 'pull_request'
-        uses: MishaKav/pytest-coverage-comment@main
-        with:
-          pytest-coverage-path: ./pytest-coverage.txt
-          junitxml-path: ./pytest.xml
-      - name: Upload coverage to Codecov
-        if: success() || failure()
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+    - name: Get pytest artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: pytest-coverage
+    - name: Get pytest junitxml artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: pytest-junitxml
+    - name: Pytest coverage comment
+      if: github.event_name == 'pull_request'
+      uses: MishaKav/pytest-coverage-comment@main
+      with:
+        pytest-coverage-path: ./pytest-coverage.txt
+        junitxml-path: ./pytest.xml
+    - name: Upload coverage to Codecov
+      if: success() || failure()
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   ruff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: chartboost/ruff-action@v1
+    - uses: actions/checkout@v4
+    - uses: chartboost/ruff-action@v1
 
   mypy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-          cache: poetry
-      - run: |
-          poetry install
-          poetry run mypy .
+    - uses: actions/checkout@v4
+    - name: Install poetry
+      run: pipx install poetry
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: poetry
+    - run: |
+        poetry install
+        poetry run mypy .
