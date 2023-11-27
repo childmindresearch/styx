@@ -1,6 +1,5 @@
 """Test command line argument building."""
 
-
 import styx.boutiques.utils
 import styx.compiler.core
 import styx.compiler.settings
@@ -292,7 +291,6 @@ def test_arg_order() -> None:
     )
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
-    print(compiled_module)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()

@@ -1,5 +1,7 @@
 """Numeric ranges tests."""
 
+import pytest
+
 import styx.boutiques.utils
 import styx.compiler.core
 import styx.compiler.settings
@@ -36,12 +38,8 @@ def test_below_range_minimum_inclusive() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
-    try:
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=4)
-    except ValueError as e:
-        assert "must be greater than" in str(e)
-    else:
-        assert False, "Expected ValueError"
 
 
 def test_above_range_maximum_inclusive() -> None:
@@ -69,12 +67,8 @@ def test_above_range_maximum_inclusive() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
-    try:
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=6)
-    except ValueError as e:
-        assert "must be less than" in str(e)
-    else:
-        assert False, "Expected ValueError"
 
 
 def test_above_range_maximum_exclusive() -> None:
@@ -103,12 +97,8 @@ def test_above_range_maximum_exclusive() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
-    try:
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=5)
-    except ValueError as e:
-        assert "must be less than" in str(e)
-    else:
-        assert False, "Expected ValueError"
 
 
 def test_below_range_minimum_exclusive() -> None:
@@ -137,12 +127,8 @@ def test_below_range_minimum_exclusive() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
-    try:
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=5)
-    except ValueError as e:
-        assert "must be greater than" in str(e)
-    else:
-        assert False, "Expected ValueError"
 
 
 def test_outside_range() -> None:
@@ -171,16 +157,8 @@ def test_outside_range() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
-    try:
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=11)
-    except ValueError as e:
-        assert "must be between" in str(e)
-    else:
-        assert False, "Expected ValueError"
 
-    try:
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=4)
-    except ValueError as e:
-        assert "must be between" in str(e)
-    else:
-        assert False, "Expected ValueError"

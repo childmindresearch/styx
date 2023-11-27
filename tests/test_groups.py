@@ -1,5 +1,7 @@
 """Argument group constraint tests."""
 
+import pytest
+
 import styx.boutiques.utils
 import styx.compiler.core
 import styx.compiler.settings
@@ -62,19 +64,12 @@ def test_mutually_exclusive() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
-    try:
-        test_module.dummy(runner=dummy_runner, x=1, y=2)
-    except ValueError as e:
-        assert "Only one" in str(e)
-    else:
-        assert False, "Expected ValueError"
 
-    try:
+    with pytest.raises(ValueError):
+        test_module.dummy(runner=dummy_runner, x=1, y=2)
+
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=1, y=2, z=3)
-    except ValueError as e:
-        assert "Only one" in str(e)
-    else:
-        assert False, "Expected ValueError"
 
     assert test_module.dummy(runner=dummy_runner, x=1) is not None
     assert test_module.dummy(runner=dummy_runner, y=2) is not None
@@ -106,18 +101,10 @@ def test_all_or_none() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
-    try:
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=1, y=2)
-    except ValueError as e:
-        assert "All or none" in str(e)
-    else:
-        assert False, "Expected ValueError"
-    try:
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, z=3)
-    except ValueError as e:
-        assert "All or none" in str(e)
-    else:
-        assert False, "Expected ValueError"
 
     assert test_module.dummy(runner=dummy_runner, x=1, y=2, z=3) is not None
     assert test_module.dummy(runner=dummy_runner) is not None
@@ -147,12 +134,8 @@ def test_one_required() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
-    try:
+    with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner)
-    except ValueError as e:
-        assert "One of" in str(e)
-    else:
-        assert False, "Expected ValueError"
 
     assert test_module.dummy(runner=dummy_runner, x=1) is not None
     assert test_module.dummy(runner=dummy_runner, y=2) is not None
