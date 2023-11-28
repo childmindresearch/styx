@@ -1,4 +1,5 @@
 import re
+from typing import Union
 
 _RX_ENSURE_CAMEL = re.compile(r"(?<=[A-Z])(?!$)(?!_)(?![A-Z])")
 
@@ -78,9 +79,24 @@ def enquote(
     return f"{quote}{s}{quote}"
 
 
-def as_py_literal(obj: str | float | int | bool) -> str:
+def enbrace(
+    s: str,
+    brace_type: str = "{",
+) -> str:  # noqa
+    """Put a string in {braces}."""
+    _right_brace = {"{": "}", "[": "]", "(": ")"}
+    return f"{brace_type}{s}{_right_brace[brace_type]}"
+
+
+_TYPE_PYPRIMITIVE = str | float | int | bool
+_TYPE_PYLITERAL = Union[_TYPE_PYPRIMITIVE, list["_TYPE_PYLITERAL"]]
+
+
+def as_py_literal(obj: _TYPE_PYLITERAL, quote: str = '"') -> str:
     """Convert an object to a Python literal expression."""
+    if isinstance(obj, list):
+        return enbrace(", ".join([as_py_literal(o, quote) for o in obj]), "[")
     if isinstance(obj, str):
-        return enquote(obj)
+        return enquote(obj, quote)
     else:
         return str(obj)

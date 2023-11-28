@@ -257,7 +257,11 @@
             "description": "Main default mask output of BET",
             "optional": true,
             "id": "outfile",
-            "name": "Output mask file"
+            "name": "Output mask file",
+            "path-template-stripped-extensions": [
+                ".nii.gz",
+                ".nii"
+            ]
         },
         {
             "path-template": "[MASK]_mask.nii.gz",

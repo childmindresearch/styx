@@ -10,6 +10,7 @@ from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, PyModule, collapse, e
 from styx.pycodegen.scope import Scope
 from styx.pycodegen.utils import (
     as_py_literal,
+    enbrace,
     enquote,
     python_camelize,
     python_snakify,
@@ -35,7 +36,7 @@ class BtType:
 class BtInput:
     def __init__(self, bt_input: bt.Inputs, scope: Scope) -> None:  # type: ignore
         self.bt_ref = bt_input.value_key
-        self.name = scope.add_or_dodge(python_snakify(bt_input.id))
+        self.py_symbol = scope.add_or_dodge(python_snakify(bt_input.id))
         self.docstring = bt_input.description
         self.command_line_flag = bt_input.command_line_flag
         self.list_separator = bt_input.list_separator if bt_input.list_separator is not None else " "
@@ -127,7 +128,7 @@ class BtInput:
         if self.type.primitive == BtPrimitive.Flag:
             buf.extend(
                 [
-                    f"if {self.name}:",
+                    f"if {self.py_symbol}:",
                     *indent([f"cargs.append({enquote(self.command_line_flag)})"]),
                 ]
             )
@@ -136,10 +137,10 @@ class BtInput:
         lvl = 0
 
         if self.type.is_optional:
-            buf.append(f"if {self.name} is not None:")
+            buf.append(f"if {self.py_symbol} is not None:")
             lvl += 1
 
-        py_obj = self.name
+        py_obj = self.py_symbol
 
         if self.type.primitive == BtPrimitive.File:
             py_obj = f"execution.input_file({py_obj})"
@@ -157,6 +158,8 @@ class BtInput:
                 )
             )
         else:
+            if self.type.primitive == BtPrimitive.Number or self.type.primitive == BtPrimitive.Integer:
+                py_obj = f"str({py_obj})"
             buf.extend(indent([f"cargs.append({py_obj})"], lvl))
 
         return buf
@@ -180,7 +183,7 @@ def _generate_range_validation_expr(
 ) -> None:
     val_opt = ""
     if bt_input.type.is_optional:
-        val_opt = f"{bt_input.name} is not None and "
+        val_opt = f"{bt_input.py_symbol} is not None and "
 
     # List argument length validation
     if bt_input.list_minimum is not None and bt_input.list_maximum is not None:
@@ -189,12 +192,12 @@ def _generate_range_validation_expr(
         if bt_input.list_minimum == bt_input.list_maximum:
             buf.extend(
                 [
-                    f"if {val_opt}(len({bt_input.name}) != {bt_input.list_minimum}): ",
+                    f"if {val_opt}(len({bt_input.py_symbol}) != {bt_input.list_minimum}): ",
                     *indent(
                         _generate_raise_value_err(
-                            f"Length of '{bt_input.name}'",
+                            f"Length of '{bt_input.py_symbol}'",
                             f"{bt_input.list_minimum}",
-                            f"{{len({bt_input.name})}}",
+                            f"{{len({bt_input.py_symbol})}}",
                         )
                     ),
                 ]
@@ -203,12 +206,13 @@ def _generate_range_validation_expr(
             # Case: X <= len(list[]) <= Y
             buf.extend(
                 [
-                    f"if {val_opt}not ({bt_input.list_minimum} <= len({bt_input.name}) <= {bt_input.list_maximum}): ",
+                    f"if {val_opt}not ({bt_input.list_minimum} <= "
+                    f"len({bt_input.py_symbol}) <= {bt_input.list_maximum}): ",
                     *indent(
                         _generate_raise_value_err(
-                            f"Length of '{bt_input.name}'",
+                            f"Length of '{bt_input.py_symbol}'",
                             f"between {bt_input.list_minimum} and {bt_input.list_maximum}",
-                            f"{{len({bt_input.name})}}",
+                            f"{{len({bt_input.py_symbol})}}",
                         )
                     ),
                 ]
@@ -217,12 +221,12 @@ def _generate_range_validation_expr(
         # Case len(list[]) >= X
         buf.extend(
             [
-                f"if {val_opt}not ({bt_input.list_minimum} <= len({bt_input.name})): ",
+                f"if {val_opt}not ({bt_input.list_minimum} <= len({bt_input.py_symbol})): ",
                 *indent(
                     _generate_raise_value_err(
-                        f"Length of '{bt_input.name}'",
+                        f"Length of '{bt_input.py_symbol}'",
                         f"greater than {bt_input.list_minimum}",
-                        f"{{len({bt_input.name})}}",
+                        f"{{len({bt_input.py_symbol})}}",
                     )
                 ),
             ]
@@ -231,12 +235,12 @@ def _generate_range_validation_expr(
         # Case len(list[]) <= X
         buf.extend(
             [
-                f"if {val_opt}not (len({bt_input.name}) <= {bt_input.list_maximum}): ",
+                f"if {val_opt}not (len({bt_input.py_symbol}) <= {bt_input.list_maximum}): ",
                 *indent(
                     _generate_raise_value_err(
-                        f"Length of '{bt_input.name}'",
+                        f"Length of '{bt_input.py_symbol}'",
                         f"less than {bt_input.list_maximum}",
-                        f"{{len({bt_input.name})}}",
+                        f"{{len({bt_input.py_symbol})}}",
                     )
                 ),
             ]
@@ -251,11 +255,11 @@ def _generate_range_validation_expr(
         if bt_input.type.is_list:
             buf.extend(
                 [
-                    f"if {val_opt}not ({bt_input.minimum} {op_min} min({bt_input.name}) "
-                    f"and max({bt_input.name}) {op_max} {bt_input.maximum}): ",
+                    f"if {val_opt}not ({bt_input.minimum} {op_min} min({bt_input.py_symbol}) "
+                    f"and max({bt_input.py_symbol}) {op_max} {bt_input.maximum}): ",
                     *indent(
                         _generate_raise_value_err(
-                            f"All elements of '{bt_input.name}'",
+                            f"All elements of '{bt_input.py_symbol}'",
                             f"between {bt_input.minimum} {op_min} x {op_max} {bt_input.maximum}",
                         )
                     ),
@@ -264,12 +268,12 @@ def _generate_range_validation_expr(
         else:
             buf.extend(
                 [
-                    f"if {val_opt}not ({bt_input.minimum} {op_min} {bt_input.name} {op_max} {bt_input.maximum}): ",
+                    f"if {val_opt}not ({bt_input.minimum} {op_min} {bt_input.py_symbol} {op_max} {bt_input.maximum}): ",
                     *indent(
                         _generate_raise_value_err(
-                            f"'{bt_input.name}'",
+                            f"'{bt_input.py_symbol}'",
                             f"between {bt_input.minimum} {op_min} x {op_max} {bt_input.maximum}",
-                            f"{{{bt_input.name}}}",
+                            f"{{{bt_input.py_symbol}}}",
                         )
                     ),
                 ]
@@ -279,10 +283,10 @@ def _generate_range_validation_expr(
         if bt_input.type.is_list:
             buf.extend(
                 [
-                    f"if {val_opt}not ({bt_input.minimum} {op_min} min({bt_input.name})): ",
+                    f"if {val_opt}not ({bt_input.minimum} {op_min} min({bt_input.py_symbol})): ",
                     *indent(
                         _generate_raise_value_err(
-                            f"All elements of '{bt_input.name}'",
+                            f"All elements of '{bt_input.py_symbol}'",
                             f"greater than {bt_input.minimum} {op_min} x",
                         )
                     ),
@@ -291,12 +295,12 @@ def _generate_range_validation_expr(
         else:
             buf.extend(
                 [
-                    f"if {val_opt}not ({bt_input.minimum} {op_min} {bt_input.name}): ",
+                    f"if {val_opt}not ({bt_input.minimum} {op_min} {bt_input.py_symbol}): ",
                     *indent(
                         _generate_raise_value_err(
-                            f"'{bt_input.name}'",
+                            f"'{bt_input.py_symbol}'",
                             f"greater than {bt_input.minimum} {op_min} x",
-                            f"{{{bt_input.name}}}",
+                            f"{{{bt_input.py_symbol}}}",
                         )
                     ),
                 ]
@@ -306,10 +310,10 @@ def _generate_range_validation_expr(
         if bt_input.type.is_list:
             buf.extend(
                 [
-                    f"if {val_opt}not (max({bt_input.name}) {op_max} {bt_input.maximum}): ",
+                    f"if {val_opt}not (max({bt_input.py_symbol}) {op_max} {bt_input.maximum}): ",
                     *indent(
                         _generate_raise_value_err(
-                            f"All elements of '{bt_input.name}'",
+                            f"All elements of '{bt_input.py_symbol}'",
                             f"less than x {op_max} {bt_input.maximum}",
                         )
                     ),
@@ -318,12 +322,12 @@ def _generate_range_validation_expr(
         else:
             buf.extend(
                 [
-                    f"if {val_opt}not ({bt_input.name} {op_max} {bt_input.maximum}): ",
+                    f"if {val_opt}not ({bt_input.py_symbol} {op_max} {bt_input.maximum}): ",
                     *indent(
                         _generate_raise_value_err(
-                            f"'{bt_input.name}'",
+                            f"'{bt_input.py_symbol}'",
                             f"less than x {op_max} {bt_input.maximum}",
-                            f"{{{bt_input.name}}}",
+                            f"{{{bt_input.py_symbol}}}",
                         )
                     ),
                 ]
@@ -403,6 +407,7 @@ def _generate_group_constraint_expr(
 
 
 def _generate_output_file_expr(
+    func_scope: Scope,
     buf_header: LineBuffer,
     buf_body: LineBuffer,
     bt_outputs: list[bt.OutputFiles],  # type: ignore
@@ -411,6 +416,26 @@ def _generate_output_file_expr(
     py_var_execution: str,
     py_var_ret: str,
 ) -> None:
+    py_rstrip_fun = func_scope.add_or_dodge("_rstrip")
+    if any([out.path_template_stripped_extensions is not None for out in bt_outputs]):
+        buf_body.extend(
+            [
+                f"def {py_rstrip_fun}(s, r):",
+                *indent(
+                    [
+                        "for postfix in r:",
+                        *indent(
+                            [
+                                "if s.endswith(postfix):",
+                                *indent(["return s[: -len(postfix)]"]),
+                            ]
+                        ),
+                        "return s",
+                    ]
+                ),
+            ]
+        )
+
     buf_body.append(f"{py_var_ret} = {py_var_output_class}(")
 
     for out in bt_outputs:
@@ -424,11 +449,17 @@ def _generate_output_file_expr(
             )
         )
 
+        strip_extensions = out.path_template_stripped_extensions is not None
+
         # Expression
         if out.path_template is not None:
             s = out.path_template
             for a in inputs:
-                s = s.replace(f"{a.bt_ref}", f"{{{a.name}}}")
+                if strip_extensions:
+                    exts = as_py_literal(out.path_template_stripped_extensions, "'")
+                    s = s.replace(f"{a.bt_ref}", enbrace(f"{py_rstrip_fun}({a.py_symbol}, {exts})"))
+                else:
+                    s = s.replace(f"{a.bt_ref}", enbrace(a.py_symbol))
 
             buf_body.extend(indent([f"{out.id}={py_var_execution}.output_file(f{enquote(s)}),"]))
 
@@ -478,7 +509,7 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
     args_lookup = {a.bt_ref: a for a in args}
 
     pyargs = [PyArg(name="runner", type="Runner[P, R]", default=None, docstring="Command runner")]
-    pyargs += [PyArg(name=i.name, type=i.py_type, default=i.py_default, docstring=i.docstring) for i in args]
+    pyargs += [PyArg(name=i.py_symbol, type=i.py_type, default=i.py_default, docstring=i.docstring) for i in args]
 
     # Input validation
     for i in args:
@@ -534,7 +565,14 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
     # Output files
     if tool.output_files is not None:
         _generate_output_file_expr(
-            buf_header, buf_body, tool.output_files, args, py_var_output_class, py_var_execution, py_var_ret
+            function_scope,
+            buf_header,
+            buf_body,
+            tool.output_files,
+            args,
+            py_var_output_class,
+            py_var_execution,
+            py_var_ret,
         )
 
     buf_body.extend(
