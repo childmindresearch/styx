@@ -119,7 +119,6 @@ def test_output_file_with_template_and_stripped_extensions() -> None:
     )
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
-    print(compiled_module)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.core.DummyRunner()
