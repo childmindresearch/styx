@@ -6,6 +6,7 @@ repos:
   hooks:
   - id: ruff
   - id: ruff-format
+    args: [--preview]
 
 - repo: https://github.com/pre-commit/mirrors-mypy
   rev: v1.7.0
