@@ -33,6 +33,7 @@ pythonpath = [
 ignore_missing_imports = true
 
 [tool.ruff]
+preview = true
 exclude = [
   ".bzr",
   ".direnv",
