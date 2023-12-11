@@ -44,20 +44,18 @@ def test_mutually_exclusive() -> None:
     """Mutually exclusive argument group."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy(
-            {
-                "command-line": "dummy [X] [Y] [Z]",
-                "inputs": _XYZ_INPUTS,
-                "groups": [
-                    {
-                        "id": "group",
-                        "name": "Group",
-                        "members": ["x", "y", "z"],
-                        "mutually-exclusive": True,
-                    }
-                ],
-            }
-        )
+        boutiques_dummy({
+            "command-line": "dummy [X] [Y] [Z]",
+            "inputs": _XYZ_INPUTS,
+            "groups": [
+                {
+                    "id": "group",
+                    "name": "Group",
+                    "members": ["x", "y", "z"],
+                    "mutually-exclusive": True,
+                }
+            ],
+        })
     )
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
@@ -81,20 +79,18 @@ def test_all_or_none() -> None:
     """All or none argument group."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy(
-            {
-                "command-line": "dummy [X] [Y] [Z]",
-                "inputs": _XYZ_INPUTS,
-                "groups": [
-                    {
-                        "id": "group",
-                        "name": "Group",
-                        "members": ["x", "y", "z"],
-                        "all-or-none": True,
-                    }
-                ],
-            }
-        )
+        boutiques_dummy({
+            "command-line": "dummy [X] [Y] [Z]",
+            "inputs": _XYZ_INPUTS,
+            "groups": [
+                {
+                    "id": "group",
+                    "name": "Group",
+                    "members": ["x", "y", "z"],
+                    "all-or-none": True,
+                }
+            ],
+        })
     )
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
@@ -114,20 +110,18 @@ def test_one_required() -> None:
     """One required argument group."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy(
-            {
-                "command-line": "dummy [X] [Y] [Z]",
-                "inputs": _XYZ_INPUTS,
-                "groups": [
-                    {
-                        "id": "group",
-                        "name": "Group",
-                        "members": ["x", "y", "z"],
-                        "one-is-required": True,
-                    }
-                ],
-            }
-        )
+        boutiques_dummy({
+            "command-line": "dummy [X] [Y] [Z]",
+            "inputs": _XYZ_INPUTS,
+            "groups": [
+                {
+                    "id": "group",
+                    "name": "Group",
+                    "members": ["x", "y", "z"],
+                    "one-is-required": True,
+                }
+            ],
+        })
     )
 
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
