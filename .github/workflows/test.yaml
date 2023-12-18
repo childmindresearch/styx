@@ -32,12 +32,12 @@ jobs:
           > ./pytest-coverage.txt;
         cat ./pytest-coverage.txt;
     - name: Upload pytest coverage artifacts.
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pytest-coverage
         path: ./pytest-coverage.txt
     - name: Upload pytest junitxml artifacts.
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pytest-junitxml
         path: pytest.xml
