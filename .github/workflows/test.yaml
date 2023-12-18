@@ -54,11 +54,11 @@ jobs:
       pull-requests: write
     steps:
     - name: Get pytest artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: pytest-coverage
     - name: Get pytest junitxml artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: pytest-junitxml
     - name: Pytest coverage comment
