@@ -19,7 +19,7 @@ pytest-cov = "^4.1.0"
 ruff = "^0.1.8"
 
 [tool.poetry.group.docs.dependencies]
-pdoc = "^14.1.0"
+pdoc = "^14.2.0"
 
 [tool.poetry.extras]
 docs = ["pdoc"]
