@@ -12,14 +12,14 @@ python = "^3.11"
 pydantic = "^2.5.2"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
-mypy = "^1.7.1"
-pre-commit = "^3.6.0"
+pytest = "^8.0.1"
+mypy = "^1.8.0"
+pre-commit = "^3.6.2"
 pytest-cov = "^4.1.0"
-ruff = "^0.1.8"
+ruff = "^0.2.2"
 
 [tool.poetry.group.docs.dependencies]
-pdoc = "^14.2.0"
+pdoc = "^14.4.0"
 
 [tool.poetry.extras]
 docs = ["pdoc"]
