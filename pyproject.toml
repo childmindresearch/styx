@@ -9,7 +9,7 @@ packages = [{include = "styx", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pydantic = "^2.5.2"
+pydantic = "^2.6.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
