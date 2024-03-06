@@ -46,6 +46,9 @@
                     <a class="function" href="#python_snakify">python_snakify</a>
             </li>
             <li>
+                    <a class="function" href="#python_screaming_snakify">python_screaming_snakify</a>
+            </li>
+            <li>
                     <a class="function" href="#enquote">enquote</a>
             </li>
             <li>
@@ -148,35 +151,47 @@
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="k">return</span> <span class="n">ensure_snake_case</span><span class="p">(</span><span class="n">ensure_python_symbol</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="k">def</span> <span class="nf">enquote</span><span class="p">(</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in &quot;quotes&quot;.&quot;&quot;&quot;</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quote</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">quote</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="k">def</span> <span class="nf">enbrace</span><span class="p">(</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">brace_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;{&quot;</span><span class="p">,</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in {braces}.&quot;&quot;&quot;</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">_right_brace</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;{&quot;</span><span class="p">:</span> <span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;[&quot;</span><span class="p">:</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span><span class="p">:</span> <span class="s2">&quot;)&quot;</span><span class="p">}</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">brace_type</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">_right_brace</span><span class="p">[</span><span class="n">brace_type</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="n">_TYPE_PYPRIMITIVE</span> <span class="o">=</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="n">_TYPE_PYLITERAL</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">_TYPE_PYPRIMITIVE</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;_TYPE_PYLITERAL&quot;</span><span class="p">]]</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="k">def</span> <span class="nf">python_screaming_snakify</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a string to screaming snake case.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    Args:</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        string: The string to convert.</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    Returns:</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">        The converted string.</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="k">return</span> <span class="n">ensure_snake_case</span><span class="p">(</span><span class="n">ensure_python_symbol</span><span class="p">(</span><span class="n">string</span><span class="p">))</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="k">def</span> <span class="nf">enquote</span><span class="p">(</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in &quot;quotes&quot;.&quot;&quot;&quot;</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quote</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">quote</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="k">def</span> <span class="nf">as_py_literal</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">_TYPE_PYLITERAL</span><span class="p">,</span> <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an object to a Python literal expression.&quot;&quot;&quot;</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="k">return</span> <span class="n">enbrace</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">as_py_literal</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]),</span> <span class="s2">&quot;[&quot;</span><span class="p">)</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="k">return</span> <span class="n">enquote</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span> <span class="nf">enbrace</span><span class="p">(</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="n">brace_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;{&quot;</span><span class="p">,</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in {braces}.&quot;&quot;&quot;</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">_right_brace</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;{&quot;</span><span class="p">:</span> <span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;[&quot;</span><span class="p">:</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span><span class="p">:</span> <span class="s2">&quot;)&quot;</span><span class="p">}</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">brace_type</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">_right_brace</span><span class="p">[</span><span class="n">brace_type</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="n">_TYPE_PYPRIMITIVE</span> <span class="o">=</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="n">_TYPE_PYLITERAL</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">_TYPE_PYPRIMITIVE</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;_TYPE_PYLITERAL&quot;</span><span class="p">]]</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="k">def</span> <span class="nf">as_py_literal</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">_TYPE_PYLITERAL</span><span class="p">,</span> <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an object to a Python literal expression.&quot;&quot;&quot;</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>        <span class="k">return</span> <span class="n">enbrace</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">as_py_literal</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]),</span> <span class="s2">&quot;[&quot;</span><span class="p">)</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="k">return</span> <span class="n">enquote</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -395,6 +410,47 @@
 
 
                 </section>
+                <section id="python_screaming_snakify">
+                            <input id="python_screaming_snakify-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">python_screaming_snakify</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">string</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="python_screaming_snakify-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#python_screaming_snakify"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="python_screaming_snakify-75"><a href="#python_screaming_snakify-75"><span class="linenos">75</span></a><span class="k">def</span> <span class="nf">python_screaming_snakify</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="python_screaming_snakify-76"><a href="#python_screaming_snakify-76"><span class="linenos">76</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a string to screaming snake case.</span>
+</span><span id="python_screaming_snakify-77"><a href="#python_screaming_snakify-77"><span class="linenos">77</span></a>
+</span><span id="python_screaming_snakify-78"><a href="#python_screaming_snakify-78"><span class="linenos">78</span></a><span class="sd">    Args:</span>
+</span><span id="python_screaming_snakify-79"><a href="#python_screaming_snakify-79"><span class="linenos">79</span></a><span class="sd">        string: The string to convert.</span>
+</span><span id="python_screaming_snakify-80"><a href="#python_screaming_snakify-80"><span class="linenos">80</span></a>
+</span><span id="python_screaming_snakify-81"><a href="#python_screaming_snakify-81"><span class="linenos">81</span></a><span class="sd">    Returns:</span>
+</span><span id="python_screaming_snakify-82"><a href="#python_screaming_snakify-82"><span class="linenos">82</span></a><span class="sd">        The converted string.</span>
+</span><span id="python_screaming_snakify-83"><a href="#python_screaming_snakify-83"><span class="linenos">83</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="python_screaming_snakify-84"><a href="#python_screaming_snakify-84"><span class="linenos">84</span></a>    <span class="k">return</span> <span class="n">ensure_snake_case</span><span class="p">(</span><span class="n">ensure_python_symbol</span><span class="p">(</span><span class="n">string</span><span class="p">))</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Converts a string to screaming snake case.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>string:</strong>  The string to convert.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>The converted string.</p>
+</blockquote>
+</div>
+
+
+                </section>
                 <section id="enquote">
                             <input id="enquote-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -406,12 +462,12 @@
 
     </div>
     <a class="headerlink" href="#enquote"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="enquote-75"><a href="#enquote-75"><span class="linenos">75</span></a><span class="k">def</span> <span class="nf">enquote</span><span class="p">(</span>
-</span><span id="enquote-76"><a href="#enquote-76"><span class="linenos">76</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="enquote-77"><a href="#enquote-77"><span class="linenos">77</span></a>    <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
-</span><span id="enquote-78"><a href="#enquote-78"><span class="linenos">78</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
-</span><span id="enquote-79"><a href="#enquote-79"><span class="linenos">79</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in &quot;quotes&quot;.&quot;&quot;&quot;</span>
-</span><span id="enquote-80"><a href="#enquote-80"><span class="linenos">80</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quote</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">quote</span><span class="si">}</span><span class="s2">&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="enquote-87"><a href="#enquote-87"><span class="linenos">87</span></a><span class="k">def</span> <span class="nf">enquote</span><span class="p">(</span>
+</span><span id="enquote-88"><a href="#enquote-88"><span class="linenos">88</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="enquote-89"><a href="#enquote-89"><span class="linenos">89</span></a>    <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+</span><span id="enquote-90"><a href="#enquote-90"><span class="linenos">90</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
+</span><span id="enquote-91"><a href="#enquote-91"><span class="linenos">91</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in &quot;quotes&quot;.&quot;&quot;&quot;</span>
+</span><span id="enquote-92"><a href="#enquote-92"><span class="linenos">92</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quote</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">quote</span><span class="si">}</span><span class="s2">&quot;</span>
 </span></pre></div>
 
 
@@ -431,13 +487,13 @@
 
     </div>
     <a class="headerlink" href="#enbrace"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="enbrace-83"><a href="#enbrace-83"><span class="linenos">83</span></a><span class="k">def</span> <span class="nf">enbrace</span><span class="p">(</span>
-</span><span id="enbrace-84"><a href="#enbrace-84"><span class="linenos">84</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="enbrace-85"><a href="#enbrace-85"><span class="linenos">85</span></a>    <span class="n">brace_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;{&quot;</span><span class="p">,</span>
-</span><span id="enbrace-86"><a href="#enbrace-86"><span class="linenos">86</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
-</span><span id="enbrace-87"><a href="#enbrace-87"><span class="linenos">87</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in {braces}.&quot;&quot;&quot;</span>
-</span><span id="enbrace-88"><a href="#enbrace-88"><span class="linenos">88</span></a>    <span class="n">_right_brace</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;{&quot;</span><span class="p">:</span> <span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;[&quot;</span><span class="p">:</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span><span class="p">:</span> <span class="s2">&quot;)&quot;</span><span class="p">}</span>
-</span><span id="enbrace-89"><a href="#enbrace-89"><span class="linenos">89</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">brace_type</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">_right_brace</span><span class="p">[</span><span class="n">brace_type</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="enbrace-95"><a href="#enbrace-95"><span class="linenos"> 95</span></a><span class="k">def</span> <span class="nf">enbrace</span><span class="p">(</span>
+</span><span id="enbrace-96"><a href="#enbrace-96"><span class="linenos"> 96</span></a>    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="enbrace-97"><a href="#enbrace-97"><span class="linenos"> 97</span></a>    <span class="n">brace_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;{&quot;</span><span class="p">,</span>
+</span><span id="enbrace-98"><a href="#enbrace-98"><span class="linenos"> 98</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa</span>
+</span><span id="enbrace-99"><a href="#enbrace-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Put a string in {braces}.&quot;&quot;&quot;</span>
+</span><span id="enbrace-100"><a href="#enbrace-100"><span class="linenos">100</span></a>    <span class="n">_right_brace</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;{&quot;</span><span class="p">:</span> <span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;[&quot;</span><span class="p">:</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span><span class="p">:</span> <span class="s2">&quot;)&quot;</span><span class="p">}</span>
+</span><span id="enbrace-101"><a href="#enbrace-101"><span class="linenos">101</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">brace_type</span><span class="si">}{</span><span class="n">s</span><span class="si">}{</span><span class="n">_right_brace</span><span class="p">[</span><span class="n">brace_type</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
 </span></pre></div>
 
 
@@ -457,14 +513,14 @@
 
     </div>
     <a class="headerlink" href="#as_py_literal"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="as_py_literal-96"><a href="#as_py_literal-96"><span class="linenos"> 96</span></a><span class="k">def</span> <span class="nf">as_py_literal</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">_TYPE_PYLITERAL</span><span class="p">,</span> <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="as_py_literal-97"><a href="#as_py_literal-97"><span class="linenos"> 97</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an object to a Python literal expression.&quot;&quot;&quot;</span>
-</span><span id="as_py_literal-98"><a href="#as_py_literal-98"><span class="linenos"> 98</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="as_py_literal-99"><a href="#as_py_literal-99"><span class="linenos"> 99</span></a>        <span class="k">return</span> <span class="n">enbrace</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">as_py_literal</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]),</span> <span class="s2">&quot;[&quot;</span><span class="p">)</span>
-</span><span id="as_py_literal-100"><a href="#as_py_literal-100"><span class="linenos">100</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="as_py_literal-101"><a href="#as_py_literal-101"><span class="linenos">101</span></a>        <span class="k">return</span> <span class="n">enquote</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span>
-</span><span id="as_py_literal-102"><a href="#as_py_literal-102"><span class="linenos">102</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="as_py_literal-103"><a href="#as_py_literal-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="as_py_literal-108"><a href="#as_py_literal-108"><span class="linenos">108</span></a><span class="k">def</span> <span class="nf">as_py_literal</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">_TYPE_PYLITERAL</span><span class="p">,</span> <span class="n">quote</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="as_py_literal-109"><a href="#as_py_literal-109"><span class="linenos">109</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an object to a Python literal expression.&quot;&quot;&quot;</span>
+</span><span id="as_py_literal-110"><a href="#as_py_literal-110"><span class="linenos">110</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="as_py_literal-111"><a href="#as_py_literal-111"><span class="linenos">111</span></a>        <span class="k">return</span> <span class="n">enbrace</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">as_py_literal</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]),</span> <span class="s2">&quot;[&quot;</span><span class="p">)</span>
+</span><span id="as_py_literal-112"><a href="#as_py_literal-112"><span class="linenos">112</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="as_py_literal-113"><a href="#as_py_literal-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="n">enquote</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span>
+</span><span id="as_py_literal-114"><a href="#as_py_literal-114"><span class="linenos">114</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="as_py_literal-115"><a href="#as_py_literal-115"><span class="linenos">115</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 </span></pre></div>
 
 

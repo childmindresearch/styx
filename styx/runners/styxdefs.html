@@ -58,6 +58,33 @@
 
             </li>
             <li>
+                    <a class="class" href="#Metadata">Metadata</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Metadata.__init__">Metadata</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Metadata.id">id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Metadata.name">name</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Metadata.container_image_type">container_image_type</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Metadata.container_image_tag">container_image_tag</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Metadata.container_image_index">container_image_index</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Metadata.container_image_opts">container_image_opts</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#Runner">Runner</a>
                             <ul class="memberlist">
                         <li>
@@ -121,7 +148,7 @@
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>        <span class="o">...</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="p">:</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="p">:</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve local output files.</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">        Returns a host filepath.</span>
@@ -138,20 +165,41 @@
 </span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="o">...</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
 </span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]):</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Runner object used to execute commands.</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="k">class</span> <span class="nc">Metadata</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">NamedTuple</span><span class="p">):</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Static tool metadata.</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">    Possible examples would be `LocalRunner`,</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">    `DockerRunner`, `DebugRunner`, ...</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">    Used as a factory for `Execution` objects.</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="k">def</span> <span class="nf">start_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Execution</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]:</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start an execution.</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">        Called before any `Execution.input_file()` calls.</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="o">...</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">    This is structured static metadata that is known at compile time.</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">    Runners can use this to set up execution environments.</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique identifier of the tool.&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the tool.&quot;&quot;&quot;</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="n">container_image_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Type of container image. Example: docker, singularity.&quot;&quot;&quot;</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="n">container_image_tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of an image where the tool is installed and configured. Example: bids/mriqc.&quot;&quot;&quot;</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="n">container_image_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional index where the image is available, if not the standard location. Example: docker.io&quot;&quot;&quot;</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="n">container_image_opts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Container-level arguments for the application. Example: --privileged&quot;&quot;&quot;</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]):</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Runner object used to execute commands.</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">    Possible examples would be `LocalRunner`,</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">    `DockerRunner`, `DebugRunner`, ...</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">    Used as a factory for `Execution` objects.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="k">def</span> <span class="nf">start_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Execution</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]:</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start an execution.</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a><span class="sd">        Called before any `Execution.input_file()` calls.</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -218,7 +266,7 @@
 </span><span id="Execution-30"><a href="#Execution-30"><span class="linenos">30</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Execution-31"><a href="#Execution-31"><span class="linenos">31</span></a>        <span class="o">...</span>
 </span><span id="Execution-32"><a href="#Execution-32"><span class="linenos">32</span></a>
-</span><span id="Execution-33"><a href="#Execution-33"><span class="linenos">33</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="p">:</span>
+</span><span id="Execution-33"><a href="#Execution-33"><span class="linenos">33</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="p">:</span>
 </span><span id="Execution-34"><a href="#Execution-34"><span class="linenos">34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve local output files.</span>
 </span><span id="Execution-35"><a href="#Execution-35"><span class="linenos">35</span></a>
 </span><span id="Execution-36"><a href="#Execution-36"><span class="linenos">36</span></a><span class="sd">        Returns a host filepath.</span>
@@ -350,13 +398,13 @@ calls and before <code><a href="#Execution.output_file">Execution.output_file()<
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">output_file</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="o">+</span><span class="n">R</span>:</span></span>
+        <span class="name">output_file</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="o">+</span><span class="n">R</span>:</span></span>
 
                 <label class="view-source-button" for="Execution.output_file-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#Execution.output_file"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Execution.output_file-33"><a href="#Execution.output_file-33"><span class="linenos">33</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Execution.output_file-33"><a href="#Execution.output_file-33"><span class="linenos">33</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="p">:</span>
 </span><span id="Execution.output_file-34"><a href="#Execution.output_file-34"><span class="linenos">34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve local output files.</span>
 </span><span id="Execution.output_file-35"><a href="#Execution.output_file-35"><span class="linenos">35</span></a>
 </span><span id="Execution.output_file-36"><a href="#Execution.output_file-36"><span class="linenos">36</span></a><span class="sd">        Returns a host filepath.</span>
@@ -404,6 +452,149 @@ Called (potentially multiple times) after
 
                             </div>
                 </section>
+                <section id="Metadata">
+                            <input id="Metadata-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Metadata</span><wbr>(<span class="base">typing.NamedTuple</span>):
+
+                <label class="view-source-button" for="Metadata-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Metadata"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Metadata-50"><a href="#Metadata-50"><span class="linenos">50</span></a><span class="k">class</span> <span class="nc">Metadata</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">NamedTuple</span><span class="p">):</span>
+</span><span id="Metadata-51"><a href="#Metadata-51"><span class="linenos">51</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Static tool metadata.</span>
+</span><span id="Metadata-52"><a href="#Metadata-52"><span class="linenos">52</span></a>
+</span><span id="Metadata-53"><a href="#Metadata-53"><span class="linenos">53</span></a><span class="sd">    This is structured static metadata that is known at compile time.</span>
+</span><span id="Metadata-54"><a href="#Metadata-54"><span class="linenos">54</span></a><span class="sd">    Runners can use this to set up execution environments.</span>
+</span><span id="Metadata-55"><a href="#Metadata-55"><span class="linenos">55</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="Metadata-56"><a href="#Metadata-56"><span class="linenos">56</span></a>
+</span><span id="Metadata-57"><a href="#Metadata-57"><span class="linenos">57</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="Metadata-58"><a href="#Metadata-58"><span class="linenos">58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique identifier of the tool.&quot;&quot;&quot;</span>
+</span><span id="Metadata-59"><a href="#Metadata-59"><span class="linenos">59</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="Metadata-60"><a href="#Metadata-60"><span class="linenos">60</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the tool.&quot;&quot;&quot;</span>
+</span><span id="Metadata-61"><a href="#Metadata-61"><span class="linenos">61</span></a>    <span class="n">container_image_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Metadata-62"><a href="#Metadata-62"><span class="linenos">62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Type of container image. Example: docker, singularity.&quot;&quot;&quot;</span>
+</span><span id="Metadata-63"><a href="#Metadata-63"><span class="linenos">63</span></a>    <span class="n">container_image_tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Metadata-64"><a href="#Metadata-64"><span class="linenos">64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of an image where the tool is installed and configured. Example: bids/mriqc.&quot;&quot;&quot;</span>
+</span><span id="Metadata-65"><a href="#Metadata-65"><span class="linenos">65</span></a>    <span class="n">container_image_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Metadata-66"><a href="#Metadata-66"><span class="linenos">66</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional index where the image is available, if not the standard location. Example: docker.io&quot;&quot;&quot;</span>
+</span><span id="Metadata-67"><a href="#Metadata-67"><span class="linenos">67</span></a>    <span class="n">container_image_opts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Metadata-68"><a href="#Metadata-68"><span class="linenos">68</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Container-level arguments for the application. Example: --privileged&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Static tool metadata.</p>
+
+<p>This is structured static metadata that is known at compile time.
+Runners can use this to set up execution environments.</p>
+</div>
+
+
+                            <div id="Metadata.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">Metadata</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">container_image_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">container_image_tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">container_image_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">container_image_opts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Metadata.__init__"></a>
+    
+            <div class="docstring"><p>Create new instance of Metadata(id, name, container_image_type, container_image_tag, container_image_index, container_image_opts)</p>
+</div>
+
+
+                            </div>
+                            <div id="Metadata.id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">id</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Metadata.id"></a>
+    
+            <div class="docstring"><p>Unique identifier of the tool.</p>
+</div>
+
+
+                            </div>
+                            <div id="Metadata.name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">name</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Metadata.name"></a>
+    
+            <div class="docstring"><p>Name of the tool.</p>
+</div>
+
+
+                            </div>
+                            <div id="Metadata.container_image_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">container_image_type</span><span class="annotation">: str | None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Metadata.container_image_type"></a>
+    
+            <div class="docstring"><p>Type of container image. Example: docker, singularity.</p>
+</div>
+
+
+                            </div>
+                            <div id="Metadata.container_image_tag" class="classattr">
+                                <div class="attr variable">
+            <span class="name">container_image_tag</span><span class="annotation">: str | None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Metadata.container_image_tag"></a>
+    
+            <div class="docstring"><p>Name of an image where the tool is installed and configured. Example: bids/mriqc.</p>
+</div>
+
+
+                            </div>
+                            <div id="Metadata.container_image_index" class="classattr">
+                                <div class="attr variable">
+            <span class="name">container_image_index</span><span class="annotation">: str | None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Metadata.container_image_index"></a>
+    
+            <div class="docstring"><p>Optional index where the image is available, if not the standard location. Example: docker.io</p>
+</div>
+
+
+                            </div>
+                            <div id="Metadata.container_image_opts" class="classattr">
+                                <div class="attr variable">
+            <span class="name">container_image_opts</span><span class="annotation">: str | None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Metadata.container_image_opts"></a>
+    
+            <div class="docstring"><p>Container-level arguments for the application. Example: --privileged</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>builtins.tuple</dt>
+                                <dd id="Metadata.index" class="function">index</dd>
+                <dd id="Metadata.count" class="function">count</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
                 <section id="Runner">
                             <input id="Runner-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
@@ -415,20 +606,20 @@ Called (potentially multiple times) after
 
     </div>
     <a class="headerlink" href="#Runner"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Runner-50"><a href="#Runner-50"><span class="linenos">50</span></a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]):</span>
-</span><span id="Runner-51"><a href="#Runner-51"><span class="linenos">51</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Runner object used to execute commands.</span>
-</span><span id="Runner-52"><a href="#Runner-52"><span class="linenos">52</span></a>
-</span><span id="Runner-53"><a href="#Runner-53"><span class="linenos">53</span></a><span class="sd">    Possible examples would be `LocalRunner`,</span>
-</span><span id="Runner-54"><a href="#Runner-54"><span class="linenos">54</span></a><span class="sd">    `DockerRunner`, `DebugRunner`, ...</span>
-</span><span id="Runner-55"><a href="#Runner-55"><span class="linenos">55</span></a><span class="sd">    Used as a factory for `Execution` objects.</span>
-</span><span id="Runner-56"><a href="#Runner-56"><span class="linenos">56</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="Runner-57"><a href="#Runner-57"><span class="linenos">57</span></a>
-</span><span id="Runner-58"><a href="#Runner-58"><span class="linenos">58</span></a>    <span class="k">def</span> <span class="nf">start_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Execution</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]:</span>
-</span><span id="Runner-59"><a href="#Runner-59"><span class="linenos">59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start an execution.</span>
-</span><span id="Runner-60"><a href="#Runner-60"><span class="linenos">60</span></a>
-</span><span id="Runner-61"><a href="#Runner-61"><span class="linenos">61</span></a><span class="sd">        Called before any `Execution.input_file()` calls.</span>
-</span><span id="Runner-62"><a href="#Runner-62"><span class="linenos">62</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Runner-63"><a href="#Runner-63"><span class="linenos">63</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Runner-71"><a href="#Runner-71"><span class="linenos">71</span></a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]):</span>
+</span><span id="Runner-72"><a href="#Runner-72"><span class="linenos">72</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Runner object used to execute commands.</span>
+</span><span id="Runner-73"><a href="#Runner-73"><span class="linenos">73</span></a>
+</span><span id="Runner-74"><a href="#Runner-74"><span class="linenos">74</span></a><span class="sd">    Possible examples would be `LocalRunner`,</span>
+</span><span id="Runner-75"><a href="#Runner-75"><span class="linenos">75</span></a><span class="sd">    `DockerRunner`, `DebugRunner`, ...</span>
+</span><span id="Runner-76"><a href="#Runner-76"><span class="linenos">76</span></a><span class="sd">    Used as a factory for `Execution` objects.</span>
+</span><span id="Runner-77"><a href="#Runner-77"><span class="linenos">77</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="Runner-78"><a href="#Runner-78"><span class="linenos">78</span></a>
+</span><span id="Runner-79"><a href="#Runner-79"><span class="linenos">79</span></a>    <span class="k">def</span> <span class="nf">start_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Execution</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]:</span>
+</span><span id="Runner-80"><a href="#Runner-80"><span class="linenos">80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start an execution.</span>
+</span><span id="Runner-81"><a href="#Runner-81"><span class="linenos">81</span></a>
+</span><span id="Runner-82"><a href="#Runner-82"><span class="linenos">82</span></a><span class="sd">        Called before any `Execution.input_file()` calls.</span>
+</span><span id="Runner-83"><a href="#Runner-83"><span class="linenos">83</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Runner-84"><a href="#Runner-84"><span class="linenos">84</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -488,18 +679,18 @@ Used as a factory for <code><a href="#Execution">Execution</a></code> objects.</
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">start_execution</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n"><a href="#Execution">Execution</a></span><span class="p">[</span><span class="o">-</span><span class="n">P</span><span class="p">,</span> <span class="o">+</span><span class="n">R</span><span class="p">]</span>:</span></span>
+        <span class="name">start_execution</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">metadata</span><span class="p">:</span> <span class="n"><a href="#Metadata">Metadata</a></span></span><span class="return-annotation">) -> <span class="n"><a href="#Execution">Execution</a></span><span class="p">[</span><span class="o">-</span><span class="n">P</span><span class="p">,</span> <span class="o">+</span><span class="n">R</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="Runner.start_execution-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#Runner.start_execution"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Runner.start_execution-58"><a href="#Runner.start_execution-58"><span class="linenos">58</span></a>    <span class="k">def</span> <span class="nf">start_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Execution</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]:</span>
-</span><span id="Runner.start_execution-59"><a href="#Runner.start_execution-59"><span class="linenos">59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start an execution.</span>
-</span><span id="Runner.start_execution-60"><a href="#Runner.start_execution-60"><span class="linenos">60</span></a>
-</span><span id="Runner.start_execution-61"><a href="#Runner.start_execution-61"><span class="linenos">61</span></a><span class="sd">        Called before any `Execution.input_file()` calls.</span>
-</span><span id="Runner.start_execution-62"><a href="#Runner.start_execution-62"><span class="linenos">62</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Runner.start_execution-63"><a href="#Runner.start_execution-63"><span class="linenos">63</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Runner.start_execution-79"><a href="#Runner.start_execution-79"><span class="linenos">79</span></a>    <span class="k">def</span> <span class="nf">start_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Execution</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]:</span>
+</span><span id="Runner.start_execution-80"><a href="#Runner.start_execution-80"><span class="linenos">80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start an execution.</span>
+</span><span id="Runner.start_execution-81"><a href="#Runner.start_execution-81"><span class="linenos">81</span></a>
+</span><span id="Runner.start_execution-82"><a href="#Runner.start_execution-82"><span class="linenos">82</span></a><span class="sd">        Called before any `Execution.input_file()` calls.</span>
+</span><span id="Runner.start_execution-83"><a href="#Runner.start_execution-83"><span class="linenos">83</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Runner.start_execution-84"><a href="#Runner.start_execution-84"><span class="linenos">84</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
