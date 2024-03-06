@@ -22,7 +22,7 @@ Compile Python command line tool wrappers from Boutiques descriptors.
 - [x] Runtime input validation
 - [ ] Unit test generation
 
-## Boutiques descriptor implementation status: 66%
+## Boutiques descriptor implementation status: 77%
 
 - [x] Documentation
 - [x] Types (String, Numerical, File)
@@ -31,5 +31,5 @@ Compile Python command line tool wrappers from Boutiques descriptors.
 - [x] Enums
 - [x] Constraints (Numeric ranges, Groups)
 - [ ] (Conditional) outputs
-- [ ] Execution meta data
+- [x] Static metadata (Hash, name, container environment)
 - [ ] Tests

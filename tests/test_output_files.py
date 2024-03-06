@@ -3,7 +3,7 @@
 import styx.boutiques.utils
 import styx.compiler.core
 import styx.compiler.settings
-import styx.runners.core
+import styx.runners.dummy
 from tests.utils.dynmodule import (
     BT_TYPE_FILE,
     BT_TYPE_NUMBER,
@@ -39,7 +39,7 @@ def test_output_file() -> None:
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.core.DummyRunner()
+    dummy_runner = styx.runners.dummy.DummyRunner()
     out = test_module.dummy(runner=dummy_runner, x=5)
 
     assert dummy_runner.last_cargs is not None
@@ -75,7 +75,7 @@ def test_output_file_with_template() -> None:
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.core.DummyRunner()
+    dummy_runner = styx.runners.dummy.DummyRunner()
     out = test_module.dummy(runner=dummy_runner, x=5)
 
     assert dummy_runner.last_cargs is not None
@@ -114,7 +114,7 @@ def test_output_file_with_template_and_stripped_extensions() -> None:
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.core.DummyRunner()
+    dummy_runner = styx.runners.dummy.DummyRunner()
     out = test_module.dummy(runner=dummy_runner, x="in.txt")
 
     assert dummy_runner.last_cargs is not None

@@ -1,3 +1,4 @@
+import hashlib
 from dataclasses import dataclass
 from enum import Enum
 
@@ -13,6 +14,7 @@ from styx.pycodegen.utils import (
     enbrace,
     enquote,
     python_camelize,
+    python_screaming_snakify,
     python_snakify,
 )
 
@@ -413,7 +415,9 @@ def _generate_output_file_expr(
                 else:
                     s = s.replace(f"{a.bt_ref}", enbrace(a.py_symbol))
 
-            buf_body.extend(indent([f"{out.id}={py_var_execution}.output_file(f{enquote(s)}),"]))
+            s_optional = ", optional=True" if out.optional else ""
+
+            buf_body.extend(indent([f"{out.id}={py_var_execution}.output_file(f{enquote(s)}{s_optional}),"]))
 
     buf_body.extend([")"])
 
@@ -425,6 +429,9 @@ def _boutiques_replace_vars(s: str, key_value: dict[str, str]) -> str:
 
 
 def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
+    # Todo: this is stupid
+    tool_hash: str = hashlib.sha1(tool.model_dump_json().encode()).hexdigest()
+
     module_scope = Scope(parent=Scope.python())
     function_scope = Scope(parent=module_scope)
 
@@ -436,8 +443,10 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
     module_scope.add_or_die("R")
     module_scope.add_or_die("Runner")
     module_scope.add_or_die("Execution")
+    module_scope.add_or_die("Metadata")
     py_var_function = module_scope.add_or_dodge(python_snakify(tool.name))
     py_var_output_class = module_scope.add_or_dodge(f"{python_camelize(tool.name)}Outputs")
+    py_var_metadata = module_scope.add_or_dodge(f"{python_screaming_snakify(tool.name)}_METADATA")
 
     # Function level symbols
     py_var_runner = function_scope.add_or_die("runner")
@@ -473,7 +482,7 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
 
     # Function body
     buf_body.extend([
-        f"{py_var_execution} = {py_var_runner}.start_execution({enquote(tool.name)})",
+        f"{py_var_execution} = {py_var_runner}.start_execution({py_var_metadata})",
         f"{py_var_cargs} = []",
     ])
 
@@ -496,8 +505,32 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
         return collapse(STYX_DEFINITIONS)
 
     buf_header = []
+
+    metadata: dict[str, str | int | float] = {
+        "id": tool_hash,
+        "name": tool.name,
+    }
+
+    if tool.container_image is not None:
+        if tool.container_image.root.type is not None:
+            metadata["container_image_type"] = tool.container_image.root.type.name
+        if tool.container_image.root.index is not None:
+            metadata["container_image_index"] = tool.container_image.root.index
+        if tool.container_image.root.image is not None:
+            metadata["container_image_tag"] = tool.container_image.root.image
+
+    print(tool.container_image)
+    # Static metadata
     buf_header.extend([
         *defs,
+        "",
+        "",
+        f"{py_var_metadata} = Metadata(",
+        *indent([f"{k}={as_py_literal(v)}," for k, v in metadata.items()]),
+        ")",
+    ])
+
+    buf_header.extend([
         "",
         "",
         f"class {py_var_output_class}(typing.NamedTuple, typing.Generic[R]):",

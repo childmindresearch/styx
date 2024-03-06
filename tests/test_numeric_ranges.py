@@ -5,7 +5,7 @@ import pytest
 import styx.boutiques.utils
 import styx.compiler.core
 import styx.compiler.settings
-import styx.runners.core
+import styx.runners.dummy
 from tests.utils.dynmodule import (
     BT_TYPE_NUMBER,
     boutiques_dummy,
@@ -35,7 +35,7 @@ def test_below_range_minimum_inclusive() -> None:
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.core.DummyRunner()
+    dummy_runner = styx.runners.dummy.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=4)
 
@@ -62,7 +62,7 @@ def test_above_range_maximum_inclusive() -> None:
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.core.DummyRunner()
+    dummy_runner = styx.runners.dummy.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=6)
 
@@ -90,7 +90,7 @@ def test_above_range_maximum_exclusive() -> None:
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.core.DummyRunner()
+    dummy_runner = styx.runners.dummy.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=5)
 
@@ -118,7 +118,7 @@ def test_below_range_minimum_exclusive() -> None:
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.core.DummyRunner()
+    dummy_runner = styx.runners.dummy.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=5)
 
@@ -146,7 +146,7 @@ def test_outside_range() -> None:
     compiled_module = styx.compiler.core.compile_descriptor(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.core.DummyRunner()
+    dummy_runner = styx.runners.dummy.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=11)
 

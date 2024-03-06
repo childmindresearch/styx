@@ -71,6 +71,18 @@ def python_snakify(string: str) -> str:
     return ensure_snake_case(ensure_python_symbol(string))
 
 
+def python_screaming_snakify(string: str) -> str:
+    """Converts a string to screaming snake case.
+
+    Args:
+        string: The string to convert.
+
+    Returns:
+        The converted string.
+    """
+    return ensure_snake_case(ensure_python_symbol(string)).upper()
+
+
 def enquote(
     s: str,
     quote: str = '"',

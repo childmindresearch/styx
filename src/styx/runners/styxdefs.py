@@ -29,7 +29,7 @@ class Execution(typing.Protocol[P, R]):
         """
         ...
 
-    def output_file(self, local_file: str) -> R:
+    def output_file(self, local_file: str, optional: bool = False) -> R:
         """Resolve local output files.
 
         Returns a host filepath.
@@ -46,6 +46,27 @@ class Execution(typing.Protocol[P, R]):
         ...
 
 
+class Metadata(typing.NamedTuple):
+    """Static tool metadata.
+
+    This is structured static metadata that is known at compile time.
+    Runners can use this to set up execution environments.
+    """
+
+    id: str
+    """Unique identifier of the tool."""
+    name: str
+    """Name of the tool."""
+    container_image_type: str | None = None
+    """Type of container image. Example: docker, singularity."""
+    container_image_tag: str | None = None
+    """Name of an image where the tool is installed and configured. Example: bids/mriqc."""
+    container_image_index: str | None = None
+    """Optional index where the image is available, if not the standard location. Example: docker.io"""
+    container_image_opts: str | None = None
+    """Container-level arguments for the application. Example: --privileged"""
+
+
 class Runner(typing.Protocol[P, R]):
     """Runner object used to execute commands.
 
@@ -54,7 +75,7 @@ class Runner(typing.Protocol[P, R]):
     Used as a factory for `Execution` objects.
     """
 
-    def start_execution(self, tool_name: str) -> Execution[P, R]:
+    def start_execution(self, metadata: Metadata) -> Execution[P, R]:
         """Start an execution.
 
         Called before any `Execution.input_file()` calls.
