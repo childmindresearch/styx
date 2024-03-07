@@ -20,7 +20,7 @@ Compile Python command line tool wrappers from Boutiques descriptors.
 - [x] Documentation generation
 - [x] Custom execution environments via dependency injection
 - [x] Runtime input validation
-- [ ] Unit test generation
+- [ ] Unit & integration test generation
 
 ## Boutiques descriptor implementation status: 77%
 

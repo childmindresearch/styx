@@ -8,6 +8,7 @@ from styx.compiler.defs import STYX_DEFINITIONS
 from styx.compiler.settings import CompilerSettings, DefsMode
 from styx.compiler.utils import optional_float_to_int
 from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, PyModule, collapse, expand, indent
+from styx.pycodegen.format import format_code
 from styx.pycodegen.scope import Scope
 from styx.pycodegen.utils import (
     as_py_literal,
@@ -519,7 +520,6 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
         if tool.container_image.root.image is not None:
             metadata["container_image_tag"] = tool.container_image.root.image
 
-    print(tool.container_image)
     # Static metadata
     buf_header.extend([
         *defs,
@@ -575,7 +575,12 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
     mod.imports.extend(["import typing"])
     mod.imports.sort()
 
-    return mod.text()
+    code = mod.text()
+    code_formatted = format_code(code)
+    if code_formatted is None:
+        print("WARNING: Failed to format code")
+        return code
+    return code_formatted
 
 
 def compile_descriptor(descriptor: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
