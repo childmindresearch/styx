@@ -46,13 +46,10 @@
                                 <a class="function" href="#DummyRunner.input_file">input_file</a>
                         </li>
                         <li>
-                                <a class="function" href="#DummyRunner.run">run</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#DummyRunner.output_file">output_file</a>
                         </li>
                         <li>
-                                <a class="function" href="#DummyRunner.finalize">finalize</a>
+                                <a class="function" href="#DummyRunner.run">run</a>
                         </li>
                 </ul>
 
@@ -93,14 +90,11 @@
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="k">def</span> <span class="nf">input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>        <span class="k">return</span> <span class="n">host_file</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">last_cargs</span> <span class="o">=</span> <span class="n">cargs</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>        <span class="k">return</span> <span class="n">local_file</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="k">return</span> <span class="n">local_file</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>        <span class="k">pass</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">last_cargs</span> <span class="o">=</span> <span class="n">cargs</span>
 </span></pre></div>
 
 
@@ -128,14 +122,11 @@
 </span><span id="DummyRunner-14"><a href="#DummyRunner-14"><span class="linenos">14</span></a>    <span class="k">def</span> <span class="nf">input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="DummyRunner-15"><a href="#DummyRunner-15"><span class="linenos">15</span></a>        <span class="k">return</span> <span class="n">host_file</span>
 </span><span id="DummyRunner-16"><a href="#DummyRunner-16"><span class="linenos">16</span></a>
-</span><span id="DummyRunner-17"><a href="#DummyRunner-17"><span class="linenos">17</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="DummyRunner-18"><a href="#DummyRunner-18"><span class="linenos">18</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">last_cargs</span> <span class="o">=</span> <span class="n">cargs</span>
+</span><span id="DummyRunner-17"><a href="#DummyRunner-17"><span class="linenos">17</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="DummyRunner-18"><a href="#DummyRunner-18"><span class="linenos">18</span></a>        <span class="k">return</span> <span class="n">local_file</span>
 </span><span id="DummyRunner-19"><a href="#DummyRunner-19"><span class="linenos">19</span></a>
-</span><span id="DummyRunner-20"><a href="#DummyRunner-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="DummyRunner-21"><a href="#DummyRunner-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="n">local_file</span>
-</span><span id="DummyRunner-22"><a href="#DummyRunner-22"><span class="linenos">22</span></a>
-</span><span id="DummyRunner-23"><a href="#DummyRunner-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="DummyRunner-24"><a href="#DummyRunner-24"><span class="linenos">24</span></a>        <span class="k">pass</span>
+</span><span id="DummyRunner-20"><a href="#DummyRunner-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="DummyRunner-21"><a href="#DummyRunner-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">last_cargs</span> <span class="o">=</span> <span class="n">cargs</span>
 </span></pre></div>
 
 
@@ -218,30 +209,6 @@ Called (potentially multiple times) after
 
 
                             </div>
-                            <div id="DummyRunner.run" class="classattr">
-                                        <input id="DummyRunner.run-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
-
-                <label class="view-source-button" for="DummyRunner.run-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#DummyRunner.run"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DummyRunner.run-17"><a href="#DummyRunner.run-17"><span class="linenos">17</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="DummyRunner.run-18"><a href="#DummyRunner.run-18"><span class="linenos">18</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">last_cargs</span> <span class="o">=</span> <span class="n">cargs</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Run the command.</p>
-
-<p>Called after all <code>Execution.input_file()</code>
-calls and before <code>Execution.output_file()</code> calls.</p>
-</div>
-
-
-                            </div>
                             <div id="DummyRunner.output_file" class="classattr">
                                         <input id="DummyRunner.output_file-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -253,39 +220,40 @@ calls and before <code>Execution.output_file()</code> calls.</p>
 
     </div>
     <a class="headerlink" href="#DummyRunner.output_file"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DummyRunner.output_file-20"><a href="#DummyRunner.output_file-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="DummyRunner.output_file-21"><a href="#DummyRunner.output_file-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="n">local_file</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DummyRunner.output_file-17"><a href="#DummyRunner.output_file-17"><span class="linenos">17</span></a>    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="DummyRunner.output_file-18"><a href="#DummyRunner.output_file-18"><span class="linenos">18</span></a>        <span class="k">return</span> <span class="n">local_file</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Resolve local output files.</p>
 
 <p>Returns a host filepath.
-Called (potentially multiple times) after
-<code>Runner.run()</code> and before <code>Execution.finalize()</code>.</p>
+Called (potentially multiple times) after all
+<code>Runner.input_file()</code> calls.</p>
 </div>
 
 
                             </div>
-                            <div id="DummyRunner.finalize" class="classattr">
-                                        <input id="DummyRunner.finalize-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="DummyRunner.run" class="classattr">
+                                        <input id="DummyRunner.run-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">finalize</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="DummyRunner.finalize-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="DummyRunner.run-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#DummyRunner.finalize"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DummyRunner.finalize-23"><a href="#DummyRunner.finalize-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="DummyRunner.finalize-24"><a href="#DummyRunner.finalize-24"><span class="linenos">24</span></a>        <span class="k">pass</span>
+    <a class="headerlink" href="#DummyRunner.run"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DummyRunner.run-20"><a href="#DummyRunner.run-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="DummyRunner.run-21"><a href="#DummyRunner.run-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">last_cargs</span> <span class="o">=</span> <span class="n">cargs</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Finalize the execution.</p>
+            <div class="docstring"><p>Run the command.</p>
 
-<p>Called after all <code>Execution.output_file()</code> calls.</p>
+<p>Called after all <code>Execution.input_file()</code>
+and <code>Execution.output_file()</code> calls.</p>
 </div>
 
 
