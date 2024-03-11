@@ -503,8 +503,6 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
         else:
             buf_body.append(f"{py_var_cargs}.append({enquote(segment)})")
 
-    buf_body.append(f"{py_var_execution}.run({py_var_cargs})")
-
     # Definitions
     if settings.defs_mode == DefsMode.INLINE:
         defs = STYX_DEFINITIONS
@@ -563,7 +561,7 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
         )
 
     buf_body.extend([
-        f"{py_var_execution}.finalize()",
+        f"{py_var_execution}.run({py_var_cargs})",
         f"return {py_var_ret}",
     ])
 

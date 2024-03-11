@@ -15,12 +15,16 @@ Compile Python command line tool wrappers from Boutiques descriptors.
 
 ## Features
 
-- [x] Modern Python 3.11+ target
+- [x] Target modern Python (3.11+)
 - [x] Intellisense &amp; full static type checking for inputs and outputs
 - [x] Documentation generation
 - [x] Custom execution environments via dependency injection
 - [x] Runtime input validation
-- [ ] Unit & integration test generation
+- [ ] Integration test generation
+- [ ] Default runners
+  - [ ] Local
+  - [ ] Docker
+  - [ ] Singularity
 
 ## Boutiques descriptor implementation status: 77%
 

@@ -13,11 +13,8 @@ class DummyRunner(Runner[str, str], Execution[str, str]):
     def input_file(self, host_file: str) -> str:
         return host_file
 
-    def run(self, cargs: list[str]) -> None:
-        self.last_cargs = cargs
-
     def output_file(self, local_file: str, optional: bool = False) -> str:
         return local_file
 
-    def finalize(self) -> None:
-        pass
+    def run(self, cargs: list[str]) -> None:
+        self.last_cargs = cargs

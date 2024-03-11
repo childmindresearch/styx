@@ -25,7 +25,7 @@ class Execution(typing.Protocol[P, R]):
         """Run the command.
 
         Called after all `Execution.input_file()`
-        calls and before `Execution.output_file()` calls.
+        and `Execution.output_file()` calls.
         """
         ...
 
@@ -33,15 +33,8 @@ class Execution(typing.Protocol[P, R]):
         """Resolve local output files.
 
         Returns a host filepath.
-        Called (potentially multiple times) after
-        `Runner.run()` and before `Execution.finalize()`.
-        """
-        ...
-
-    def finalize(self) -> None:
-        """Finalize the execution.
-
-        Called after all `Execution.output_file()` calls.
+        Called (potentially multiple times) after all
+        `Runner.input_file()` calls.
         """
         ...
 
