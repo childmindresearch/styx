@@ -165,6 +165,11 @@ class BtInput:
 
         return buf
 
+    def py_expr_is_set(self) -> str:
+        if self.type.primitive == BtPrimitive.Flag:
+            return self.py_symbol
+        return f"({self.py_symbol} is not None)"
+
 
 def _generate_raise_value_err(obj: str, expectation: str, reality: str | None = None) -> LineBuffer:
     fstr = ""
@@ -318,10 +323,12 @@ def _generate_range_validation_expr(
 def _generate_group_constraint_expr(
     buf: LineBuffer,
     group: bt.Group,  # type: ignore
+    args_lookup: dict[str, BtInput],
 ) -> None:
+    group_args = [args_lookup[x] for x in group.members]
     if group.mutually_exclusive:
         txt_members = [enquote(x) for x in expand(",\\n\n".join(group.members))]
-        check_members = expand(" +\n".join([f"({x} is not None)" for x in group.members]))
+        check_members = expand(" +\n".join([x.py_expr_is_set() for x in group_args]))
         buf.extend(["if ("])
         buf.extend(indent(check_members))
         buf.extend([
@@ -337,7 +344,7 @@ def _generate_group_constraint_expr(
         ])
     if group.all_or_none:
         txt_members = [enquote(x) for x in expand(",\\n\n".join(group.members))]
-        check_members = expand(" ==\n".join([f"({x} is None)" for x in group.members]))
+        check_members = expand(" ==\n".join([x.py_expr_is_set() for x in group_args]))
         buf.extend(["if not ("])
         buf.extend(indent(check_members))
         buf.extend([
@@ -353,7 +360,7 @@ def _generate_group_constraint_expr(
         ])
     if group.one_is_required:
         txt_members = [enquote("- " + x) for x in expand("\\n\n".join(group.members))]
-        check_members = expand(" or\n".join([f"({x} is not None)" for x in group.members]))
+        check_members = expand(" or\n".join([x.py_expr_is_set() for x in group_args]))
         buf.extend(["if not ("])
         buf.extend(indent(check_members))
         buf.extend([
@@ -469,6 +476,7 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
     # Arguments
     cmd = boutiques_split_command(tool.command_line)
     args_lookup = {a.bt_ref: a for a in args}
+    args_lookup_pyref = {a.py_symbol: a for a in args}
 
     pyargs = [PyArg(name="runner", type="Runner[P, R]", default=None, docstring="Command runner")]
     pyargs += [PyArg(name=i.py_symbol, type=i.py_type, default=i.py_default, docstring=i.docstring) for i in args]
@@ -479,7 +487,7 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
 
     if tool.groups is not None:
         for group in tool.groups:
-            _generate_group_constraint_expr(buf_body, group)
+            _generate_group_constraint_expr(buf_body, group, args_lookup_pyref)
 
     # Function body
     buf_body.extend([
