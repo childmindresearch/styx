@@ -133,10 +133,15 @@
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>        <span class="n">scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">()</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">{</span><span class="o">*</span><span class="n">keyword</span><span class="o">.</span><span class="n">kwlist</span><span class="p">,</span> <span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">stdlib_module_names</span><span class="p">,</span> <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">builtins</span><span class="p">),</span> <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">__builtins__</span><span class="p">)}:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>            <span class="n">scope</span><span class="o">.</span><span class="n">add_or_die</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="k">return</span> <span class="n">scope</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">{</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>            <span class="o">*</span><span class="n">keyword</span><span class="o">.</span><span class="n">kwlist</span><span class="p">,</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">stdlib_module_names</span><span class="p">,</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>            <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">builtins</span><span class="p">),</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>            <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">__builtins__</span><span class="p">),</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>        <span class="p">}:</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>            <span class="n">scope</span><span class="o">.</span><span class="n">add_or_die</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>        <span class="k">return</span> <span class="n">scope</span>
 </span></pre></div>
 
 
@@ -210,10 +215,15 @@
 </span><span id="Scope-60"><a href="#Scope-60"><span class="linenos">60</span></a>
 </span><span id="Scope-61"><a href="#Scope-61"><span class="linenos">61</span></a>        <span class="n">scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">()</span>
 </span><span id="Scope-62"><a href="#Scope-62"><span class="linenos">62</span></a>
-</span><span id="Scope-63"><a href="#Scope-63"><span class="linenos">63</span></a>        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">{</span><span class="o">*</span><span class="n">keyword</span><span class="o">.</span><span class="n">kwlist</span><span class="p">,</span> <span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">stdlib_module_names</span><span class="p">,</span> <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">builtins</span><span class="p">),</span> <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">__builtins__</span><span class="p">)}:</span>
-</span><span id="Scope-64"><a href="#Scope-64"><span class="linenos">64</span></a>            <span class="n">scope</span><span class="o">.</span><span class="n">add_or_die</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-</span><span id="Scope-65"><a href="#Scope-65"><span class="linenos">65</span></a>
-</span><span id="Scope-66"><a href="#Scope-66"><span class="linenos">66</span></a>        <span class="k">return</span> <span class="n">scope</span>
+</span><span id="Scope-63"><a href="#Scope-63"><span class="linenos">63</span></a>        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">{</span>
+</span><span id="Scope-64"><a href="#Scope-64"><span class="linenos">64</span></a>            <span class="o">*</span><span class="n">keyword</span><span class="o">.</span><span class="n">kwlist</span><span class="p">,</span>
+</span><span id="Scope-65"><a href="#Scope-65"><span class="linenos">65</span></a>            <span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">stdlib_module_names</span><span class="p">,</span>
+</span><span id="Scope-66"><a href="#Scope-66"><span class="linenos">66</span></a>            <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">builtins</span><span class="p">),</span>
+</span><span id="Scope-67"><a href="#Scope-67"><span class="linenos">67</span></a>            <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">__builtins__</span><span class="p">),</span>
+</span><span id="Scope-68"><a href="#Scope-68"><span class="linenos">68</span></a>        <span class="p">}:</span>
+</span><span id="Scope-69"><a href="#Scope-69"><span class="linenos">69</span></a>            <span class="n">scope</span><span class="o">.</span><span class="n">add_or_die</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span id="Scope-70"><a href="#Scope-70"><span class="linenos">70</span></a>
+</span><span id="Scope-71"><a href="#Scope-71"><span class="linenos">71</span></a>        <span class="k">return</span> <span class="n">scope</span>
 </span></pre></div>
 
 
@@ -324,10 +334,15 @@
 </span><span id="Scope.python-60"><a href="#Scope.python-60"><span class="linenos">60</span></a>
 </span><span id="Scope.python-61"><a href="#Scope.python-61"><span class="linenos">61</span></a>        <span class="n">scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">()</span>
 </span><span id="Scope.python-62"><a href="#Scope.python-62"><span class="linenos">62</span></a>
-</span><span id="Scope.python-63"><a href="#Scope.python-63"><span class="linenos">63</span></a>        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">{</span><span class="o">*</span><span class="n">keyword</span><span class="o">.</span><span class="n">kwlist</span><span class="p">,</span> <span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">stdlib_module_names</span><span class="p">,</span> <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">builtins</span><span class="p">),</span> <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">__builtins__</span><span class="p">)}:</span>
-</span><span id="Scope.python-64"><a href="#Scope.python-64"><span class="linenos">64</span></a>            <span class="n">scope</span><span class="o">.</span><span class="n">add_or_die</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-</span><span id="Scope.python-65"><a href="#Scope.python-65"><span class="linenos">65</span></a>
-</span><span id="Scope.python-66"><a href="#Scope.python-66"><span class="linenos">66</span></a>        <span class="k">return</span> <span class="n">scope</span>
+</span><span id="Scope.python-63"><a href="#Scope.python-63"><span class="linenos">63</span></a>        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">{</span>
+</span><span id="Scope.python-64"><a href="#Scope.python-64"><span class="linenos">64</span></a>            <span class="o">*</span><span class="n">keyword</span><span class="o">.</span><span class="n">kwlist</span><span class="p">,</span>
+</span><span id="Scope.python-65"><a href="#Scope.python-65"><span class="linenos">65</span></a>            <span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">stdlib_module_names</span><span class="p">,</span>
+</span><span id="Scope.python-66"><a href="#Scope.python-66"><span class="linenos">66</span></a>            <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">builtins</span><span class="p">),</span>
+</span><span id="Scope.python-67"><a href="#Scope.python-67"><span class="linenos">67</span></a>            <span class="o">*</span><span class="nb">dir</span><span class="p">(</span><span class="n">__builtins__</span><span class="p">),</span>
+</span><span id="Scope.python-68"><a href="#Scope.python-68"><span class="linenos">68</span></a>        <span class="p">}:</span>
+</span><span id="Scope.python-69"><a href="#Scope.python-69"><span class="linenos">69</span></a>            <span class="n">scope</span><span class="o">.</span><span class="n">add_or_die</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span id="Scope.python-70"><a href="#Scope.python-70"><span class="linenos">70</span></a>
+</span><span id="Scope.python-71"><a href="#Scope.python-71"><span class="linenos">71</span></a>        <span class="k">return</span> <span class="n">scope</span>
 </span></pre></div>
 
 
