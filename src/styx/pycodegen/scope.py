@@ -59,7 +59,12 @@ class Scope:
 
         scope = Scope()
 
-        for s in {*keyword.kwlist, *sys.stdlib_module_names, *dir(builtins), *dir(__builtins__)}:
+        for s in {
+            *keyword.kwlist,
+            *sys.stdlib_module_names,
+            *dir(builtins),
+            *dir(__builtins__),
+        }:
             scope.add_or_die(s)
 
         return scope

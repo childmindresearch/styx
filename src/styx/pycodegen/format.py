@@ -12,7 +12,7 @@ def format_code(code: str) -> str | None:
                 "ruff",
                 "format",
                 "--config",
-                Path(__file__).parent / "ruff.toml",
+                Path(__file__).parent / "dynruff.toml",
                 "-",
             ],
             input=code,
