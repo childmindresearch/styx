@@ -4,10 +4,9 @@ from enum import Enum
 
 from styx.boutiques import model as bt
 from styx.boutiques.utils import boutiques_split_command
-from styx.compiler.defs import STYX_DEFINITIONS
 from styx.compiler.settings import CompilerSettings, DefsMode
 from styx.compiler.utils import optional_float_to_int
-from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, PyModule, collapse, expand, indent
+from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, PyModule, expand, indent
 from styx.pycodegen.format import format_code
 from styx.pycodegen.scope import Scope
 from styx.pycodegen.utils import (
@@ -505,11 +504,11 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
 
     # Definitions
     if settings.defs_mode == DefsMode.INLINE:
-        defs = STYX_DEFINITIONS
+        defs = [compile_definitions()]
     elif settings.defs_mode == DefsMode.IMPORT:
-        defs = ["from styx.runners.styxdefs import *"]
+        defs = ["from .styxdefs import *"]
     else:
-        return collapse(STYX_DEFINITIONS)
+        return compile_definitions()
 
     buf_header = []
 
@@ -592,3 +591,12 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
 def compile_descriptor(descriptor: bt.Tool, settings: CompilerSettings) -> str:  # type: ignore
     """Compile a Boutiques descriptor to Python code."""
     return _from_boutiques(descriptor, settings)
+
+
+def compile_definitions() -> str:
+    """Compile the definitions to Python code."""
+    import styx.runners.styxdefs
+
+    defs_file = styx.runners.styxdefs.__file__
+    with open(defs_file, "r") as f:
+        return f.read()

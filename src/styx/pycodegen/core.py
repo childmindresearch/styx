@@ -4,6 +4,8 @@ from abc import ABC
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from styx.pycodegen.utils import linebreak_paragraph
+
 LineBuffer = list[str]
 INDENT = "    "
 
@@ -28,6 +30,11 @@ def collapse(lines: LineBuffer) -> str:
 def expand(text: str) -> LineBuffer:
     """Expand a string into a LineBuffer."""
     return text.splitlines()
+
+
+def concat(line_buffers: list[LineBuffer]) -> LineBuffer:
+    """Concatenate multiple LineBuffers."""
+    return [line for buf in line_buffers for line in buf]
 
 
 def blank_before(lines: LineBuffer, blanks: int = 1) -> LineBuffer:
@@ -82,6 +89,14 @@ class PyFunc(PyGen):
                 buf.extend(indent([f"{arg.name}: {arg.type} = {arg.default},"]))
         buf.append(f") -> {self.return_type}:")
 
+        arg_docstr_buf = []
+        for arg in self.args:
+            arg_docstr = linebreak_paragraph(
+                f"{arg.name}: {arg.docstring}", width=80 - 12 - (len(arg.name) + 2), first_line_width=80 - 8
+            )
+            arg_docstr_buf.append(arg_docstr[0])
+            arg_docstr_buf.extend(indent(arg_docstr[1:]))
+
         # Add docstring (Google style)
         buf.extend(
             indent([
@@ -89,7 +104,7 @@ class PyFunc(PyGen):
                 f"{self.docstring_body}",
                 "",
                 "Args:",
-                *indent([f"{arg.name}: {arg.docstring}" for arg in self.args]),
+                *indent(arg_docstr_buf),
                 "Returns:",
                 *indent([f"{self.return_descr}"]),
                 '"""',

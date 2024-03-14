@@ -112,3 +112,34 @@ def as_py_literal(obj: _TYPE_PYLITERAL, quote: str = '"') -> str:
         return enquote(obj, quote)
     else:
         return str(obj)
+
+
+def linebreak_line(text: str, width: int = 80) -> list[str]:
+    """Insert linebreaks into a line of text. Breaks lines at word boundaries."""
+    words = text.split()
+    lines = []
+    line = ""
+    for word in words:
+        if len(line) + len(word) + 1 > width:
+            lines.append(line)
+            line = word
+        else:
+            if line:
+                line += " "
+            line += word
+    lines.append(line)
+    return lines
+
+
+def linebreak_paragraph(text: str, width: int = 80, first_line_width: int = 80) -> list[str]:
+    """Insert linebreaks into a paragraph of text. Breaks lines at word boundaries."""
+    lines = text.splitlines()
+    wrapped_lines = []
+    first = True
+    for line in lines:
+        if first:
+            wrapped_lines.extend(linebreak_line(line, width=first_line_width))
+            first = False
+        else:
+            wrapped_lines.extend(linebreak_line(line, width=width))
+    return wrapped_lines
