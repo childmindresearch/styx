@@ -42,6 +42,7 @@ class BtInput:
         self.docstring = bt_input.description
         self.command_line_flag = bt_input.command_line_flag
         self.list_separator = bt_input.list_separator if bt_input.list_separator is not None else " "
+        self.default_value = bt_input.default_value
 
         # Validation
 
@@ -87,17 +88,22 @@ class BtInput:
 
         # Python default value
         self.py_default: str | None
-        if self.type.primitive == BtPrimitive.Flag:
-            self.py_default = "False"
-        elif not self.type.is_optional:
-            self.py_default = None
+        if self.default_value is not None:
+            if self.type.primitive == BtPrimitive.Flag:
+                self.py_default = "False"
+            elif not self.type.is_optional:
+                self.py_default = None
+            else:
+                self.py_default = "None"
         else:
-            self.py_default = "None"
+            # todo: make sure default_value is of the correct type for this field
+            self.py_default = as_py_literal(self.default_value)  # type: ignore
 
         self.py_expr = self._make_py_expr()
 
     @classmethod
     def bt_type_to_py_type(cls, bt_type: BtType, enum_values: list | None) -> str:
+        """Return the Python type expression."""
         if bt_type.is_enum:
             assert enum_values is not None
             assert bt_type.primitive != BtPrimitive.Flag
@@ -125,6 +131,7 @@ class BtInput:
         return base
 
     def _make_py_expr(self) -> list[str]:
+        """Return a Python expression that builds the command line arguments."""
         buf = []
 
         if self.type.primitive == BtPrimitive.Flag:
@@ -165,6 +172,7 @@ class BtInput:
         return buf
 
     def py_expr_is_set(self) -> str:
+        """Return a Python expression that checks if the input is set."""
         if self.type.primitive == BtPrimitive.Flag:
             return self.py_symbol
         return f"({self.py_symbol} is not None)"
@@ -506,7 +514,8 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
     if settings.defs_mode == DefsMode.INLINE:
         defs = [compile_definitions()]
     elif settings.defs_mode == DefsMode.IMPORT:
-        defs = ["from .styxdefs import *"]
+        defs_module_path = "styx.runners.styxdefs" if settings.defs_module_path is None else settings.defs_module_path
+        defs = [f"from {defs_module_path} import *"]
     else:
         return compile_definitions()
 

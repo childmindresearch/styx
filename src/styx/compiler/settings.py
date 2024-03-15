@@ -14,4 +14,7 @@ class DefsMode(Enum):
 
 @dataclass
 class CompilerSettings:
+    """Compiler settings."""
+
+    defs_module_path: str | None = None
     defs_mode: DefsMode = DefsMode.INLINE
