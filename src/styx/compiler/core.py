@@ -88,7 +88,7 @@ class BtInput:
 
         # Python default value
         self.py_default: str | None
-        if self.default_value is not None:
+        if self.default_value is None:
             if self.type.primitive == BtPrimitive.Flag:
                 self.py_default = "False"
             elif not self.type.is_optional:
