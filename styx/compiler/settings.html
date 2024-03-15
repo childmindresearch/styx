@@ -52,6 +52,9 @@
                                 <a class="function" href="#CompilerSettings.__init__">CompilerSettings</a>
                         </li>
                         <li>
+                                <a class="variable" href="#CompilerSettings.defs_module_path">defs_module_path</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#CompilerSettings.defs_mode">defs_mode</a>
                         </li>
                 </ul>
@@ -96,7 +99,10 @@
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="nd">@dataclass</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="k">class</span> <span class="nc">CompilerSettings</span><span class="p">:</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">defs_mode</span><span class="p">:</span> <span class="n">DefsMode</span> <span class="o">=</span> <span class="n">DefsMode</span><span class="o">.</span><span class="n">INLINE</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compiler settings.&quot;&quot;&quot;</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="n">defs_module_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">defs_mode</span><span class="p">:</span> <span class="n">DefsMode</span> <span class="o">=</span> <span class="n">DefsMode</span><span class="o">.</span><span class="n">INLINE</span>
 </span></pre></div>
 
 
@@ -186,20 +192,37 @@
     <a class="headerlink" href="#CompilerSettings"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="CompilerSettings-16"><a href="#CompilerSettings-16"><span class="linenos">16</span></a><span class="nd">@dataclass</span>
 </span><span id="CompilerSettings-17"><a href="#CompilerSettings-17"><span class="linenos">17</span></a><span class="k">class</span> <span class="nc">CompilerSettings</span><span class="p">:</span>
-</span><span id="CompilerSettings-18"><a href="#CompilerSettings-18"><span class="linenos">18</span></a>    <span class="n">defs_mode</span><span class="p">:</span> <span class="n">DefsMode</span> <span class="o">=</span> <span class="n">DefsMode</span><span class="o">.</span><span class="n">INLINE</span>
+</span><span id="CompilerSettings-18"><a href="#CompilerSettings-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compiler settings.&quot;&quot;&quot;</span>
+</span><span id="CompilerSettings-19"><a href="#CompilerSettings-19"><span class="linenos">19</span></a>
+</span><span id="CompilerSettings-20"><a href="#CompilerSettings-20"><span class="linenos">20</span></a>    <span class="n">defs_module_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="CompilerSettings-21"><a href="#CompilerSettings-21"><span class="linenos">21</span></a>    <span class="n">defs_mode</span><span class="p">:</span> <span class="n">DefsMode</span> <span class="o">=</span> <span class="n">DefsMode</span><span class="o">.</span><span class="n">INLINE</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Compiler settings.</p>
+</div>
+
 
                             <div id="CompilerSettings.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">CompilerSettings</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">defs_mode</span><span class="p">:</span> <span class="n"><a href="#DefsMode">DefsMode</a></span> <span class="o">=</span> <span class="o">&lt;</span><span class="n"><a href="#DefsMode.INLINE">DefsMode.INLINE</a></span><span class="p">:</span> <span class="mi">0</span><span class="o">&gt;</span></span>)</span>
+        <span class="name">CompilerSettings</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">defs_module_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">defs_mode</span><span class="p">:</span> <span class="n"><a href="#DefsMode">DefsMode</a></span> <span class="o">=</span> <span class="o">&lt;</span><span class="n"><a href="#DefsMode.INLINE">DefsMode.INLINE</a></span><span class="p">:</span> <span class="mi">0</span><span class="o">&gt;</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#CompilerSettings.__init__"></a>
+    
+    
+
+                            </div>
+                            <div id="CompilerSettings.defs_module_path" class="classattr">
+                                <div class="attr variable">
+            <span class="name">defs_module_path</span><span class="annotation">: str | None</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#CompilerSettings.defs_module_path"></a>
     
     
 

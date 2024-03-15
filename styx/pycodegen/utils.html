@@ -57,6 +57,12 @@
             <li>
                     <a class="function" href="#as_py_literal">as_py_literal</a>
             </li>
+            <li>
+                    <a class="function" href="#linebreak_line">linebreak_line</a>
+            </li>
+            <li>
+                    <a class="function" href="#linebreak_paragraph">linebreak_paragraph</a>
+            </li>
     </ul>
 
 
@@ -192,6 +198,37 @@
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="k">return</span> <span class="n">enquote</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="k">def</span> <span class="nf">linebreak_line</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert linebreaks into a line of text. Breaks lines at word boundaries.&quot;&quot;&quot;</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="n">width</span><span class="p">:</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>            <span class="n">line</span> <span class="o">=</span> <span class="n">word</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>            <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>                <span class="n">line</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>            <span class="n">line</span> <span class="o">+=</span> <span class="n">word</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="k">return</span> <span class="n">lines</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="k">def</span> <span class="nf">linebreak_paragraph</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="n">first_line_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert linebreaks into a paragraph of text. Breaks lines at word boundaries.&quot;&quot;&quot;</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="n">wrapped_lines</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>        <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>            <span class="n">wrapped_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">linebreak_line</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">first_line_width</span><span class="p">))</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>            <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>            <span class="n">wrapped_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">linebreak_line</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">))</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="k">return</span> <span class="n">wrapped_lines</span>
 </span></pre></div>
 
 
@@ -525,6 +562,71 @@
 
 
             <div class="docstring"><p>Convert an object to a Python literal expression.</p>
+</div>
+
+
+                </section>
+                <section id="linebreak_line">
+                            <input id="linebreak_line-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">linebreak_line</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">text</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span></span><span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="linebreak_line-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#linebreak_line"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="linebreak_line-118"><a href="#linebreak_line-118"><span class="linenos">118</span></a><span class="k">def</span> <span class="nf">linebreak_line</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="linebreak_line-119"><a href="#linebreak_line-119"><span class="linenos">119</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert linebreaks into a line of text. Breaks lines at word boundaries.&quot;&quot;&quot;</span>
+</span><span id="linebreak_line-120"><a href="#linebreak_line-120"><span class="linenos">120</span></a>    <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</span><span id="linebreak_line-121"><a href="#linebreak_line-121"><span class="linenos">121</span></a>    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="linebreak_line-122"><a href="#linebreak_line-122"><span class="linenos">122</span></a>    <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="linebreak_line-123"><a href="#linebreak_line-123"><span class="linenos">123</span></a>    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+</span><span id="linebreak_line-124"><a href="#linebreak_line-124"><span class="linenos">124</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="n">width</span><span class="p">:</span>
+</span><span id="linebreak_line-125"><a href="#linebreak_line-125"><span class="linenos">125</span></a>            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span><span id="linebreak_line-126"><a href="#linebreak_line-126"><span class="linenos">126</span></a>            <span class="n">line</span> <span class="o">=</span> <span class="n">word</span>
+</span><span id="linebreak_line-127"><a href="#linebreak_line-127"><span class="linenos">127</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="linebreak_line-128"><a href="#linebreak_line-128"><span class="linenos">128</span></a>            <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+</span><span id="linebreak_line-129"><a href="#linebreak_line-129"><span class="linenos">129</span></a>                <span class="n">line</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
+</span><span id="linebreak_line-130"><a href="#linebreak_line-130"><span class="linenos">130</span></a>            <span class="n">line</span> <span class="o">+=</span> <span class="n">word</span>
+</span><span id="linebreak_line-131"><a href="#linebreak_line-131"><span class="linenos">131</span></a>    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span><span id="linebreak_line-132"><a href="#linebreak_line-132"><span class="linenos">132</span></a>    <span class="k">return</span> <span class="n">lines</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Insert linebreaks into a line of text. Breaks lines at word boundaries.</p>
+</div>
+
+
+                </section>
+                <section id="linebreak_paragraph">
+                            <input id="linebreak_paragraph-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">linebreak_paragraph</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">text</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span>, </span><span class="param"><span class="n">first_line_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span></span><span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="linebreak_paragraph-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#linebreak_paragraph"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="linebreak_paragraph-135"><a href="#linebreak_paragraph-135"><span class="linenos">135</span></a><span class="k">def</span> <span class="nf">linebreak_paragraph</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="n">first_line_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="linebreak_paragraph-136"><a href="#linebreak_paragraph-136"><span class="linenos">136</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert linebreaks into a paragraph of text. Breaks lines at word boundaries.&quot;&quot;&quot;</span>
+</span><span id="linebreak_paragraph-137"><a href="#linebreak_paragraph-137"><span class="linenos">137</span></a>    <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+</span><span id="linebreak_paragraph-138"><a href="#linebreak_paragraph-138"><span class="linenos">138</span></a>    <span class="n">wrapped_lines</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="linebreak_paragraph-139"><a href="#linebreak_paragraph-139"><span class="linenos">139</span></a>    <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="linebreak_paragraph-140"><a href="#linebreak_paragraph-140"><span class="linenos">140</span></a>    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+</span><span id="linebreak_paragraph-141"><a href="#linebreak_paragraph-141"><span class="linenos">141</span></a>        <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+</span><span id="linebreak_paragraph-142"><a href="#linebreak_paragraph-142"><span class="linenos">142</span></a>            <span class="n">wrapped_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">linebreak_line</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">first_line_width</span><span class="p">))</span>
+</span><span id="linebreak_paragraph-143"><a href="#linebreak_paragraph-143"><span class="linenos">143</span></a>            <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="linebreak_paragraph-144"><a href="#linebreak_paragraph-144"><span class="linenos">144</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="linebreak_paragraph-145"><a href="#linebreak_paragraph-145"><span class="linenos">145</span></a>            <span class="n">wrapped_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">linebreak_line</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">))</span>
+</span><span id="linebreak_paragraph-146"><a href="#linebreak_paragraph-146"><span class="linenos">146</span></a>    <span class="k">return</span> <span class="n">wrapped_lines</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Insert linebreaks into a paragraph of text. Breaks lines at word boundaries.</p>
 </div>
 
 
