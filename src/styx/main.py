@@ -60,7 +60,7 @@ def main() -> None:
         output_module_path = json_path.parent.relative_to(input_folder).parts
         output_file_name = f"{json_path.stem}.py"
 
-        settings.defs_module_path = "." * len(output_module_path) + "styxdefs"
+        settings.defs_module_path = "." * (len(output_module_path) + 1) + "styxdefs"
 
         with open(json_path, "r") as json_file:
             json_data = json.load(json_file)
