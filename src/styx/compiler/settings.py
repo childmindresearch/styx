@@ -1,5 +1,6 @@
 """Compiler settings."""
 
+import pathlib
 from dataclasses import dataclass
 from enum import Enum
 
@@ -16,5 +17,8 @@ class DefsMode(Enum):
 class CompilerSettings:
     """Compiler settings."""
 
+    input_path: pathlib.Path
+    output_path: pathlib.Path | None = None
+
     defs_module_path: str | None = None
-    defs_mode: DefsMode = DefsMode.INLINE
+    defs_mode: DefsMode = DefsMode.IMPORT
