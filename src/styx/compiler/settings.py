@@ -17,7 +17,7 @@ class DefsMode(Enum):
 class CompilerSettings:
     """Compiler settings."""
 
-    input_path: pathlib.Path
+    input_path: pathlib.Path | None = None
     output_path: pathlib.Path | None = None
 
     defs_module_path: str | None = None
