@@ -158,6 +158,8 @@ class BtInput:
             py_obj = f'"{self.list_separator}".join({py_obj})'
 
         if self.command_line_flag:
+            if self.type.primitive != BtPrimitive.String:
+                py_obj = f"str({py_obj})"
             buf.extend(
                 indent(
                     [f"cargs.extend([{enquote(self.command_line_flag)}, {py_obj}])"],
