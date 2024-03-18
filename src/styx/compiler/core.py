@@ -435,6 +435,8 @@ def _generate_output_file_expr(
             s_optional = ", optional=True" if out.optional else ""
 
             buf_body.extend(indent([f"{out.id}={py_var_execution}.output_file(f{enquote(s)}{s_optional}),"]))
+        else:
+            raise NotImplementedError
 
     buf_body.extend([")"])
 
