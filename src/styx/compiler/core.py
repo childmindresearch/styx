@@ -13,7 +13,7 @@ from styx.pycodegen.utils import (
     as_py_literal,
     enbrace,
     enquote,
-    python_camelize,
+    python_pascalize,
     python_screaming_snakify,
     python_snakify,
 )
@@ -464,7 +464,7 @@ def _from_boutiques(tool: bt.Tool, settings: CompilerSettings) -> str:  # type: 
     module_scope.add_or_die("Execution")
     module_scope.add_or_die("Metadata")
     py_var_function = module_scope.add_or_dodge(python_snakify(tool.name))
-    py_var_output_class = module_scope.add_or_dodge(f"{python_camelize(tool.name)}Outputs")
+    py_var_output_class = module_scope.add_or_dodge(f"{python_pascalize(tool.name)}Outputs")
     py_var_metadata = module_scope.add_or_dodge(f"{python_screaming_snakify(tool.name)}_METADATA")
 
     # Function level symbols
