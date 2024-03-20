@@ -1,5 +1,4 @@
 import re
-from typing import Union
 
 from .string_case import (
     camel_case,
@@ -9,20 +8,21 @@ from .string_case import (
 )
 
 
-def ensure_python_symbol(name: str) -> str:
+def ensure_python_symbol(name: str, alt_prefix: str = "v_") -> str:
     """Ensure that a string is a valid Python symbol.
 
     Args:
         name (str): The string to be converted.
+        alt_prefix (str): The prefix to use if the name starts with a digit. Defaults to "v_".
 
     Returns:
         str: A valid Python symbol.
     """
     # Remove invalid characters
     name = re.sub(r"[^a-zA-Z0-9_]", "_", name)
-    # Prepend 'v_' if name starts with a digit
-    name = re.sub(r"^[0-9]", "v_", name)
-
+    # Prefix if name starts with a digit
+    if re.match(r"^\d", name):
+        name = f"{alt_prefix}{name}"
     return name
 
 
@@ -92,17 +92,35 @@ def enbrace(
 
 
 _TYPE_PYPRIMITIVE = str | float | int | bool
-_TYPE_PYLITERAL = Union[_TYPE_PYPRIMITIVE, list["_TYPE_PYLITERAL"]]
+_TYPE_PYLITERAL = (
+    _TYPE_PYPRIMITIVE
+    | list["_TYPE_PYLITERAL"]
+    | tuple["_TYPE_PYLITERAL"]
+    | set["_TYPE_PYLITERAL"]
+    | dict[str, "_TYPE_PYLITERAL"]
+    | None
+)
 
 
 def as_py_literal(obj: _TYPE_PYLITERAL, quote: str = '"') -> str:
     """Convert an object to a Python literal expression."""
-    if isinstance(obj, list):
-        return enbrace(", ".join([as_py_literal(o, quote) for o in obj]), "[")
+    if isinstance(obj, bool):
+        return "True" if obj else "False"
+    if isinstance(obj, (int, float)):
+        return str(obj)
+    if obj is None:
+        return "None"
     if isinstance(obj, str):
         return enquote(obj, quote)
-    else:
-        return str(obj)
+    if isinstance(obj, list):
+        return enbrace(", ".join([as_py_literal(o, quote) for o in obj]), "[")
+    if isinstance(obj, (tuple, set)):
+        return enbrace(", ".join([as_py_literal(o, quote) for o in obj]), "(")
+    if isinstance(obj, dict):
+        return enbrace(
+            ", ".join([f"{as_py_literal(k, quote)}: {as_py_literal(v, quote)}" for k, v in obj.items()]), "{"
+        )
+    raise ValueError(f"Unsupported type: {type(obj)}")
 
 
 def linebreak_line(text: str, width: int = 80) -> list[str]:
