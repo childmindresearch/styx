@@ -13,6 +13,7 @@ from styx.pycodegen.string_case import (
 @pytest.mark.parametrize(
     "input,expected",
     [
+        ("", ""),
         ("snake_case", "snake_case"),
         ("SNAKE_CASE", "snake_case"),
         ("camelCase", "camel_case"),
@@ -37,6 +38,7 @@ def test_ensure_snake_case(input: str, expected: str) -> None:
 @pytest.mark.parametrize(
     "input,expected",
     [
+        ("", ""),
         ("snake_case", "snakeCase"),
         ("SNAKE_CASE", "snakeCase"),
         ("camelCase", "camelCase"),
@@ -61,6 +63,7 @@ def test_ensure_camel_case(input: str, expected: str) -> None:
 @pytest.mark.parametrize(
     "input,expected",
     [
+        ("", ""),
         ("snake_case", "SnakeCase"),
         ("SNAKE_CASE", "SnakeCase"),
         ("camelCase", "CamelCase"),
@@ -85,6 +88,7 @@ def test_ensure_pascal_case(input: str, expected: str) -> None:
 @pytest.mark.parametrize(
     "input,expected",
     [
+        ("", ""),
         ("snake_case", "SNAKE_CASE"),
         ("SNAKE_CASE", "SNAKE_CASE"),
         ("camelCase", "CAMEL_CASE"),
