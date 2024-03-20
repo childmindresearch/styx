@@ -1,7 +1,12 @@
 import re
 from typing import Union
 
-_RX_ENSURE_CAMEL = re.compile(r"(?<=[A-Z])(?!$)(?!_)(?![A-Z])")
+from .string_case import (
+    camel_case,
+    pascal_case,
+    screaming_snake_case,
+    snake_case,
+)
 
 
 def ensure_python_symbol(name: str) -> str:
@@ -21,32 +26,6 @@ def ensure_python_symbol(name: str) -> str:
     return name
 
 
-def ensure_snake_case(string: str) -> str:
-    """Converts a string to snake case.
-
-    Consecutive uppercase letters do not receive underscores between them.
-
-    Args:
-        string: The string to convert.
-
-    Returns:
-        The converted string.
-    """
-    return _RX_ENSURE_CAMEL.sub("_", string[::-1]).lower()[::-1]
-
-
-def ensure_camel_case(string: str) -> str:
-    """Converts a string to camel case.
-
-    Args:
-        string: The string to convert.
-
-    Returns:
-        The converted string.
-    """
-    return _RX_ENSURE_CAMEL.sub("_", string).title().replace("_", "")
-
-
 def python_camelize(string: str) -> str:
     """Converts a string to camel case.
 
@@ -56,7 +35,19 @@ def python_camelize(string: str) -> str:
     Returns:
         The converted string.
     """
-    return ensure_camel_case(ensure_python_symbol(string))
+    return camel_case(ensure_python_symbol(string))
+
+
+def python_pascalize(string: str) -> str:
+    """Converts a string to pascal case.
+
+    Args:
+        string: The string to convert.
+
+    Returns:
+        The converted string.
+    """
+    return pascal_case(ensure_python_symbol(string))
 
 
 def python_snakify(string: str) -> str:
@@ -68,7 +59,7 @@ def python_snakify(string: str) -> str:
     Returns:
         The converted string.
     """
-    return ensure_snake_case(ensure_python_symbol(string))
+    return snake_case(ensure_python_symbol(string))
 
 
 def python_screaming_snakify(string: str) -> str:
@@ -80,7 +71,7 @@ def python_screaming_snakify(string: str) -> str:
     Returns:
         The converted string.
     """
-    return ensure_snake_case(ensure_python_symbol(string)).upper()
+    return screaming_snake_case(ensure_python_symbol(string))
 
 
 def enquote(
