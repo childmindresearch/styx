@@ -240,11 +240,11 @@
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="k">class</span> <span class="nc">PyFunc</span><span class="p">(</span><span class="n">PyGen</span><span class="p">):</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Python function.&quot;&quot;&quot;</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PyArg</span><span class="p">]</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">docstring_body</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="n">body</span><span class="p">:</span> <span class="n">LineBuffer</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="n">return_descr</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PyArg</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">docstring_body</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="n">body</span><span class="p">:</span> <span class="n">LineBuffer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="n">return_descr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="n">return_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineBuffer</span><span class="p">:</span>
@@ -669,11 +669,11 @@ inheritance.</p>
 </span><span id="PyFunc-72"><a href="#PyFunc-72"><span class="linenos"> 72</span></a><span class="k">class</span> <span class="nc">PyFunc</span><span class="p">(</span><span class="n">PyGen</span><span class="p">):</span>
 </span><span id="PyFunc-73"><a href="#PyFunc-73"><span class="linenos"> 73</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Python function.&quot;&quot;&quot;</span>
 </span><span id="PyFunc-74"><a href="#PyFunc-74"><span class="linenos"> 74</span></a>
-</span><span id="PyFunc-75"><a href="#PyFunc-75"><span class="linenos"> 75</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PyFunc-76"><a href="#PyFunc-76"><span class="linenos"> 76</span></a>    <span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PyArg</span><span class="p">]</span>
-</span><span id="PyFunc-77"><a href="#PyFunc-77"><span class="linenos"> 77</span></a>    <span class="n">docstring_body</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PyFunc-78"><a href="#PyFunc-78"><span class="linenos"> 78</span></a>    <span class="n">body</span><span class="p">:</span> <span class="n">LineBuffer</span>
-</span><span id="PyFunc-79"><a href="#PyFunc-79"><span class="linenos"> 79</span></a>    <span class="n">return_descr</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PyFunc-75"><a href="#PyFunc-75"><span class="linenos"> 75</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="PyFunc-76"><a href="#PyFunc-76"><span class="linenos"> 76</span></a>    <span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PyArg</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="PyFunc-77"><a href="#PyFunc-77"><span class="linenos"> 77</span></a>    <span class="n">docstring_body</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="PyFunc-78"><a href="#PyFunc-78"><span class="linenos"> 78</span></a>    <span class="n">body</span><span class="p">:</span> <span class="n">LineBuffer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="PyFunc-79"><a href="#PyFunc-79"><span class="linenos"> 79</span></a>    <span class="n">return_descr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 </span><span id="PyFunc-80"><a href="#PyFunc-80"><span class="linenos"> 80</span></a>    <span class="n">return_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="PyFunc-81"><a href="#PyFunc-81"><span class="linenos"> 81</span></a>
 </span><span id="PyFunc-82"><a href="#PyFunc-82"><span class="linenos"> 82</span></a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineBuffer</span><span class="p">:</span>
@@ -728,7 +728,7 @@ inheritance.</p>
                             <div id="PyFunc.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">PyFunc</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#PyArg">PyArg</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">docstring_body</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">body</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>,</span><span class="param">	<span class="n">return_descr</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">return_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">PyFunc</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#PyArg">PyArg</a></span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">docstring_body</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">body</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">return_descr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">return_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -739,7 +739,8 @@ inheritance.</p>
                             </div>
                             <div id="PyFunc.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: str</span>
+            <span class="name">name</span><span class="annotation">: str</span>        =
+<span class="default_value">&#39;&#39;</span>
 
         
     </div>
@@ -761,7 +762,8 @@ inheritance.</p>
                             </div>
                             <div id="PyFunc.docstring_body" class="classattr">
                                 <div class="attr variable">
-            <span class="name">docstring_body</span><span class="annotation">: str</span>
+            <span class="name">docstring_body</span><span class="annotation">: str</span>        =
+<span class="default_value">&#39;&#39;</span>
 
         
     </div>
@@ -783,7 +785,8 @@ inheritance.</p>
                             </div>
                             <div id="PyFunc.return_descr" class="classattr">
                                 <div class="attr variable">
-            <span class="name">return_descr</span><span class="annotation">: str</span>
+            <span class="name">return_descr</span><span class="annotation">: str</span>        =
+<span class="default_value">&#39;&#39;</span>
 
         
     </div>

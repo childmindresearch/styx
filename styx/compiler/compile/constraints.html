@@ -36,6 +36,9 @@
             <li>
                     <a class="function" href="#generate_group_constraint_validation">generate_group_constraint_validation</a>
             </li>
+            <li>
+                    <a class="function" href="#generate_constraint_checks">generate_constraint_checks</a>
+            </li>
     </ul>
 
 
@@ -57,8 +60,8 @@
 
                         <label class="view-source-button" for="mod-constraints-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span> <span class="nn">styx.model.core</span> <span class="kn">import</span> <span class="n">GroupConstraint</span><span class="p">,</span> <span class="n">InputArgument</span><span class="p">,</span> <span class="n">InputTypePrimitive</span><span class="p">,</span> <span class="n">WithSymbol</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">from</span> <span class="nn">styx.pycodegen.core</span> <span class="kn">import</span> <span class="n">LineBuffer</span><span class="p">,</span> <span class="n">expand</span><span class="p">,</span> <span class="n">indent</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span> <span class="nn">styx.model.core</span> <span class="kn">import</span> <span class="n">Descriptor</span><span class="p">,</span> <span class="n">GroupConstraint</span><span class="p">,</span> <span class="n">InputArgument</span><span class="p">,</span> <span class="n">InputTypePrimitive</span><span class="p">,</span> <span class="n">WithSymbol</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">from</span> <span class="nn">styx.pycodegen.core</span> <span class="kn">import</span> <span class="n">LineBuffer</span><span class="p">,</span> <span class="n">PyFunc</span><span class="p">,</span> <span class="n">expand</span><span class="p">,</span> <span class="n">indent</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">from</span> <span class="nn">styx.pycodegen.utils</span> <span class="kn">import</span> <span class="n">enquote</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
@@ -276,6 +279,21 @@
 </span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>                <span class="s2">&quot;)&quot;</span><span class="p">,</span>
 </span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>            <span class="p">]),</span>
 </span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>        <span class="p">])</span>
+</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>
+</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a><span class="k">def</span> <span class="nf">generate_constraint_checks</span><span class="p">(</span>
+</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>    <span class="n">func</span><span class="p">:</span> <span class="n">PyFunc</span><span class="p">,</span>
+</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>    <span class="n">descriptor</span><span class="p">:</span> <span class="n">Descriptor</span><span class="p">,</span>
+</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>    <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WithSymbol</span><span class="p">[</span><span class="n">InputArgument</span><span class="p">]],</span>
+</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>    <span class="c1"># Lookup input from symbol</span>
+</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>    <span class="n">inputs_lookup_symbol</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">symbol</span><span class="p">:</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">}</span>
+</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>        <span class="n">generate_input_constraint_validation</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>    <span class="k">for</span> <span class="n">group_constraint</span> <span class="ow">in</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">group_constraints</span><span class="p">:</span>
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>        <span class="n">generate_group_constraint_validation</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">group_constraint</span><span class="p">,</span> <span class="n">inputs_lookup_symbol</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -503,6 +521,36 @@
 </span><span id="generate_group_constraint_validation-218"><a href="#generate_group_constraint_validation-218"><span class="linenos">218</span></a>                <span class="s2">&quot;)&quot;</span><span class="p">,</span>
 </span><span id="generate_group_constraint_validation-219"><a href="#generate_group_constraint_validation-219"><span class="linenos">219</span></a>            <span class="p">]),</span>
 </span><span id="generate_group_constraint_validation-220"><a href="#generate_group_constraint_validation-220"><span class="linenos">220</span></a>        <span class="p">])</span>
+</span></pre></div>
+
+
+    
+
+                </section>
+                <section id="generate_constraint_checks">
+                            <input id="generate_constraint_checks-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">generate_constraint_checks</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">func</span><span class="p">:</span> <span class="n"><a href="../../pycodegen/core.html#PyFunc">styx.pycodegen.core.PyFunc</a></span>,</span><span class="param">	<span class="n">descriptor</span><span class="p">:</span> <span class="n"><a href="../../model/core.html#Descriptor">styx.model.core.Descriptor</a></span>,</span><span class="param">	<span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="../../model/core.html#WithSymbol">styx.model.core.WithSymbol</a></span><span class="p">[</span><span class="n"><a href="../../model/core.html#InputArgument">styx.model.core.InputArgument</a></span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+
+                <label class="view-source-button" for="generate_constraint_checks-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#generate_constraint_checks"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="generate_constraint_checks-223"><a href="#generate_constraint_checks-223"><span class="linenos">223</span></a><span class="k">def</span> <span class="nf">generate_constraint_checks</span><span class="p">(</span>
+</span><span id="generate_constraint_checks-224"><a href="#generate_constraint_checks-224"><span class="linenos">224</span></a>    <span class="n">func</span><span class="p">:</span> <span class="n">PyFunc</span><span class="p">,</span>
+</span><span id="generate_constraint_checks-225"><a href="#generate_constraint_checks-225"><span class="linenos">225</span></a>    <span class="n">descriptor</span><span class="p">:</span> <span class="n">Descriptor</span><span class="p">,</span>
+</span><span id="generate_constraint_checks-226"><a href="#generate_constraint_checks-226"><span class="linenos">226</span></a>    <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WithSymbol</span><span class="p">[</span><span class="n">InputArgument</span><span class="p">]],</span>
+</span><span id="generate_constraint_checks-227"><a href="#generate_constraint_checks-227"><span class="linenos">227</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="generate_constraint_checks-228"><a href="#generate_constraint_checks-228"><span class="linenos">228</span></a>    <span class="c1"># Lookup input from symbol</span>
+</span><span id="generate_constraint_checks-229"><a href="#generate_constraint_checks-229"><span class="linenos">229</span></a>    <span class="n">inputs_lookup_symbol</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">symbol</span><span class="p">:</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">}</span>
+</span><span id="generate_constraint_checks-230"><a href="#generate_constraint_checks-230"><span class="linenos">230</span></a>
+</span><span id="generate_constraint_checks-231"><a href="#generate_constraint_checks-231"><span class="linenos">231</span></a>    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+</span><span id="generate_constraint_checks-232"><a href="#generate_constraint_checks-232"><span class="linenos">232</span></a>        <span class="n">generate_input_constraint_validation</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+</span><span id="generate_constraint_checks-233"><a href="#generate_constraint_checks-233"><span class="linenos">233</span></a>
+</span><span id="generate_constraint_checks-234"><a href="#generate_constraint_checks-234"><span class="linenos">234</span></a>    <span class="k">for</span> <span class="n">group_constraint</span> <span class="ow">in</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">group_constraints</span><span class="p">:</span>
+</span><span id="generate_constraint_checks-235"><a href="#generate_constraint_checks-235"><span class="linenos">235</span></a>        <span class="n">generate_group_constraint_validation</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">group_constraint</span><span class="p">,</span> <span class="n">inputs_lookup_symbol</span><span class="p">)</span>
 </span></pre></div>
 
 
