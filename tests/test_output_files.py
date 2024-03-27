@@ -15,28 +15,26 @@ from tests.utils.dynmodule import (
 def test_output_file() -> None:
     """Test an output file."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
-    model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy({
-            "command-line": "dummy [X]",
-            "inputs": [
-                {
-                    "id": "x",
-                    "name": "The x",
-                    "value-key": "[X]",
-                    "type": BT_TYPE_NUMBER,
-                }
-            ],
-            "output-files": [
-                {
-                    "id": "out",
-                    "name": "The out",
-                    "path-template": "out.txt",
-                }
-            ],
-        })
-    )
+    model = boutiques_dummy({
+        "command-line": "dummy [X]",
+        "inputs": [
+            {
+                "id": "x",
+                "name": "The x",
+                "value-key": "[X]",
+                "type": BT_TYPE_NUMBER,
+            }
+        ],
+        "output-files": [
+            {
+                "id": "out",
+                "name": "The out",
+                "path-template": "out.txt",
+            }
+        ],
+    })
 
-    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -51,28 +49,26 @@ def test_output_file() -> None:
 def test_output_file_with_template() -> None:
     """Test an output file with a template."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
-    model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy({
-            "command-line": "dummy [X]",
-            "inputs": [
-                {
-                    "id": "x",
-                    "name": "The x",
-                    "value-key": "[X]",
-                    "type": BT_TYPE_NUMBER,
-                }
-            ],
-            "output-files": [
-                {
-                    "id": "out",
-                    "name": "The out",
-                    "path-template": "out-{x}.txt",
-                }
-            ],
-        })
-    )
+    model = boutiques_dummy({
+        "command-line": "dummy [X]",
+        "inputs": [
+            {
+                "id": "x",
+                "name": "The x",
+                "value-key": "[X]",
+                "type": BT_TYPE_NUMBER,
+            }
+        ],
+        "output-files": [
+            {
+                "id": "out",
+                "name": "The out",
+                "path-template": "out-{x}.txt",
+            }
+        ],
+    })
 
-    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -89,29 +85,27 @@ def test_output_file_with_template_and_stripped_extensions() -> None:
     settings = styx.compiler.settings.CompilerSettings(
         defs_mode=styx.compiler.settings.DefsMode.IMPORT,
     )
-    model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy({
-            "command-line": "dummy [X]",
-            "inputs": [
-                {
-                    "id": "x",
-                    "name": "The x",
-                    "value-key": "[X]",
-                    "type": BT_TYPE_FILE,
-                }
-            ],
-            "output-files": [
-                {
-                    "id": "out",
-                    "name": "The out",
-                    "path-template": "out-[X].png",
-                    "path-template-stripped-extensions": [".txt"],
-                }
-            ],
-        })
-    )
+    model = boutiques_dummy({
+        "command-line": "dummy [X]",
+        "inputs": [
+            {
+                "id": "x",
+                "name": "The x",
+                "value-key": "[X]",
+                "type": BT_TYPE_FILE,
+            }
+        ],
+        "output-files": [
+            {
+                "id": "out",
+                "name": "The out",
+                "path-template": "out-[X].png",
+                "path-template-stripped-extensions": [".txt"],
+            }
+        ],
+    })
 
-    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()

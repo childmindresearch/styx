@@ -1,4 +1,6 @@
+import pathlib
 import re
+from typing import Mapping, Sequence, TypeAlias
 
 from .string_case import (
     camel_case,
@@ -91,15 +93,8 @@ def enbrace(
     return f"{brace_type}{s}{_right_brace[brace_type]}"
 
 
-_TYPE_PYPRIMITIVE = str | float | int | bool
-_TYPE_PYLITERAL = (
-    _TYPE_PYPRIMITIVE
-    | list["_TYPE_PYLITERAL"]
-    | tuple["_TYPE_PYLITERAL"]
-    | set["_TYPE_PYLITERAL"]
-    | dict[str, "_TYPE_PYLITERAL"]
-    | None
-)
+_TYPE_PYPRIMITIVE: TypeAlias = str | float | int | bool | pathlib.Path | None
+_TYPE_PYLITERAL: TypeAlias = _TYPE_PYPRIMITIVE | Sequence["_TYPE_PYLITERAL"] | Mapping[str, "_TYPE_PYLITERAL"]
 
 
 def as_py_literal(obj: _TYPE_PYLITERAL, quote: str = '"') -> str:
@@ -112,6 +107,8 @@ def as_py_literal(obj: _TYPE_PYLITERAL, quote: str = '"') -> str:
         return "None"
     if isinstance(obj, str):
         return enquote(obj, quote)
+    if isinstance(obj, pathlib.Path):
+        return enquote(str(obj), quote)
     if isinstance(obj, list):
         return enbrace(", ".join([as_py_literal(o, quote) for o in obj]), "[")
     if isinstance(obj, (tuple, set)):

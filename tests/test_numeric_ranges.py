@@ -16,23 +16,21 @@ from tests.utils.dynmodule import (
 def test_below_range_minimum_inclusive() -> None:
     """Below range minimum."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
-    model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy({
-            "command-line": "dummy [X]",
-            "inputs": [
-                {
-                    "id": "x",
-                    "name": "The x",
-                    "value-key": "[X]",
-                    "type": BT_TYPE_NUMBER,
-                    "minimum": 5,
-                    "integer": True,
-                }
-            ],
-        })
-    )
+    model = boutiques_dummy({
+        "command-line": "dummy [X]",
+        "inputs": [
+            {
+                "id": "x",
+                "name": "The x",
+                "value-key": "[X]",
+                "type": BT_TYPE_NUMBER,
+                "minimum": 5,
+                "integer": True,
+            }
+        ],
+    })
 
-    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -43,23 +41,21 @@ def test_below_range_minimum_inclusive() -> None:
 def test_above_range_maximum_inclusive() -> None:
     """Above range maximum."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
-    model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy({
-            "command-line": "dummy [X]",
-            "inputs": [
-                {
-                    "id": "x",
-                    "name": "The x",
-                    "value-key": "[X]",
-                    "type": BT_TYPE_NUMBER,
-                    "maximum": 5,
-                    "integer": True,
-                }
-            ],
-        })
-    )
+    model = boutiques_dummy({
+        "command-line": "dummy [X]",
+        "inputs": [
+            {
+                "id": "x",
+                "name": "The x",
+                "value-key": "[X]",
+                "type": BT_TYPE_NUMBER,
+                "maximum": 5,
+                "integer": True,
+            }
+        ],
+    })
 
-    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -70,24 +66,22 @@ def test_above_range_maximum_inclusive() -> None:
 def test_above_range_maximum_exclusive() -> None:
     """Above range maximum exclusive."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
-    model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy({
-            "command-line": "dummy [X]",
-            "inputs": [
-                {
-                    "id": "x",
-                    "name": "The x",
-                    "value-key": "[X]",
-                    "type": BT_TYPE_NUMBER,
-                    "maximum": 5,
-                    "integer": True,
-                    "exclusive-maximum": True,
-                }
-            ],
-        })
-    )
+    model = boutiques_dummy({
+        "command-line": "dummy [X]",
+        "inputs": [
+            {
+                "id": "x",
+                "name": "The x",
+                "value-key": "[X]",
+                "type": BT_TYPE_NUMBER,
+                "maximum": 5,
+                "integer": True,
+                "exclusive-maximum": True,
+            }
+        ],
+    })
 
-    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -98,24 +92,22 @@ def test_above_range_maximum_exclusive() -> None:
 def test_below_range_minimum_exclusive() -> None:
     """Below range minimum exclusive."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
-    model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy({
-            "command-line": "dummy [X]",
-            "inputs": [
-                {
-                    "id": "x",
-                    "name": "The x",
-                    "value-key": "[X]",
-                    "type": BT_TYPE_NUMBER,
-                    "minimum": 5,
-                    "integer": True,
-                    "exclusive-minimum": True,
-                }
-            ],
-        })
-    )
+    model = boutiques_dummy({
+        "command-line": "dummy [X]",
+        "inputs": [
+            {
+                "id": "x",
+                "name": "The x",
+                "value-key": "[X]",
+                "type": BT_TYPE_NUMBER,
+                "minimum": 5,
+                "integer": True,
+                "exclusive-minimum": True,
+            }
+        ],
+    })
 
-    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -126,24 +118,22 @@ def test_below_range_minimum_exclusive() -> None:
 def test_outside_range() -> None:
     """Outside range."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
-    model = styx.boutiques.utils.boutiques_from_dict(
-        boutiques_dummy({
-            "command-line": "dummy [X]",
-            "inputs": [
-                {
-                    "id": "x",
-                    "name": "The x",
-                    "value-key": "[X]",
-                    "type": BT_TYPE_NUMBER,
-                    "minimum": 5,
-                    "maximum": 10,
-                    "integer": True,
-                }
-            ],
-        })
-    )
+    model = boutiques_dummy({
+        "command-line": "dummy [X]",
+        "inputs": [
+            {
+                "id": "x",
+                "name": "The x",
+                "value-key": "[X]",
+                "type": BT_TYPE_NUMBER,
+                "minimum": 5,
+                "maximum": 10,
+                "integer": True,
+            }
+        ],
+    })
 
-    compiled_module = styx.compiler.core.compile_descriptor(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()

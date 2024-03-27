@@ -4,8 +4,8 @@ import pathlib
 
 import tomli as tomllib  # Remove once we move to python 3.11
 
-from styx.boutiques.utils import boutiques_from_dict
-from styx.compiler.core import compile_definitions, compile_descriptor
+from styx.compiler.compile.definitions import compile_definitions
+from styx.compiler.core import compile_boutiques_dict
 from styx.compiler.settings import CompilerSettings, DefsMode
 
 
@@ -100,6 +100,7 @@ def main() -> None:
                 defs_file.write(defs)
         print(f"Compiled definitions to {defs_path}")
 
+    assert settings.input_path is not None
     json_files = settings.input_path.glob("**/*.json")
 
     for json_path in json_files:
@@ -108,11 +109,10 @@ def main() -> None:
 
         settings.defs_module_path = "." * (len(output_module_path) + 1) + "styxdefs"
 
-        with open(json_path, "r") as json_file:
+        with open(json_path, "r", encoding="utf-8") as json_file:
             json_data = json.load(json_file)
 
-        descriptor = boutiques_from_dict(json_data)
-        code = compile_descriptor(descriptor, settings)
+        code = compile_boutiques_dict(json_data, settings)
 
         if settings.output_path:
             output_path = settings.output_path / pathlib.Path(*output_module_path)

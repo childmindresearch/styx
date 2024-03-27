@@ -1,0 +1,1 @@
+"""Styx data model."""

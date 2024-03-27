@@ -49,14 +49,18 @@ def blank_after(lines: LineBuffer, blanks: int = 1) -> LineBuffer:
 
 class PyGen(ABC):
     def generate(self) -> LineBuffer:
+        """Generate the code."""
         raise NotImplementedError
 
     def text(self) -> str:
+        """Generate the code and collapse it into a single string."""
         return collapse(self.generate())
 
 
 @dataclass
 class PyArg:
+    """Python function argument."""
+
     name: str
     type: str
     default: str | None
@@ -65,6 +69,8 @@ class PyArg:
 
 @dataclass
 class PyFunc(PyGen):
+    """Python function."""
+
     name: str
     args: list[PyArg]
     docstring_body: str
@@ -118,6 +124,8 @@ class PyFunc(PyGen):
 
 @dataclass
 class PyModule(PyGen):
+    """Python module."""
+
     imports: LineBuffer = field(default_factory=list)
     header: LineBuffer = field(default_factory=list)
     funcs: list[PyFunc] = field(default_factory=list)
