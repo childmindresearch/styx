@@ -71,11 +71,11 @@ class PyArg:
 class PyFunc(PyGen):
     """Python function."""
 
-    name: str
-    args: list[PyArg]
-    docstring_body: str
-    body: LineBuffer
-    return_descr: str
+    name: str = ""
+    args: list[PyArg] = field(default_factory=list)
+    docstring_body: str = ""
+    body: LineBuffer = field(default_factory=list)
+    return_descr: str = ""
     return_type: str | None = None
 
     def generate(self) -> LineBuffer:

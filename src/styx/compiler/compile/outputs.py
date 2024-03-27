@@ -1,22 +1,46 @@
+from styx.compiler.compile.common import SharedScopes, SharedSymbols
 from styx.model.core import InputArgument, OutputArgument, WithSymbol
-from styx.pycodegen.core import LineBuffer, indent
-from styx.pycodegen.scope import Scope
+from styx.pycodegen.core import PyFunc, PyModule, indent
 from styx.pycodegen.utils import as_py_literal, enbrace, enquote
 
 
-def compile_output_file_expr(
-    func_scope: Scope,
-    buf_header: LineBuffer,
-    buf_body: LineBuffer,
+def generate_outputs_definition(
+    module: PyModule,
+    symbols: SharedSymbols,
+    outputs: list[WithSymbol[OutputArgument]],
+) -> None:
+    """Generate the static output class definition."""
+    module.header.extend([
+        "",
+        "",
+        f"class {symbols.output_class}(typing.NamedTuple, typing.Generic[R]):",
+        *indent([
+            '"""',
+            f"Output object returned when calling `{symbols.function}(...)`.",
+            '"""',
+        ]),
+    ])
+    for out in outputs:
+        # Declaration
+        module.header.extend(
+            indent([
+                f"{out.symbol}: R",
+                f'"""{out.data.description}"""',
+            ])
+        )
+
+
+def generate_output_building(
+    func: PyFunc,
+    scopes: SharedScopes,
+    symbols: SharedSymbols,
     outputs: list[WithSymbol[OutputArgument]],
     inputs: list[WithSymbol[InputArgument]],
-    py_var_output_class: str,
-    py_var_execution: str,
-    py_var_ret: str,
 ) -> None:
-    py_rstrip_fun = func_scope.add_or_dodge("_rstrip")
+    """Generate the output building code."""
+    py_rstrip_fun = scopes.function.add_or_dodge("_rstrip")
     if any([out.data.stripped_file_extensions is not None for out in outputs]):
-        buf_body.extend([
+        func.body.extend([
             f"def {py_rstrip_fun}(s, r):",
             *indent([
                 "for postfix in r:",
@@ -28,20 +52,10 @@ def compile_output_file_expr(
             ]),
         ])
 
-    buf_body.append(f"{py_var_ret} = {py_var_output_class}(")
+    func.body.append(f"{symbols.ret} = {symbols.output_class}(")
 
     for out in outputs:
-        # Declaration
-        buf_header.extend(
-            indent([
-                f"{out.symbol}: R",
-                f'"""{out.data.description}"""',
-            ])
-        )
-
         strip_extensions = out.data.stripped_file_extensions is not None
-
-        # Expression
         if out.data.path_template is not None:
             s = out.data.path_template
             for a in inputs:
@@ -53,8 +67,8 @@ def compile_output_file_expr(
 
             s_optional = ", optional=True" if out.data.optional else ""
 
-            buf_body.extend(indent([f"{out.symbol}={py_var_execution}.output_file(f{enquote(s)}{s_optional}),"]))
+            func.body.extend(indent([f"{out.symbol}={symbols.execution}.output_file(f{enquote(s)}{s_optional}),"]))
         else:
             raise NotImplementedError
 
-    buf_body.extend([")"])
+    func.body.extend([")"])
