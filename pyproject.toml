@@ -9,8 +9,8 @@ packages = [{include = "styx", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pydantic = "^2.6.3"
-ruff = "^0.3.1"
+pydantic = "^2.6.4"
+ruff = "^0.3.4"
 tomli = "^2.0.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -18,7 +18,7 @@ pytest = "^8.0.2"
 mypy = "^1.7.1"
 pre-commit = "^3.6.0"
 pytest-cov = "^4.1.0"
-ruff = "^0.3.1"
+ruff = "^0.3.4"
 
 [tool.poetry.group.docs.dependencies]
 pdoc = "^14.2.0"
