@@ -111,20 +111,22 @@ def main() -> None:
 
         with open(json_path, "r", encoding="utf-8") as json_file:
             json_data = json.load(json_file)
-
-        code = compile_boutiques_dict(json_data, settings)
-
-        if settings.output_path:
-            output_path = settings.output_path / pathlib.Path(*output_module_path)
-            output_path.mkdir(parents=True, exist_ok=True)
-            output_path = output_path / output_file_name
-            with open(output_path, "w") as py_file:
-                py_file.write(code)
-            print(f"Compiled {json_path} to {output_path}")
-        else:
-            print(f"Compiled {json_path} -> {pathlib.Path(*output_module_path) / output_file_name}: {'---' * 10}")
-            print(code)
-            print("---" * 10)
+        try:
+            code = compile_boutiques_dict(json_data, settings)
+    
+            if settings.output_path:
+                output_path = settings.output_path / pathlib.Path(*output_module_path)
+                output_path.mkdir(parents=True, exist_ok=True)
+                output_path = output_path / output_file_name
+                with open(output_path, "w") as py_file:
+                    py_file.write(code)
+                print(f"Compiled {json_path} to {output_path}")
+            else:
+                print(f"Compiled {json_path} -> {pathlib.Path(*output_module_path) / output_file_name}: {'---' * 10}")
+                print(code)
+                print("---" * 10)
+        except:
+            print(f"Skipped: {json_path}")
 
 
 if __name__ == "__main__":
