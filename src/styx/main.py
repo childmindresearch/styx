@@ -113,7 +113,7 @@ def main() -> None:
             json_data = json.load(json_file)
         try:
             code = compile_boutiques_dict(json_data, settings)
-    
+
             if settings.output_path:
                 output_path = settings.output_path / pathlib.Path(*output_module_path)
                 output_path.mkdir(parents=True, exist_ok=True)
@@ -125,8 +125,11 @@ def main() -> None:
                 print(f"Compiled {json_path} -> {pathlib.Path(*output_module_path) / output_file_name}: {'---' * 10}")
                 print(code)
                 print("---" * 10)
-        except:
+        except Exception:
             print(f"Skipped: {json_path}")
+            import traceback
+
+            print(traceback.format_exc())
 
 
 if __name__ == "__main__":

@@ -589,7 +589,7 @@ class Tool(BaseModel):
     output_files: Optional[List[Union[OutputFiles, OutputFiles1]]] = Field(None, alias="output-files", min_length=1)
     invocation_schema: Optional[Dict[str, Any]] = Field(None, alias="invocation-schema")
     suggested_resources: Optional[SuggestedResources] = Field(None, alias="suggested-resources")
-    tags: Optional[Dict[str, List[str]]] = Field(
+    tags: Optional[Dict[str, Union[List[str], str]]] = Field(
         None,
         description="A set of key-value pairs specifying tags describing the pipeline. The tag names are open, they might be more constrained in the future.",
     )

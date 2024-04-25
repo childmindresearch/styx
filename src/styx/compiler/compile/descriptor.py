@@ -49,9 +49,12 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
 
     # Input symbols
     inputs: list[WithSymbol[InputArgument]] = []
+    inputs_lookup_bt_name: dict[str, WithSymbol[InputArgument]] = {}
     for input_ in descriptor.inputs:
         py_symbol = scopes.function.add_or_dodge(python_snakify(input_.name))
-        inputs.append(WithSymbol(input_, py_symbol))
+        input_with_symbol = WithSymbol(input_, py_symbol)
+        inputs.append(input_with_symbol)
+        inputs_lookup_bt_name[input_.name] = input_with_symbol
 
     # Output symbols
     outputs: list[WithSymbol[OutputArgument]] = []
@@ -76,7 +79,7 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
     func.args.extend(build_input_arguments(inputs))
 
     # Constraint checking
-    generate_constraint_checks(func, descriptor, inputs)
+    generate_constraint_checks(func, descriptor, inputs, inputs_lookup_bt_name)
 
     # Function body
     func.body.extend([

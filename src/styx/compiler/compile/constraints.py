@@ -223,12 +223,10 @@ def generate_constraint_checks(
     func: PyFunc,
     descriptor: Descriptor,
     inputs: list[WithSymbol[InputArgument]],
+    inputs_lookup_bt_name: dict[str, WithSymbol[InputArgument]],
 ) -> None:
-    # Lookup input from symbol
-    inputs_lookup_symbol = {a.symbol: a for a in inputs}
-
     for arg in inputs:
         generate_input_constraint_validation(func.body, arg)
 
     for group_constraint in descriptor.group_constraints:
-        generate_group_constraint_validation(func.body, group_constraint, inputs_lookup_symbol)
+        generate_group_constraint_validation(func.body, group_constraint, inputs_lookup_bt_name)
