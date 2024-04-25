@@ -4,6 +4,7 @@ import pathlib
 from styx.boutiques import model as bt
 from styx.model.core import (
     TYPE_INPUT_VALUE,
+    TYPE_INPUT_VALUE_PRIMITIVE,
     Descriptor,
     GroupConstraint,
     InputArgument,
@@ -106,6 +107,17 @@ def _input_argument_from_boutiques(bt_input: bt.Inputs) -> InputArgument:  # typ
     has_default_value, default_value = _default_value_from_boutiques(bt_input)
     constraints = _constraints_from_boutiques(bt_input)
     list_separator = bt_input.list_separator if bt_input.list_separator is not None else " "
+
+    enum_values: list[TYPE_INPUT_VALUE_PRIMITIVE] | None = None
+    if bt_input.value_choices is not None:
+        assert isinstance(bt_input.value_choices, list)
+        assert all(isinstance(value, (str, int, float)) for value in bt_input.value_choices)
+
+        if type_.primitive == InputTypePrimitive.Integer:
+            enum_values = [int(value) for value in bt_input.value_choices]
+        else:
+            enum_values = bt_input.value_choices
+
     return InputArgument(
         name=bt_input.id,
         type=type_,
@@ -115,7 +127,7 @@ def _input_argument_from_boutiques(bt_input: bt.Inputs) -> InputArgument:  # typ
         constraints=constraints,
         command_line_flag=bt_input.command_line_flag,
         list_separator=list_separator,
-        enum_values=bt_input.value_choices,
+        enum_values=enum_values,
         bt_ref=bt_input.value_key,
     )
 
