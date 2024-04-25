@@ -65,6 +65,8 @@ def _default_value_from_boutiques(bt_input: bt.Inputs) -> tuple[bool, TYPE_INPUT
         assert isinstance(default_value, (int, float))
     elif primitive == InputTypePrimitive.Integer:
         assert isinstance(default_value, int)
+    elif primitive == InputTypePrimitive.Flag:
+        assert isinstance(default_value, bool)
     else:
         raise NotImplementedError
 

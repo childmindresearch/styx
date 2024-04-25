@@ -54,7 +54,7 @@ def _input_argument_to_py_arg_builder(buf: LineBuffer, arg: WithSymbol[InputArgu
     py_symbol = arg.symbol
 
     if arg.data.type.primitive == InputTypePrimitive.Flag:
-        assert arg.data.command_line_flag is not None
+        assert arg.data.command_line_flag is not None, "Flag input must have a command line flag"
         buf.extend([
             f"if {py_symbol}:",
             *indent([f"cargs.append({enquote(arg.data.command_line_flag)})"]),
