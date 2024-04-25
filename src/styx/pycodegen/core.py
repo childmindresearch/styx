@@ -104,10 +104,13 @@ class PyFunc(PyGen):
             arg_docstr_buf.extend(indent(arg_docstr[1:]))
 
         # Add docstring (Google style)
+
+        docstring_linebroken = linebreak_paragraph(self.docstring_body, width=80 - 4)
+
         buf.extend(
             indent([
                 '"""',
-                f"{self.docstring_body}",
+                *docstring_linebroken,
                 "",
                 "Args:",
                 *indent(arg_docstr_buf),
