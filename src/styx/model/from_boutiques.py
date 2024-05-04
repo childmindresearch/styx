@@ -108,7 +108,7 @@ def _input_argument_from_boutiques(bt_input: bt.Inputs) -> InputArgument:  # typ
     type_ = _input_type_from_boutiques(bt_input)
     has_default_value, default_value = _default_value_from_boutiques(bt_input)
     constraints = _constraints_from_boutiques(bt_input)
-    list_separator = bt_input.list_separator if bt_input.list_separator is not None else " "
+    list_separator = bt_input.list_separator
 
     enum_values: list[TYPE_INPUT_VALUE_PRIMITIVE] | None = None
     if bt_input.value_choices is not None:
@@ -164,8 +164,9 @@ def descriptor_from_boutiques(tool: bt.Tool) -> Descriptor:  # type: ignore
         inputs.append(_input_argument_from_boutiques(input_))
 
     outputs = []
-    for output in tool.output_files:
-        outputs.append(_output_argument_from_boutiques(output))
+    if tool.output_files is not None:
+        for output in tool.output_files:
+            outputs.append(_output_argument_from_boutiques(output))
 
     group_constraints = []
     if tool.groups is not None:
