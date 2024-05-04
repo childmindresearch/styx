@@ -1,8 +1,8 @@
 from styx.boutiques.utils import boutiques_split_command
 from styx.compiler.compile.common import SharedSymbols
 from styx.model.core import Descriptor, InputArgument, InputTypePrimitive, WithSymbol
-from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, indent
-from styx.pycodegen.utils import as_py_literal, enquote
+from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, expand, indent
+from styx.pycodegen.utils import as_py_literal, enbrace, enquote
 
 
 def _input_argument_to_py_type(arg: InputArgument) -> str:
@@ -49,45 +49,168 @@ def build_input_arguments(
     ]
 
 
-def _input_argument_to_py_arg_builder(buf: LineBuffer, arg: WithSymbol[InputArgument]) -> None:
-    """Return a Python expression that builds the command line arguments."""
-    py_symbol = arg.symbol
+def _codegen_var_is_set_by_user(arg: WithSymbol[InputArgument]) -> str:
+    """Return a Python expression that checks if the variable is set by the user."""
+    if arg.data.type.primitive == InputTypePrimitive.Flag:
+        return arg.symbol
+    return f"{arg.symbol} is not None"
 
+
+def _codegen_var_to_str(arg: WithSymbol[InputArgument]) -> tuple[str, bool]:
+    """Return a Python expression that converts the variable to a string or string array.
+
+    Return a boolean that indicates if the expression is an array.
+    """
     if arg.data.type.primitive == InputTypePrimitive.Flag:
         assert arg.data.command_line_flag is not None, "Flag input must have a command line flag"
-        buf.extend([
-            f"if {py_symbol}:",
-            *indent([f"cargs.append({enquote(arg.data.command_line_flag)})"]),
-        ])
+        return enquote(arg.data.command_line_flag), False
+
+    def _val() -> tuple[str, bool]:
+        if arg.data.type.primitive == InputTypePrimitive.File:
+            return f"execution.input_file({arg.symbol})", False
+        if arg.data.type.is_list:
+            if arg.data.type.primitive != InputTypePrimitive.String:
+                if arg.data.list_separator is None:
+                    return f"map(str, {arg.symbol})", True
+                return f'"{arg.data.list_separator}".join(map(str, {arg.symbol}))', False
+            if arg.data.list_separator is None:
+                return arg.symbol, True
+            return f'"{arg.data.list_separator}".join({arg.symbol})', False
+
+        if (
+            arg.data.type.primitive == InputTypePrimitive.Number
+            or arg.data.type.primitive == InputTypePrimitive.Integer
+        ):
+            return f"str({arg.symbol})", False
+        assert arg.data.type.primitive == InputTypePrimitive.String
+        return arg.symbol, False
+
+    if arg.data.command_line_flag is not None:
+        val, val_is_list = _val()
+        if val_is_list:
+            return enbrace(enquote(arg.data.command_line_flag) + ", *" + val, "["), True
+        return enbrace(enquote(arg.data.command_line_flag) + ", " + val, "["), True
+    return _val()
+
+
+def _input_segment_to_py_arg_builder(buf: LineBuffer, segment: list[str | WithSymbol[InputArgument]]) -> None:
+    """Return a Python expression that builds the command line arguments."""
+    if len(segment) == 0:
         return
 
-    lvl = 0
+    input_args: list[WithSymbol[InputArgument]] = [i for i in segment if isinstance(i, WithSymbol)]
 
-    if arg.data.type.is_optional:
-        buf.append(f"if {py_symbol} is not None:")
-        lvl += 1
+    indent_level = 0
 
-    if arg.data.type.primitive == InputTypePrimitive.File:
-        py_symbol = f"execution.input_file({py_symbol})"
+    # Are there variables?
+    if len(input_args) > 0:
+        # Codegen: Condition: Is any variable in the segment set by the user?
+        condition = []
+        for arg in input_args:
+            condition.append(_codegen_var_is_set_by_user(arg))
+        buf.append(f"if {' or '.join(condition)}:")
+        indent_level += 1
 
-    if arg.data.type.is_list:
-        if arg.data.type.primitive != InputTypePrimitive.String:
-            py_symbol = f"map(str, {py_symbol})"
-        py_symbol = f'"{arg.data.list_separator}".join({py_symbol})'
-
-    if arg.data.command_line_flag:
-        if arg.data.type.primitive != InputTypePrimitive.String:
-            py_symbol = f"str({py_symbol})"
+    # Codegen: Build the string
+    # Codegen: Append to the command line arguments
+    if len(input_args) > 1:
+        # We need to check which variables are set
+        statement = []
+        for token in segment:
+            if isinstance(token, str):
+                statement.append(enquote(token))
+            else:
+                var, is_list = _codegen_var_to_str(token)
+                assert not is_list, "List variables are not supported in this context"
+                statement.append(f'{var} if {_codegen_var_is_set_by_user(token)} else ""')
         buf.extend(
             indent(
-                [f"cargs.extend([{enquote(arg.data.command_line_flag)}, {py_symbol}])"],
-                lvl,
+                [
+                    "cargs.append(",
+                    *indent(expand(" +\n".join(statement))),
+                    ")",
+                ],
+                indent_level,
             )
         )
+
     else:
-        if arg.data.type.primitive == InputTypePrimitive.Number:
-            py_symbol = f"str({py_symbol})"
-        buf.extend(indent([f"cargs.append({py_symbol})"], lvl))
+        # We know the var has been set by the user
+        if len(segment) == 1:
+            if isinstance(segment[0], str):
+                buf.extend(indent([f"cargs.append({enquote(segment[0])})"], indent_level))
+            else:
+                var, is_list = _codegen_var_to_str(segment[0])
+                if is_list:
+                    buf.extend(indent([f"cargs.extend({var})"], indent_level))
+                else:
+                    buf.extend(indent([f"cargs.append({var})"], indent_level))
+            return
+
+        statement = []
+        for token in segment:
+            if isinstance(token, str):
+                statement.append(token)
+            else:
+                var, is_list = _codegen_var_to_str(token)
+                assert not is_list, "List variables are not supported in this context"
+                statement.append(var)
+
+        buf.extend(
+            indent(
+                [
+                    "cargs.append(",
+                    *indent(expand(" +\n".join(statement))),
+                    ")",
+                ],
+                indent_level,
+            )
+        )
+
+
+def _bt_template_str_parse(
+    descriptor: Descriptor,
+    inputs: list[WithSymbol[InputArgument]],
+) -> list[list[str | WithSymbol[InputArgument]]]:
+    """Parse a Boutiques command line template string into segments."""
+    bt_template_str = boutiques_split_command(descriptor.input_command_line_template)
+
+    bt_id_inputs = {input_.data.bt_ref: input_ for input_ in inputs}
+
+    segments: list[list[str | WithSymbol[InputArgument]]] = []
+
+    for arg in bt_template_str:
+        segment: list[str | WithSymbol[InputArgument]] = []
+
+        stack: list[str | WithSymbol[InputArgument]] = [arg]
+
+        # turn template into segments
+        while stack:
+            token = stack.pop()
+            if isinstance(token, str):
+                any_match = False
+                for _, bt_input in bt_id_inputs.items():
+                    value_key = bt_input.data.bt_ref
+                    if value_key == token:
+                        stack.append(bt_input)
+                        any_match = True
+                        break
+                    o = token.split(value_key, 1)
+                    if len(o) == 2:
+                        stack.append(o[0])
+                        stack.append(bt_input)
+                        stack.append(o[1])
+                        any_match = True
+                        break
+                if not any_match:
+                    segment.insert(0, token)
+            elif isinstance(token, WithSymbol):
+                segment.insert(0, token)
+            else:
+                assert False
+        segments.append(segment)
+
+    return segments
 
 
 def generate_command_line_args_building(
@@ -97,13 +220,6 @@ def generate_command_line_args_building(
     inputs: list[WithSymbol[InputArgument]],
 ) -> None:
     """Generate the command line arguments building code."""
-    # Lookup input from boutiques template reference
-    inputs_lookup_bt_ref = {a.data.bt_ref: a for a in inputs}
-
-    cmd = boutiques_split_command(descriptor.input_command_line_template)
-    for segment in cmd:
-        if segment in inputs_lookup_bt_ref:
-            i = inputs_lookup_bt_ref[segment]
-            _input_argument_to_py_arg_builder(func.body, i)
-        else:
-            func.body.append(f"{symbols.cargs}.append({enquote(segment)})")
+    segments = _bt_template_str_parse(descriptor, inputs)
+    for segment in segments:
+        _input_segment_to_py_arg_builder(func.body, segment)

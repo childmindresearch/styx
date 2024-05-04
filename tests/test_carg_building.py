@@ -145,7 +145,7 @@ def test_list_of_strings_arg() -> None:
     """List of strings."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
-        "command-line": "dummy [X]",
+        "command-line": "dummy [X] [Y]",
         "inputs": [
             {
                 "id": "x",
@@ -153,7 +153,16 @@ def test_list_of_strings_arg() -> None:
                 "value-key": "[X]",
                 "type": BT_TYPE_STRING,
                 "list": True,
-            }
+                "list-separator": None,
+            },
+            {
+                "id": "y",
+                "name": "The y",
+                "value-key": "[Y]",
+                "type": BT_TYPE_STRING,
+                "list": True,
+                "list-separator": " ",
+            },
         ],
     })
 
@@ -161,17 +170,17 @@ def test_list_of_strings_arg() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
-    test_module.dummy(runner=dummy_runner, x=["my_string1", "my_string2"])
+    test_module.dummy(runner=dummy_runner, x=["my_string1", "my_string2"], y=["my_string3", "my_string4"])
 
     assert dummy_runner.last_cargs is not None
-    assert dummy_runner.last_cargs == ["dummy", "my_string1 my_string2"]
+    assert dummy_runner.last_cargs == ["dummy", "my_string1", "my_string2", "my_string3 my_string4"]
 
 
 def test_list_of_numbers_arg() -> None:
     """List of numbers."""
     settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
-        "command-line": "dummy [X]",
+        "command-line": "dummy [X] [Y]",
         "inputs": [
             {
                 "id": "x",
@@ -179,7 +188,16 @@ def test_list_of_numbers_arg() -> None:
                 "value-key": "[X]",
                 "type": BT_TYPE_NUMBER,
                 "list": True,
-            }
+                "list-separator": None,
+            },
+            {
+                "id": "y",
+                "name": "The y",
+                "value-key": "[Y]",
+                "type": BT_TYPE_NUMBER,
+                "list": True,
+                "list-separator": " ",
+            },
         ],
     })
 
@@ -187,10 +205,11 @@ def test_list_of_numbers_arg() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
-    test_module.dummy(runner=dummy_runner, x=[1, 2])
+    test_module.dummy(runner=dummy_runner, x=[1, 2], y=[3, 4])
 
     assert dummy_runner.last_cargs is not None
-    assert dummy_runner.last_cargs == ["dummy", "1 2"]
+    print(compiled_module)
+    assert dummy_runner.last_cargs == ["dummy", "1", "2", "3 4"]
 
 
 def test_static_args() -> None:
