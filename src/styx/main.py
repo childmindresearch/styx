@@ -7,6 +7,7 @@ import tomli as tomllib  # Remove once we move to python 3.11
 from styx.compiler.compile.definitions import compile_definitions
 from styx.compiler.core import compile_boutiques_dict
 from styx.compiler.settings import CompilerSettings, DefsMode
+from styx.pycodegen.utils import python_snakify
 
 
 def load_settings_from_toml(
@@ -103,14 +104,24 @@ def main() -> None:
     assert settings.input_path is not None
     json_files = settings.input_path.glob("**/*.json")
 
+    fail_counter = 0
+    total_counter = 0
     for json_path in json_files:
+        total_counter += 1
         output_module_path = json_path.parent.relative_to(settings.input_path).parts
-        output_file_name = f"{json_path.stem}.py"
+        # ensure module path is valid python symbol
+        output_module_path = tuple(python_snakify(part) for part in output_module_path)
+        output_file_name = f"{python_snakify(json_path.stem)}.py"
 
         settings.defs_module_path = "." * (len(output_module_path) + 1) + "styxdefs"
 
         with open(json_path, "r", encoding="utf-8") as json_file:
-            json_data = json.load(json_file)
+            try:
+                json_data = json.load(json_file)
+            except json.JSONDecodeError:
+                print(f"Skipped: {json_path} (invalid JSON)")
+                fail_counter += 1
+                continue
         try:
             code = compile_boutiques_dict(json_data, settings)
 
@@ -127,9 +138,15 @@ def main() -> None:
                 print("---" * 10)
         except Exception:
             print(f"Skipped: {json_path}")
+            fail_counter += 1
             import traceback
 
             print(traceback.format_exc())
+
+    if fail_counter > 0:
+        print(f"Failed to compile {fail_counter}/{total_counter} descriptors.")
+    else:
+        print(f"Successfully compiled {total_counter} descriptors.")
 
 
 if __name__ == "__main__":
