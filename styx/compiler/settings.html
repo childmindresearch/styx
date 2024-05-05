@@ -63,6 +63,9 @@
                         <li>
                                 <a class="variable" href="#CompilerSettings.defs_mode">defs_mode</a>
                         </li>
+                        <li>
+                                <a class="variable" href="#CompilerSettings.debug_mode">debug_mode</a>
+                        </li>
                 </ul>
 
             </li>
@@ -113,6 +116,8 @@
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">defs_module_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">defs_mode</span><span class="p">:</span> <span class="n">DefsMode</span> <span class="o">=</span> <span class="n">DefsMode</span><span class="o">.</span><span class="n">IMPORT</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -209,6 +214,8 @@
 </span><span id="CompilerSettings-23"><a href="#CompilerSettings-23"><span class="linenos">23</span></a>
 </span><span id="CompilerSettings-24"><a href="#CompilerSettings-24"><span class="linenos">24</span></a>    <span class="n">defs_module_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="CompilerSettings-25"><a href="#CompilerSettings-25"><span class="linenos">25</span></a>    <span class="n">defs_mode</span><span class="p">:</span> <span class="n">DefsMode</span> <span class="o">=</span> <span class="n">DefsMode</span><span class="o">.</span><span class="n">IMPORT</span>
+</span><span id="CompilerSettings-26"><a href="#CompilerSettings-26"><span class="linenos">26</span></a>
+</span><span id="CompilerSettings-27"><a href="#CompilerSettings-27"><span class="linenos">27</span></a>    <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -219,7 +226,7 @@
                             <div id="CompilerSettings.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">CompilerSettings</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">input_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">defs_module_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">defs_mode</span><span class="p">:</span> <span class="n"><a href="#DefsMode">DefsMode</a></span> <span class="o">=</span> <span class="o">&lt;</span><span class="n"><a href="#DefsMode.IMPORT">DefsMode.IMPORT</a></span><span class="p">:</span> <span class="mi">1</span><span class="o">&gt;</span></span>)</span>
+        <span class="name">CompilerSettings</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">input_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">defs_module_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">defs_mode</span><span class="p">:</span> <span class="n"><a href="#DefsMode">DefsMode</a></span> <span class="o">=</span> <span class="o">&lt;</span><span class="n"><a href="#DefsMode.IMPORT">DefsMode.IMPORT</a></span><span class="p">:</span> <span class="mi">1</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span>)</span>
 
         
     </div>
@@ -272,6 +279,18 @@
         
     </div>
     <a class="headerlink" href="#CompilerSettings.defs_mode"></a>
+    
+    
+
+                            </div>
+                            <div id="CompilerSettings.debug_mode" class="classattr">
+                                <div class="attr variable">
+            <span class="name">debug_mode</span><span class="annotation">: bool</span>        =
+<span class="default_value">False</span>
+
+        
+    </div>
+    <a class="headerlink" href="#CompilerSettings.debug_mode"></a>
     
     
 

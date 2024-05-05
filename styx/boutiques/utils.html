@@ -36,6 +36,12 @@
             <li>
                     <a class="function" href="#boutiques_split_command">boutiques_split_command</a>
             </li>
+            <li>
+                    <a class="variable" href="#InputType">InputType</a>
+            </li>
+            <li>
+                    <a class="variable" href="#OutputType">OutputType</a>
+            </li>
     </ul>
 
 
@@ -88,6 +94,16 @@
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="n">args</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="k">return</span> <span class="n">args</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="c1"># Helper types</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="n">InputType</span> <span class="o">=</span> <span class="n">styx</span><span class="o">.</span><span class="n">boutiques</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">BoutiquesInput</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="n">OutputType</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="n">styx</span><span class="o">.</span><span class="n">boutiques</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">OutputFiles</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="o">|</span> <span class="n">styx</span><span class="o">.</span><span class="n">boutiques</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">OutputFiles1</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="o">|</span> <span class="n">styx</span><span class="o">.</span><span class="n">boutiques</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">OutputFiles2</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="o">|</span> <span class="n">styx</span><span class="o">.</span><span class="n">boutiques</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">OutputFiles3</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="p">)</span>
 </span></pre></div>
 
 
@@ -176,6 +192,31 @@
 </blockquote>
 </div>
 
+
+                </section>
+                <section id="InputType">
+                    <div class="attr variable">
+            <span class="name">InputType</span>        =
+<span class="default_value">&lt;class &#39;<a href="model.html#BoutiquesInput">styx.boutiques.model.BoutiquesInput</a>&#39;&gt;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#InputType"></a>
+    
+    
+
+                </section>
+                <section id="OutputType">
+                    <div class="attr variable">
+            <span class="name">OutputType</span>        =
+<input id="OutputType-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="OutputType-view-value"></label><span class="default_value"><a href="model.html#OutputFiles">styx.boutiques.model.OutputFiles</a> | <a href="model.html#OutputFiles1">styx.boutiques.model.OutputFiles1</a> | <a href="model.html#OutputFiles2">styx.boutiques.model.OutputFiles2</a> | <a href="model.html#OutputFiles3">styx.boutiques.model.OutputFiles3</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#OutputType"></a>
+    
+    
 
                 </section>
     </main>
