@@ -62,9 +62,16 @@ class PyArg:
     """Python function argument."""
 
     name: str
-    type: str
+    type: str | None
     default: str | None
     docstring: str
+
+    def declaration(self) -> str:
+        """Generate the argument declaration ("var[: type][ = default]")."""
+        annot_type = f": {self.type}" if self.type is not None else ""
+        if self.default is None:
+            return f"{self.name}{annot_type}"
+        return f"{self.name}{annot_type} = {self.default}"
 
 
 @dataclass
@@ -89,10 +96,7 @@ class PyFunc(PyGen):
 
         # Add arguments
         for arg in self.args:
-            if arg.default is None:
-                buf.extend(indent([f"{arg.name}: {arg.type},"]))
-            else:
-                buf.extend(indent([f"{arg.name}: {arg.type} = {arg.default},"]))
+            buf.extend(indent([f"{arg.declaration()},"]))
         buf.append(f") -> {self.return_type}:")
 
         arg_docstr_buf = []
@@ -122,6 +126,36 @@ class PyFunc(PyGen):
 
         # Add function body
         buf.extend(indent(self.body))
+        return buf
+
+
+@dataclass
+class PyDataClass(PyGen):
+    """Python generate."""
+
+    name: str
+    docstring: str
+    fields: list[PyArg] = field(default_factory=list)
+    methods: list[PyFunc] = field(default_factory=list)
+
+    def generate(self) -> LineBuffer:
+        def _arg_docstring(arg: PyArg) -> LineBuffer:
+            return linebreak_paragraph(f'"""{arg.docstring}"""', width=80 - 4, first_line_width=80 - 4)
+
+        args = concat([[f.declaration(), *_arg_docstring(f)] for f in self.fields])
+        methods = concat([method.generate() for method in self.methods])
+
+        buf = [
+            "@dataclasses.dataclass",
+            f"class {self.name}:",
+            *indent([
+                '"""',
+                f"{self.docstring}",
+                '"""',
+                *args,
+                *blank_before(methods),
+            ]),
+        ]
         return buf
 
 

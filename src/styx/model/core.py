@@ -1,7 +1,7 @@
 import pathlib
 from dataclasses import dataclass
 from enum import Enum
-from typing import Generic, Mapping, Sequence, TypeAlias, TypeVar
+from typing import Generic, Mapping, Sequence, TypeAlias, TypeVar, Union
 
 T = TypeVar("T")
 
@@ -16,6 +16,7 @@ class InputTypePrimitive(Enum):
     Integer = 3
     File = 4
     Flag = 5
+    SubCommand = 6
 
 
 @dataclass
@@ -49,7 +50,15 @@ class InputArgument:
     list_separator: str | None = None
     enum_values: list[TYPE_INPUT_VALUE_PRIMITIVE] | None = None
 
+    sub_command: Union["SubCommand", None] = None
+
     bt_ref: str | None = None
+
+
+@dataclass
+class SubCommand:
+    input_command_line_template: str
+    inputs: list[InputArgument]
 
 
 @dataclass

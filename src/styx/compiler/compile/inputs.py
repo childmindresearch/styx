@@ -1,11 +1,11 @@
 from styx.boutiques.utils import boutiques_split_command
 from styx.compiler.compile.common import SharedSymbols
-from styx.model.core import Descriptor, InputArgument, InputTypePrimitive, WithSymbol
+from styx.model.core import InputArgument, InputTypePrimitive, WithSymbol
 from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, expand, indent
 from styx.pycodegen.utils import as_py_literal, enbrace, enquote
 
 
-def _input_argument_to_py_type(arg: InputArgument) -> str:
+def _input_argument_to_py_type(arg: InputArgument, sub_command_types: dict[str, str]) -> str:
     """Return the Python type expression."""
     if arg.type.is_enum:
         assert arg.enum_values is not None
@@ -22,7 +22,7 @@ def _input_argument_to_py_type(arg: InputArgument) -> str:
     elif arg.type.primitive == InputTypePrimitive.Flag:
         base = "bool"
     else:
-        raise NotImplementedError
+        base = sub_command_types[arg.bt_ref]  # type: ignore
 
     if arg.type.primitive != InputTypePrimitive.Flag:
         if arg.type.is_list:
@@ -36,12 +36,13 @@ def _input_argument_to_py_type(arg: InputArgument) -> str:
 
 def build_input_arguments(
     inputs: list[WithSymbol[InputArgument]],
+    sub_command_types: dict[str, str],
 ) -> list[PyArg]:
     """Build Python function arguments from input arguments."""
     return [
         PyArg(
             name=arg.symbol,
-            type=_input_argument_to_py_type(arg.data),
+            type=_input_argument_to_py_type(arg.data, sub_command_types),
             default=as_py_literal(arg.data.default_value) if arg.data.has_default_value else None,
             docstring=arg.data.description,
         )
@@ -67,8 +68,12 @@ def _codegen_var_to_str(arg: WithSymbol[InputArgument]) -> tuple[str, bool]:
 
     def _val() -> tuple[str, bool]:
         if arg.data.type.primitive == InputTypePrimitive.File:
+            if arg.data.type.is_list:
+                return f"[execution.input_file(f) for f in {arg.symbol}]", True
             return f"execution.input_file({arg.symbol})", False
         if arg.data.type.is_list:
+            if arg.data.type.primitive == InputTypePrimitive.SubCommand:
+                return f"[a for c in [s.run(execution) for s in {arg.symbol}] for a in c]", True
             if arg.data.type.primitive != InputTypePrimitive.String:
                 if arg.data.list_separator is None:
                     return f"map(str, {arg.symbol})", True
@@ -77,6 +82,8 @@ def _codegen_var_to_str(arg: WithSymbol[InputArgument]) -> tuple[str, bool]:
                 return arg.symbol, True
             return f'"{arg.data.list_separator}".join({arg.symbol})', False
 
+        if arg.data.type.primitive == InputTypePrimitive.SubCommand:
+            return f"{arg.symbol}.run(execution)", True
         if (
             arg.data.type.primitive == InputTypePrimitive.Number
             or arg.data.type.primitive == InputTypePrimitive.Integer
@@ -169,11 +176,11 @@ def _input_segment_to_py_arg_builder(buf: LineBuffer, segment: list[str | WithSy
 
 
 def _bt_template_str_parse(
-    descriptor: Descriptor,
+    input_command_line_template: str,
     inputs: list[WithSymbol[InputArgument]],
 ) -> list[list[str | WithSymbol[InputArgument]]]:
     """Parse a Boutiques command line template string into segments."""
-    bt_template_str = boutiques_split_command(descriptor.input_command_line_template)
+    bt_template_str = boutiques_split_command(input_command_line_template)
 
     bt_id_inputs = {input_.data.bt_ref: input_ for input_ in inputs}
 
@@ -214,12 +221,12 @@ def _bt_template_str_parse(
 
 
 def generate_command_line_args_building(
-    descriptor: Descriptor,
+    input_command_line_template: str,
     symbols: SharedSymbols,
     func: PyFunc,
     inputs: list[WithSymbol[InputArgument]],
 ) -> None:
     """Generate the command line arguments building code."""
-    segments = _bt_template_str_parse(descriptor, inputs)
+    segments = _bt_template_str_parse(input_command_line_template, inputs)
     for segment in segments:
         _input_segment_to_py_arg_builder(func.body, segment)

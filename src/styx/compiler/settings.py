@@ -22,3 +22,5 @@ class CompilerSettings:
 
     defs_module_path: str | None = None
     defs_mode: DefsMode = DefsMode.IMPORT
+
+    debug_mode: bool = False

@@ -1,7 +1,10 @@
+# type: ignore
+
 import hashlib
 import pathlib
 
 from styx.boutiques import model as bt
+from styx.boutiques import utils as btu
 from styx.model.core import (
     TYPE_INPUT_VALUE,
     TYPE_INPUT_VALUE_PRIMITIVE,
@@ -12,31 +15,41 @@ from styx.model.core import (
     InputType,
     InputTypePrimitive,
     OutputArgument,
+    SubCommand,
 )
 
 
-def _input_type_primitive_from_boutiques(bt_input: bt.Inputs) -> InputTypePrimitive:  # type: ignore
+def _input_type_primitive_from_boutiques(bt_input: btu.InputType) -> InputTypePrimitive:
     """Convert a Boutiques input to a Styx input type primitive."""
-    if bt_input.type == bt.Type4.String:  # type: ignore
+    if isinstance(bt_input.root.type, bt.Type2):
+        return InputTypePrimitive.SubCommand
+    else:
+        bt_type_name = bt_input.root.type
+        if not isinstance(bt_type_name, str):
+            bt_type_name = bt_type_name.value
+
+    if bt_type_name == "String":
         return InputTypePrimitive.String
-    elif bt_input.type == bt.Type4.File:  # type: ignore
+    elif bt_type_name == "File":
         return InputTypePrimitive.File
-    elif bt_input.type == bt.Type4.Flag:  # type: ignore
+    elif bt_type_name == "Flag":
         return InputTypePrimitive.Flag
-    elif bt_input.type == bt.Type4.Number and not bt_input.integer:  # type: ignore
+    elif bt_type_name == "Number" and not bt_input.root.integer:
         return InputTypePrimitive.Number
-    elif bt_input.type == bt.Type4.Number and bt_input.integer:  # type: ignore
+    elif bt_type_name == "Number" and bt_input.root.integer:
         return InputTypePrimitive.Integer
     else:
         raise NotImplementedError
 
 
-def _input_type_from_boutiques(bt_input: bt.Inputs) -> InputType:  # type: ignore
+def _input_type_from_boutiques(bt_input_: btu.InputType) -> InputType:
     """Convert a Boutiques input to a Styx input type."""
+    bt_input = bt_input_.root
+
     bt_is_list = bt_input.list is True
     bt_is_optional = bt_input.optional is True
     bt_is_enum = bt_input.value_choices is not None
-    primitive = _input_type_primitive_from_boutiques(bt_input)
+    primitive = _input_type_primitive_from_boutiques(bt_input_)
     if primitive == InputTypePrimitive.File:
         assert not bt_is_enum
     if primitive == InputTypePrimitive.Flag:
@@ -44,9 +57,11 @@ def _input_type_from_boutiques(bt_input: bt.Inputs) -> InputType:  # type: ignor
     return InputType(primitive, bt_is_list, bt_is_optional, bt_is_enum)
 
 
-def _default_value_from_boutiques(bt_input: bt.Inputs) -> tuple[bool, TYPE_INPUT_VALUE | None]:  # type: ignore
+def _default_value_from_boutiques(bt_input_: btu.InputType) -> tuple[bool, TYPE_INPUT_VALUE | None]:
     """Convert a Boutiques input to a Styx default value."""
-    primitive = _input_type_primitive_from_boutiques(bt_input)
+    bt_input = bt_input_.root
+
+    primitive = _input_type_primitive_from_boutiques(bt_input_)
     default_value = bt_input.default_value
     if default_value is None:
         if primitive == InputTypePrimitive.Flag:
@@ -67,14 +82,18 @@ def _default_value_from_boutiques(bt_input: bt.Inputs) -> tuple[bool, TYPE_INPUT
         assert isinstance(default_value, int)
     elif primitive == InputTypePrimitive.Flag:
         assert isinstance(default_value, bool)
+    elif primitive == InputTypePrimitive.SubCommand:
+        assert isinstance(default_value, str)
     else:
         raise NotImplementedError
 
     return True, default_value
 
 
-def _constraints_from_boutiques(bt_input: bt.Inputs) -> InputArgumentConstraints:  # type: ignore
+def _constraints_from_boutiques(bt_input_: btu.InputType) -> InputArgumentConstraints:
     """Convert a Boutiques input to a Styx input constraints."""
+    bt_input = bt_input_.root
+
     value_min = None
     value_min_exclusive = False
     value_max = None
@@ -82,7 +101,9 @@ def _constraints_from_boutiques(bt_input: bt.Inputs) -> InputArgumentConstraints
     list_length_min = None
     list_length_max = None
 
-    if bt_input.type == bt.Type4.Number:  # type: ignore
+    input_type = _input_type_primitive_from_boutiques(bt_input_)
+
+    if input_type in (InputTypePrimitive.Number, InputTypePrimitive.Integer):
         if bt_input.minimum is not None:
             value_min = int(bt_input.minimum) if bt_input.integer else bt_input.minimum
             value_min_exclusive = bt_input.exclusive_minimum is True
@@ -103,11 +124,13 @@ def _constraints_from_boutiques(bt_input: bt.Inputs) -> InputArgumentConstraints
     )
 
 
-def _input_argument_from_boutiques(bt_input: bt.Inputs) -> InputArgument:  # type: ignore
+def _input_argument_from_boutiques(bt_input_: btu.InputType) -> InputArgument:
     """Convert a Boutiques input to a Styx input argument."""
-    type_ = _input_type_from_boutiques(bt_input)
-    has_default_value, default_value = _default_value_from_boutiques(bt_input)
-    constraints = _constraints_from_boutiques(bt_input)
+    bt_input = bt_input_.root
+
+    type_ = _input_type_from_boutiques(bt_input_)
+    has_default_value, default_value = _default_value_from_boutiques(bt_input_)
+    constraints = _constraints_from_boutiques(bt_input_)
     list_separator = bt_input.list_separator
 
     enum_values: list[TYPE_INPUT_VALUE_PRIMITIVE] | None = None
@@ -120,6 +143,14 @@ def _input_argument_from_boutiques(bt_input: bt.Inputs) -> InputArgument:  # typ
         else:
             enum_values = bt_input.value_choices
 
+    if type_.primitive == InputTypePrimitive.SubCommand:
+        sub_command = SubCommand(
+            input_command_line_template=bt_input.type.command_line,
+            inputs=[_input_argument_from_boutiques(input_) for input_ in bt_input.type.inputs],
+        )
+    else:
+        sub_command = None
+
     return InputArgument(
         name=bt_input.id,
         type=type_,
@@ -130,11 +161,12 @@ def _input_argument_from_boutiques(bt_input: bt.Inputs) -> InputArgument:  # typ
         command_line_flag=bt_input.command_line_flag,
         list_separator=list_separator,
         enum_values=enum_values,
+        sub_command=sub_command,
         bt_ref=bt_input.value_key,
     )
 
 
-def _output_argument_from_boutiques(bt_output: bt.OutputFiles) -> OutputArgument:  # type: ignore
+def _output_argument_from_boutiques(bt_output: btu.OutputType) -> OutputArgument:
     """Convert a Boutiques output to a Styx output argument."""
     return OutputArgument(
         name=bt_output.id,
@@ -145,7 +177,7 @@ def _output_argument_from_boutiques(bt_output: bt.OutputFiles) -> OutputArgument
     )
 
 
-def _group_constraint_from_boutiques(bt_group: bt.Group) -> GroupConstraint:  # type: ignore
+def _group_constraint_from_boutiques(bt_group: bt.Group) -> GroupConstraint:
     """Convert a Boutiques group to a Styx group constraint."""
     return GroupConstraint(
         name=bt_group.id,
@@ -157,7 +189,7 @@ def _group_constraint_from_boutiques(bt_group: bt.Group) -> GroupConstraint:  # 
     )
 
 
-def descriptor_from_boutiques(tool: bt.Tool) -> Descriptor:  # type: ignore
+def descriptor_from_boutiques(tool: bt.Tool) -> Descriptor:
     """Convert a Boutiques tool to a Styx descriptor."""
     inputs = []
     for input_ in tool.inputs:

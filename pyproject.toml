@@ -61,7 +61,8 @@ exclude = [
   "dist",
   "node_modules",
   "venv",
-  "examples"
+  "examples",
+  "src/styx/boutiques/model.py"
 ]
 line-length = 120
 indent-width = 4

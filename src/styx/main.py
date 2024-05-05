@@ -82,6 +82,7 @@ def main() -> None:
         "-o", "--output-folder", type=pathlib.Path, help="Path to the output folder for compiled Python modules"
     )
     parser.add_argument("-c", "--config", type=pathlib.Path, help="Path to the configuration file")
+    parser.add_argument("-d", "--debug", action="store_true", help="Enable debug mode")
     args = parser.parse_args()
 
     settings = collect_settings(
@@ -90,6 +91,7 @@ def main() -> None:
         override_output_folder=args.output_folder,
         override_config_file=args.config,
     )
+    settings.debug_mode = settings.debug_mode or args.debug
 
     if settings.defs_mode == DefsMode.IMPORT:
         defs_path: str | pathlib.Path = "styxdefs.py"
@@ -136,8 +138,10 @@ def main() -> None:
                 print(f"Compiled {json_path} -> {pathlib.Path(*output_module_path) / output_file_name}: {'---' * 10}")
                 print(code)
                 print("---" * 10)
-        except Exception:
+        except Exception as e:
             print(f"Skipped: {json_path}")
+            if settings.debug_mode:
+                raise e
             fail_counter += 1
             import traceback
 

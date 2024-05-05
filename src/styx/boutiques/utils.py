@@ -29,3 +29,13 @@ def boutiques_split_command(command: str) -> list[str]:
     args = shlex.split(command)
 
     return args
+
+
+# Helper types
+InputType = styx.boutiques.model.BoutiquesInput  # type: ignore
+OutputType = (
+    styx.boutiques.model.OutputFiles  # type: ignore
+    | styx.boutiques.model.OutputFiles1  # type: ignore
+    | styx.boutiques.model.OutputFiles2  # type: ignore
+    | styx.boutiques.model.OutputFiles3  # type: ignore
+)

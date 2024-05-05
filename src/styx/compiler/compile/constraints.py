@@ -1,4 +1,4 @@
-from styx.model.core import Descriptor, GroupConstraint, InputArgument, InputTypePrimitive, WithSymbol
+from styx.model.core import GroupConstraint, InputArgument, InputTypePrimitive, WithSymbol
 from styx.pycodegen.core import LineBuffer, PyFunc, expand, indent
 from styx.pycodegen.utils import enquote
 
@@ -168,7 +168,7 @@ def generate_group_constraint_validation(
     group: GroupConstraint,  # type: ignore
     args_lookup: dict[str, WithSymbol[InputArgument]],
 ) -> None:
-    group_args = [args_lookup[x] for x in group.members]
+    group_args = [args_lookup[x] for x in group.members if x]
     if group.members_mutually_exclusive:
         txt_members = [enquote(x) for x in expand(",\\n\n".join(group.members))]
         check_members = expand(" +\n".join([_input_argument_to_py_expr_is_set(x) for x in group_args]))
@@ -221,12 +221,12 @@ def generate_group_constraint_validation(
 
 def generate_constraint_checks(
     func: PyFunc,
-    descriptor: Descriptor,
+    group_constraints: list[GroupConstraint],
     inputs: list[WithSymbol[InputArgument]],
-    inputs_lookup_bt_name: dict[str, WithSymbol[InputArgument]],
 ) -> None:
     for arg in inputs:
         generate_input_constraint_validation(func.body, arg)
 
-    for group_constraint in descriptor.group_constraints:
+    inputs_lookup_bt_name = {x.data.name: x for x in inputs}
+    for group_constraint in group_constraints:
         generate_group_constraint_validation(func.body, group_constraint, inputs_lookup_bt_name)
