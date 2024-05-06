@@ -2,36 +2,41 @@ from styx.compiler.compile.common import SharedSymbols
 from styx.model.boutiques_split_command import boutiques_split_command
 from styx.model.core import InputArgument, InputTypePrimitive, WithSymbol
 from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, expand, indent
-from styx.pycodegen.utils import as_py_literal, enbrace, enquote
+from styx.pycodegen.utils import as_py_literal, enquote
 
 
 def _input_argument_to_py_type(arg: InputArgument, sub_command_types: dict[str, str]) -> str:
     """Return the Python type expression."""
-    if arg.type.is_enum:
-        assert arg.enum_values is not None
-        assert arg.type.primitive != InputTypePrimitive.Flag
-        base = f"typing.Literal[{', '.join(map(as_py_literal, arg.enum_values))}]"
-    elif arg.type.primitive == InputTypePrimitive.String:
-        base = "str"
-    elif arg.type.primitive == InputTypePrimitive.Number:
-        base = "float | int"
-    elif arg.type.primitive == InputTypePrimitive.Integer:
-        base = "int"
-    elif arg.type.primitive == InputTypePrimitive.File:
-        base = "P"
-    elif arg.type.primitive == InputTypePrimitive.Flag:
-        base = "bool"
-    else:
-        base = sub_command_types[arg.bt_ref]  # type: ignore
+
+    def _base() -> str:
+        if arg.type.is_enum:
+            assert arg.enum_values is not None
+            assert arg.type.primitive != InputTypePrimitive.Flag
+            assert arg.type.primitive != InputTypePrimitive.SubCommand
+            return f"typing.Literal[{', '.join(map(as_py_literal, arg.enum_values))}]"
+
+        match arg.type.primitive:
+            case InputTypePrimitive.String:
+                return "str"
+            case InputTypePrimitive.Number:
+                return "float | int"
+            case InputTypePrimitive.Integer:
+                return "int"
+            case InputTypePrimitive.File:
+                return "P"
+            case InputTypePrimitive.Flag:
+                return "bool"
+            case InputTypePrimitive.SubCommand:
+                return sub_command_types[arg.bt_ref]  # type: ignore
+            case _:
+                assert False
 
     if arg.type.primitive != InputTypePrimitive.Flag:
         if arg.type.is_list:
-            base = f"list[{base}]"
-
+            return f"list[{_base()}]"
         if arg.type.is_optional:
-            base = f"{base} | None"
-
-    return base
+            return f"{_base()} | None"
+    return _base()
 
 
 def build_input_arguments(
@@ -67,36 +72,58 @@ def _codegen_var_to_str(arg: WithSymbol[InputArgument]) -> tuple[str, bool]:
         return enquote(arg.data.command_line_flag), False
 
     def _val() -> tuple[str, bool]:
-        if arg.data.type.primitive == InputTypePrimitive.File:
-            if arg.data.type.is_list:
-                return f"[execution.input_file(f) for f in {arg.symbol}]", True
-            return f"execution.input_file({arg.symbol})", False
-        if arg.data.type.is_list:
-            if arg.data.type.primitive == InputTypePrimitive.SubCommand:
-                return f"[a for c in [s.run(execution) for s in {arg.symbol}] for a in c]", True
-            if arg.data.type.primitive != InputTypePrimitive.String:
-                if arg.data.list_separator is None:
-                    return f"map(str, {arg.symbol})", True
-                return f'"{arg.data.list_separator}".join(map(str, {arg.symbol}))', False
-            if arg.data.list_separator is None:
-                return arg.symbol, True
-            return f'"{arg.data.list_separator}".join({arg.symbol})', False
+        if not arg.data.type.is_list:
+            match arg.data.type.primitive:
+                case InputTypePrimitive.String:
+                    return arg.symbol, False
+                case InputTypePrimitive.Number:
+                    return f"str({arg.symbol})", False
+                case InputTypePrimitive.Integer:
+                    return f"str({arg.symbol})", False
+                case InputTypePrimitive.File:
+                    return f"execution.input_file({arg.symbol})", False
+                case InputTypePrimitive.SubCommand:
+                    return f"{arg.symbol}.run(execution)", True
+                case _:
+                    assert False
 
-        if arg.data.type.primitive == InputTypePrimitive.SubCommand:
-            return f"{arg.symbol}.run(execution)", True
-        if (
-            arg.data.type.primitive == InputTypePrimitive.Number
-            or arg.data.type.primitive == InputTypePrimitive.Integer
-        ):
-            return f"str({arg.symbol})", False
-        assert arg.data.type.primitive == InputTypePrimitive.String
-        return arg.symbol, False
+        # arg.data.type.is_list is True
+        if arg.data.list_separator is None:
+            match arg.data.type.primitive:
+                case InputTypePrimitive.String:
+                    return arg.symbol, True
+                case InputTypePrimitive.Number:
+                    return f"map(str, {arg.symbol})", True
+                case InputTypePrimitive.Integer:
+                    return f"map(str, {arg.symbol})", True
+                case InputTypePrimitive.File:
+                    return f"[execution.input_file(f) for f in {arg.symbol}]", True
+                case InputTypePrimitive.SubCommand:
+                    return f"[a for c in [s.run(execution) for s in {arg.symbol}] for a in c]", True
+                case _:
+                    assert False
+
+        # arg.data.list_separator is not None
+        sep_join = f"{enquote(arg.data.list_separator)}.join"
+        match arg.data.type.primitive:
+            case InputTypePrimitive.String:
+                return f"{sep_join}({arg.symbol})", False
+            case InputTypePrimitive.Number:
+                return f"{sep_join}(map(str, {arg.symbol}))", False
+            case InputTypePrimitive.Integer:
+                return f"{sep_join}(map(str, {arg.symbol}))", False
+            case InputTypePrimitive.File:
+                return f"{sep_join}([execution.input_file(f) for f in {arg.symbol}])", False
+            case InputTypePrimitive.SubCommand:
+                return f"{sep_join}([a for c in [s.run(execution) for s in {arg.symbol}] for a in c])", False
+            case _:
+                assert False
 
     if arg.data.command_line_flag is not None:
         val, val_is_list = _val()
         if val_is_list:
-            return enbrace(enquote(arg.data.command_line_flag) + ", *" + val, "["), True
-        return enbrace(enquote(arg.data.command_line_flag) + ", " + val, "["), True
+            return f"[{enquote(arg.data.command_line_flag)}, *{val}]", True
+        return f"[{enquote(arg.data.command_line_flag)}, {val}]", True
     return _val()
 
 
