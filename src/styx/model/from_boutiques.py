@@ -1,4 +1,4 @@
-# type: ignore
+"""Convert a Boutiques tool to a Styx descriptor."""
 
 import hashlib
 import json
