@@ -2,7 +2,6 @@
 
 import pytest
 
-import styx.boutiques.utils
 import styx.compiler.core
 import styx.compiler.settings
 import styx.runners.dummy
