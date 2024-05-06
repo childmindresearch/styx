@@ -1,5 +1,5 @@
-from styx.boutiques.utils import boutiques_split_command
 from styx.compiler.compile.common import SharedSymbols
+from styx.model.boutiques_split_command import boutiques_split_command
 from styx.model.core import InputArgument, InputTypePrimitive, WithSymbol
 from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, expand, indent
 from styx.pycodegen.utils import as_py_literal, enbrace, enquote
