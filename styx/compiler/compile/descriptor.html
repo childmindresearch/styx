@@ -85,7 +85,7 @@
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="c1"># Function</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="n">func</span> <span class="o">=</span> <span class="n">PyFunc</span><span class="p">(</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="n">name</span><span class="o">=</span><span class="n">command</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="n">name</span><span class="o">=</span><span class="n">symbols</span><span class="o">.</span><span class="n">function</span><span class="p">,</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>        <span class="n">return_type</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">symbols</span><span class="o">.</span><span class="n">output_class</span><span class="si">}</span><span class="s2">[R]&quot;</span><span class="p">,</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>        <span class="n">return_descr</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;NamedTuple of outputs &quot;</span> <span class="sa">f</span><span class="s2">&quot;(described in `</span><span class="si">{</span><span class="n">symbols</span><span class="o">.</span><span class="n">output_class</span><span class="si">}</span><span class="s2">`).&quot;</span><span class="p">,</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>        <span class="n">docstring_body</span><span class="o">=</span><span class="n">command</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
@@ -166,7 +166,7 @@
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="c1"># --- Code generation ---</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="n">module</span> <span class="o">=</span> <span class="n">PyModule</span><span class="p">()</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">module</span><span class="o">.</span><span class="n">imports</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;import typing&quot;</span><span class="p">])</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">module</span><span class="o">.</span><span class="n">imports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;import typing&quot;</span><span class="p">)</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="c1"># Definitions</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="n">generate_definitions</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
@@ -180,7 +180,7 @@
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="n">module</span><span class="p">,</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="n">symbols</span><span class="p">,</span>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="n">scopes</span><span class="p">,</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="n">command</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>  <span class="c1"># todo: name was symbols.function</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="n">command</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
 </span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>        <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
 </span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span>
 </span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="p">)</span>
@@ -250,7 +250,7 @@
 </span><span id="compile_descriptor-111"><a href="#compile_descriptor-111"><span class="linenos">111</span></a>
 </span><span id="compile_descriptor-112"><a href="#compile_descriptor-112"><span class="linenos">112</span></a>    <span class="c1"># --- Code generation ---</span>
 </span><span id="compile_descriptor-113"><a href="#compile_descriptor-113"><span class="linenos">113</span></a>    <span class="n">module</span> <span class="o">=</span> <span class="n">PyModule</span><span class="p">()</span>
-</span><span id="compile_descriptor-114"><a href="#compile_descriptor-114"><span class="linenos">114</span></a>    <span class="n">module</span><span class="o">.</span><span class="n">imports</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;import typing&quot;</span><span class="p">])</span>
+</span><span id="compile_descriptor-114"><a href="#compile_descriptor-114"><span class="linenos">114</span></a>    <span class="n">module</span><span class="o">.</span><span class="n">imports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;import typing&quot;</span><span class="p">)</span>
 </span><span id="compile_descriptor-115"><a href="#compile_descriptor-115"><span class="linenos">115</span></a>
 </span><span id="compile_descriptor-116"><a href="#compile_descriptor-116"><span class="linenos">116</span></a>    <span class="c1"># Definitions</span>
 </span><span id="compile_descriptor-117"><a href="#compile_descriptor-117"><span class="linenos">117</span></a>    <span class="n">generate_definitions</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
@@ -264,7 +264,7 @@
 </span><span id="compile_descriptor-125"><a href="#compile_descriptor-125"><span class="linenos">125</span></a>        <span class="n">module</span><span class="p">,</span>
 </span><span id="compile_descriptor-126"><a href="#compile_descriptor-126"><span class="linenos">126</span></a>        <span class="n">symbols</span><span class="p">,</span>
 </span><span id="compile_descriptor-127"><a href="#compile_descriptor-127"><span class="linenos">127</span></a>        <span class="n">scopes</span><span class="p">,</span>
-</span><span id="compile_descriptor-128"><a href="#compile_descriptor-128"><span class="linenos">128</span></a>        <span class="n">command</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>  <span class="c1"># todo: name was symbols.function</span>
+</span><span id="compile_descriptor-128"><a href="#compile_descriptor-128"><span class="linenos">128</span></a>        <span class="n">command</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
 </span><span id="compile_descriptor-129"><a href="#compile_descriptor-129"><span class="linenos">129</span></a>        <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
 </span><span id="compile_descriptor-130"><a href="#compile_descriptor-130"><span class="linenos">130</span></a>        <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span>
 </span><span id="compile_descriptor-131"><a href="#compile_descriptor-131"><span class="linenos">131</span></a>    <span class="p">)</span>
