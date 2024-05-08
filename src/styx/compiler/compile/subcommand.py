@@ -1,4 +1,5 @@
 from styx.compiler.compile.common import SharedSymbols
+from styx.compiler.compile.constraints import generate_constraint_checks
 from styx.compiler.compile.inputs import build_input_arguments, generate_command_line_args_building
 from styx.model.core import InputArgument, InputTypePrimitive, SubCommand, WithSymbol
 from styx.pycodegen.core import PyArg, PyDataClass, PyFunc, PyModule, blank_before
@@ -42,6 +43,9 @@ def _generate_sub_command(
         ],
     )
     inputs_self = [WithSymbol(i.data, f"self.{i.symbol}") for i in inputs]
+
+    generate_constraint_checks(run_method, sub_command.group_constraints, inputs_self)
+
     generate_command_line_args_building(sub_command.input_command_line_template, symbols, run_method, inputs_self)
     run_method.body.extend([
         "return cargs",
