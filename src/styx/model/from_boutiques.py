@@ -26,6 +26,9 @@ def _input_type_primitive_from_boutiques(bt_input: dict) -> InputTypePrimitive:
     if isinstance(bt_input["type"], dict):
         return InputTypePrimitive.SubCommand
 
+    if isinstance(bt_input["type"], list):
+        return InputTypePrimitive.SubCommandUnion
+
     bt_type_name = bt_input["type"]
     if not isinstance(bt_type_name, str):
         bt_type_name = bt_type_name.value
@@ -120,6 +123,38 @@ def _constraints_from_boutiques(bt_input: dict) -> InputArgumentConstraints:
     )
 
 
+def _sub_command_from_boutiques(bt_subcommand: dict) -> SubCommand:
+    """Convert a Boutiques input to a Styx sub-command."""
+    if "id" not in bt_subcommand:
+        raise ValueError(f"id is missing for sub-command: '{bt_subcommand}'")
+    if "command-line" not in bt_subcommand:
+        raise ValueError(f"command-line is missing for sub-command: '{bt_subcommand}'")
+
+    inputs = []
+    for input_ in bt_subcommand["inputs"]:
+        inputs.append(_input_argument_from_boutiques(input_))
+
+    outputs = []
+    if "output-files" in bt_subcommand:
+        for output in bt_subcommand["output-files"]:
+            outputs.append(_output_argument_from_boutiques(output))
+
+    group_constraints = []
+    if "groups" in bt_subcommand:
+        for group in bt_subcommand["groups"]:
+            group_constraints.append(_group_constraint_from_boutiques(group))
+
+    return SubCommand(
+        internal_id=bt_subcommand["id"],
+        name=bt_subcommand["id"],
+        doc=bt_subcommand.get("description", "Description missing"),
+        input_command_line_template=bt_subcommand["command-line"],
+        inputs=inputs,
+        outputs=outputs,
+        group_constraints=group_constraints,
+    )
+
+
 def _input_argument_from_boutiques(bt_input: dict) -> InputArgument:
     """Convert a Boutiques input to a Styx input argument."""
     if "id" not in bt_input:
@@ -146,28 +181,27 @@ def _input_argument_from_boutiques(bt_input: dict) -> InputArgument:
         else:
             enum_values = value_choices
 
+    sub_command = None
+    sub_command_union = None
     if type_.primitive == InputTypePrimitive.SubCommand:
-        if "command-line" not in bt_input["type"]:
-            raise ValueError(f"command-line is missing for input '{bt_input['id']}'")
-        sub_command = SubCommand(
-            input_command_line_template=bt_input["type"]["command-line"],
-            inputs=[_input_argument_from_boutiques(input_) for input_ in bt_input["type"]["inputs"]],
-        )
-    else:
-        sub_command = None
+        sub_command = _sub_command_from_boutiques(bt_input["type"])
+    elif type_.primitive == InputTypePrimitive.SubCommandUnion:
+        sub_command_union = [_sub_command_from_boutiques(subcommand) for subcommand in bt_input["type"]]
 
     return InputArgument(
         name=bt_input["id"],
         type=type_,
-        description=bt_input.get("description", "Description missing"),
+        doc=bt_input.get("description", "Description missing"),
         has_default_value=has_default_value,
         default_value=default_value,
         constraints=constraints,
         command_line_flag=bt_input.get("command-line-flag"),
+        command_line_flag_separator=bt_input.get("command-line-flag-separator"),
         list_separator=list_separator,
         enum_values=enum_values,
         sub_command=sub_command,
-        bt_ref=bt_input["value-key"],
+        sub_command_union=sub_command_union,
+        internal_id=bt_input["value-key"],
     )
 
 
@@ -180,7 +214,7 @@ def _output_argument_from_boutiques(bt_output: dict) -> OutputArgument:
 
     return OutputArgument(
         name=bt_output["id"],
-        description=bt_output.get("description", "Description missing"),
+        doc=bt_output.get("description", "Description missing"),
         optional=bt_output.get("optional") is True,
         stripped_file_extensions=bt_output.get("path-template-stripped-extensions"),
         path_template=bt_output["path-template"],
@@ -252,11 +286,14 @@ def descriptor_from_boutiques(tool: dict) -> Descriptor:
 
     return Descriptor(
         hash=hash_,
-        name=tool["name"],
-        description=tool.get("description", "Description missing"),
-        input_command_line_template=tool["command-line"],
-        inputs=inputs,
-        outputs=outputs,
-        group_constraints=group_constraints,
         metadata=metadata,
+        command=SubCommand(
+            internal_id=tool["name"],
+            name=tool["name"],
+            doc=tool.get("description", "Description missing"),
+            input_command_line_template=tool["command-line"],
+            inputs=inputs,
+            outputs=outputs,
+            group_constraints=group_constraints,
+        ),
     )

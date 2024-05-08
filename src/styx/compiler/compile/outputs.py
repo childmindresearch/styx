@@ -25,7 +25,7 @@ def generate_outputs_definition(
         module.header.extend(
             indent([
                 f"{out.symbol}: R",
-                f'"""{out.data.description}"""',
+                f'"""{out.data.doc}"""',
             ])
         )
 
@@ -61,9 +61,9 @@ def generate_output_building(
             for a in inputs:
                 if strip_extensions:
                     exts = as_py_literal(out.data.stripped_file_extensions, "'")
-                    s = s.replace(f"{a.data.bt_ref}", enbrace(f"{py_rstrip_fun}({a.symbol}, {exts})"))
+                    s = s.replace(f"{a.data.internal_id}", enbrace(f"{py_rstrip_fun}({a.symbol}, {exts})"))
                 else:
-                    s = s.replace(f"{a.data.bt_ref}", enbrace(a.symbol))
+                    s = s.replace(f"{a.data.internal_id}", enbrace(a.symbol))
 
             s_optional = ", optional=True" if out.data.optional else ""
 

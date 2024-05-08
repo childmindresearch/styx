@@ -17,6 +17,7 @@ class InputTypePrimitive(Enum):
     File = 4
     Flag = 5
     SubCommand = 6
+    SubCommandUnion = 7
 
 
 @dataclass
@@ -39,32 +40,28 @@ class InputArgumentConstraints:
 
 @dataclass
 class InputArgument:
+    internal_id: str
+
     name: str
     type: InputType
-    description: str
+    doc: str
     constraints: InputArgumentConstraints
     has_default_value: bool = False
     default_value: TYPE_INPUT_VALUE | None = None
 
     command_line_flag: str | None = None
+    command_line_flag_separator: str | None = None
     list_separator: str | None = None
     enum_values: list[TYPE_INPUT_VALUE_PRIMITIVE] | None = None
 
     sub_command: Union["SubCommand", None] = None
-
-    bt_ref: str | None = None
-
-
-@dataclass
-class SubCommand:
-    input_command_line_template: str
-    inputs: list[InputArgument]
+    sub_command_union: list["SubCommand"] | None = None
 
 
 @dataclass
 class OutputArgument:
     name: str
-    description: str
+    doc: str
     path_template: str
     optional: bool = False
 
@@ -83,15 +80,22 @@ class GroupConstraint:
 
 
 @dataclass
-class Descriptor:
-    hash: str
+class SubCommand:
+    internal_id: str
+
     name: str
-    description: str
+    doc: str
     input_command_line_template: str
     inputs: list[InputArgument]
     outputs: list[OutputArgument]
     group_constraints: list[GroupConstraint]
+
+
+@dataclass
+class Descriptor:
+    hash: str
     metadata: TYPE_METADATA
+    command: SubCommand
 
 
 @dataclass

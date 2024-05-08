@@ -6,7 +6,7 @@ from styx.compiler.compile.metadata import generate_static_metadata
 from styx.compiler.compile.outputs import generate_output_building, generate_outputs_definition
 from styx.compiler.compile.subcommand import generate_sub_command_classes
 from styx.compiler.settings import CompilerSettings, DefsMode
-from styx.model.core import Descriptor, GroupConstraint, InputArgument, OutputArgument, WithSymbol
+from styx.model.core import Descriptor, InputArgument, OutputArgument, SubCommand, WithSymbol
 from styx.pycodegen.core import PyArg, PyFunc, PyModule
 from styx.pycodegen.scope import Scope
 from styx.pycodegen.utils import (
@@ -20,31 +20,28 @@ def _generate_run_function(
     module: PyModule,
     symbols: SharedSymbols,
     scopes: SharedScopes,
-    name: str,
-    doc: str,
-    input_command_line_template: str,
+    command: SubCommand,
     inputs: list[WithSymbol[InputArgument]],
     outputs: list[WithSymbol[OutputArgument]],
-    group_constraints: list[GroupConstraint],
 ) -> None:
     # Sub-command classes
-    sub_command_types = generate_sub_command_classes(module, symbols, inputs)
+    sub_aliases, _ = generate_sub_command_classes(module, symbols, command, scopes.module)
 
     # Function
     func = PyFunc(
-        name=name,
+        name=command.name,
         return_type=f"{symbols.output_class}[R]",
         return_descr=f"NamedTuple of outputs " f"(described in `{symbols.output_class}`).",
-        docstring_body=doc,
+        docstring_body=command.doc,
     )
     module.funcs.append(func)
 
     # Function arguments
     func.args.append(PyArg(name="runner", type="Runner[P, R]", default=None, docstring="Command runner"))
-    func.args.extend(build_input_arguments(inputs, sub_command_types))
+    func.args.extend(build_input_arguments(inputs, sub_aliases))
 
     # Constraint checking
-    generate_constraint_checks(func, group_constraints, inputs)
+    generate_constraint_checks(func, command.group_constraints, inputs)
 
     # Function body
     func.body.extend([
@@ -53,7 +50,7 @@ def _generate_run_function(
     ])
 
     # Command line args building
-    generate_command_line_args_building(input_command_line_template, symbols, func, inputs)
+    generate_command_line_args_building(command.input_command_line_template, symbols, func, inputs)
 
     # Outputs static definition
     generate_outputs_definition(module, symbols, outputs)
@@ -90,9 +87,9 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
     scopes.module.add_or_die("Metadata")
 
     symbols = SharedSymbols(
-        function=scopes.module.add_or_dodge(python_snakify(descriptor.name)),
-        output_class=scopes.module.add_or_dodge(f"{python_pascalize(descriptor.name)}Outputs"),
-        metadata=scopes.module.add_or_dodge(f"{python_screaming_snakify(descriptor.name)}_METADATA"),
+        function=scopes.module.add_or_dodge(python_snakify(descriptor.command.name)),
+        output_class=scopes.module.add_or_dodge(f"{python_pascalize(descriptor.command.name)}Outputs"),
+        metadata=scopes.module.add_or_dodge(f"{python_screaming_snakify(descriptor.command.name)}_METADATA"),
         runner=scopes.function.add_or_die("runner"),
         execution=scopes.function.add_or_die("execution"),
         cargs=scopes.function.add_or_die("cargs"),
@@ -101,14 +98,13 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
 
     # Input symbols
     inputs: list[WithSymbol[InputArgument]] = []
-    for input_ in descriptor.inputs:
+    for input_ in descriptor.command.inputs:
         py_symbol = scopes.function.add_or_dodge(python_snakify(input_.name))
-        input_with_symbol = WithSymbol(input_, py_symbol)
-        inputs.append(input_with_symbol)
+        inputs.append(WithSymbol(input_, py_symbol))
 
     # Output symbols
     outputs: list[WithSymbol[OutputArgument]] = []
-    for output in descriptor.outputs:
+    for output in descriptor.command.outputs:
         py_symbol = scopes.output_tuple.add_or_dodge(python_snakify(output.name))
         outputs.append(WithSymbol(output, py_symbol))
 
@@ -128,12 +124,9 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
         module,
         symbols,
         scopes,
-        name=symbols.function,
-        doc=descriptor.description,
-        input_command_line_template=descriptor.input_command_line_template,
+        command=descriptor.command,  # todo: name was symbols.function
         inputs=inputs,
         outputs=outputs,
-        group_constraints=descriptor.group_constraints,
     )
 
     # --- Return code ---
