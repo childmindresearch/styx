@@ -59,10 +59,12 @@ def build_input_arguments(
     ]
 
 
-def codegen_var_is_set_by_user(arg: WithSymbol[InputArgument]) -> str:
+def codegen_var_is_set_by_user(arg: WithSymbol[InputArgument], enbrace_statement: bool = False) -> str:
     """Return a Python expression that checks if the variable is set by the user."""
     if arg.data.type.primitive == InputTypePrimitive.Flag:
         return arg.symbol
+    if enbrace_statement:
+        return f"({arg.symbol} is not None)"
     return f"{arg.symbol} is not None"
 
 

@@ -165,7 +165,7 @@ def generate_group_constraint_validation(
     group_args = [args_lookup[x] for x in group.members if x]
     if group.members_mutually_exclusive:
         txt_members = [enquote(x) for x in expand(",\\n\n".join(group.members))]
-        check_members = expand(" +\n".join([codegen_var_is_set_by_user(x) for x in group_args]))
+        check_members = expand(" +\n".join([codegen_var_is_set_by_user(x, True) for x in group_args]))
         buf.extend(["if ("])
         buf.extend(indent(check_members))
         buf.extend([
@@ -181,7 +181,7 @@ def generate_group_constraint_validation(
         ])
     if group.members_must_include_all_or_none:
         txt_members = [enquote(x) for x in expand(",\\n\n".join(group.members))]
-        check_members = expand(" ==\n".join([codegen_var_is_set_by_user(x) for x in group_args]))
+        check_members = expand(" ==\n".join([codegen_var_is_set_by_user(x, True) for x in group_args]))
         buf.extend(["if not ("])
         buf.extend(indent(check_members))
         buf.extend([
@@ -197,7 +197,7 @@ def generate_group_constraint_validation(
         ])
     if group.members_must_include_one:
         txt_members = [enquote("- " + x) for x in expand("\\n\n".join(group.members))]
-        check_members = expand(" or\n".join([codegen_var_is_set_by_user(x) for x in group_args]))
+        check_members = expand(" or\n".join([codegen_var_is_set_by_user(x, True) for x in group_args]))
         buf.extend(["if not ("])
         buf.extend(indent(check_members))
         buf.extend([
