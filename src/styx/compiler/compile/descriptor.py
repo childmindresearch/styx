@@ -29,7 +29,7 @@ def _generate_run_function(
 
     # Function
     func = PyFunc(
-        name=command.name,
+        name=symbols.function,
         return_type=f"{symbols.output_class}[R]",
         return_descr=f"NamedTuple of outputs " f"(described in `{symbols.output_class}`).",
         docstring_body=command.doc,
@@ -110,7 +110,7 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
 
     # --- Code generation ---
     module = PyModule()
-    module.imports.extend(["import typing"])
+    module.imports.append("import typing")
 
     # Definitions
     generate_definitions(module, settings)
@@ -124,7 +124,7 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
         module,
         symbols,
         scopes,
-        command=descriptor.command,  # todo: name was symbols.function
+        command=descriptor.command,
         inputs=inputs,
         outputs=outputs,
     )
