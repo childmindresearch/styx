@@ -1,18 +1,19 @@
+import pathlib
 import typing
 
-P = typing.TypeVar("P", contravariant=True)
+InputPathType: typing.TypeAlias = pathlib.Path | str
 """Input host file type."""
-R = typing.TypeVar("R", covariant=True)
+OutputPathType: typing.TypeAlias = pathlib.Path | str
 """Output host file type."""
 
 
-class Execution(typing.Protocol[P, R]):
+class Execution(typing.Protocol):
     """Execution object used to execute commands.
 
     Created by `Runner.start_execution()`.
     """
 
-    def input_file(self, host_file: P) -> str:
+    def input_file(self, host_file: InputPathType) -> str:
         """Resolve host input files.
 
         Returns a local filepath.
@@ -29,7 +30,7 @@ class Execution(typing.Protocol[P, R]):
         """
         ...
 
-    def output_file(self, local_file: str, optional: bool = False) -> R:
+    def output_file(self, local_file: str, optional: bool = False) -> OutputPathType:
         """Resolve local output files.
 
         Returns a host filepath.
@@ -60,7 +61,7 @@ class Metadata(typing.NamedTuple):
     """Container-level arguments for the application. Example: --privileged"""
 
 
-class Runner(typing.Protocol[P, R]):
+class Runner(typing.Protocol):
     """Runner object used to execute commands.
 
     Possible examples would be `LocalRunner`,
@@ -68,7 +69,7 @@ class Runner(typing.Protocol[P, R]):
     Used as a factory for `Execution` objects.
     """
 
-    def start_execution(self, metadata: Metadata) -> Execution[P, R]:
+    def start_execution(self, metadata: Metadata) -> Execution:
         """Start an execution.
 
         Called before any `Execution.input_file()` calls.

@@ -35,7 +35,7 @@ def _generate_sub_command(
         docstring_body="Build command line arguments. This method is called by the main command.",
         args=[
             PyArg(name="self", type=None, default=None, docstring="The sub-command object."),
-            PyArg(name="execution", type="Execution[P, R]", default=None, docstring="The execution object."),
+            PyArg(name="execution", type="Execution", default=None, docstring="The execution object."),
         ],
         return_type="list[str]",
         body=[

@@ -13,7 +13,7 @@ def generate_outputs_definition(
     module.header.extend([
         "",
         "",
-        f"class {symbols.output_class}(typing.NamedTuple, typing.Generic[R]):",
+        f"class {symbols.output_class}(typing.NamedTuple):",
         *indent([
             '"""',
             f"Output object returned when calling `{symbols.function}(...)`.",
@@ -24,7 +24,7 @@ def generate_outputs_definition(
         # Declaration
         module.header.extend(
             indent([
-                f"{out.symbol}: R",
+                f"{out.symbol}: OutputPathType",
                 f'"""{out.data.doc}"""',
             ])
         )

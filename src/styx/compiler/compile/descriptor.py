@@ -30,14 +30,14 @@ def _generate_run_function(
     # Function
     func = PyFunc(
         name=symbols.function,
-        return_type=f"{symbols.output_class}[R]",
+        return_type=symbols.output_class,
         return_descr=f"NamedTuple of outputs " f"(described in `{symbols.output_class}`).",
         docstring_body=command.doc,
     )
     module.funcs.append(func)
 
     # Function arguments
-    func.args.append(PyArg(name="runner", type="Runner[P, R]", default=None, docstring="Command runner"))
+    func.args.append(PyArg(name="runner", type="Runner", default=None, docstring="Command runner"))
     func.args.extend(build_input_arguments(inputs, sub_aliases))
 
     # Constraint checking
@@ -80,8 +80,8 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
 
     # Module level symbols
     scopes.module.add_or_die("styx")
-    scopes.module.add_or_die("P")
-    scopes.module.add_or_die("R")
+    scopes.module.add_or_die("InputFileType")
+    scopes.module.add_or_die("OutputFileType")
     scopes.module.add_or_die("Runner")
     scopes.module.add_or_die("Execution")
     scopes.module.add_or_die("Metadata")

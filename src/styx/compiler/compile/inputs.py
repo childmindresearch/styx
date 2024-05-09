@@ -23,7 +23,7 @@ def _input_argument_to_py_type(arg: InputArgument, sub_command_types: dict[str, 
             case InputTypePrimitive.Integer:
                 return "int"
             case InputTypePrimitive.File:
-                return "P"
+                return "InputPathType"
             case InputTypePrimitive.Flag:
                 return "bool"
             case InputTypePrimitive.SubCommand:
