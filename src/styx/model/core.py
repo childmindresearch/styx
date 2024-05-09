@@ -41,6 +41,7 @@ class InputArgumentConstraints:
 @dataclass
 class InputArgument:
     internal_id: str
+    template_key: str
 
     name: str
     type: InputType

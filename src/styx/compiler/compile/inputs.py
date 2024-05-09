@@ -236,7 +236,7 @@ def _bt_template_str_parse(
     """Parse a Boutiques command line template string into segments."""
     bt_template_str = boutiques_split_command(input_command_line_template)
 
-    bt_id_inputs = {input_.data.internal_id: input_ for input_ in inputs}
+    bt_id_inputs = {input_.data.template_key: input_ for input_ in inputs}
 
     segments: list[list[str | WithSymbol[InputArgument]]] = []
 

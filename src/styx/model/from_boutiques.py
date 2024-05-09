@@ -189,6 +189,8 @@ def _input_argument_from_boutiques(bt_input: dict) -> InputArgument:
         sub_command_union = [_sub_command_from_boutiques(subcommand) for subcommand in bt_input["type"]]
 
     return InputArgument(
+        internal_id=bt_input["value-key"],
+        template_key=bt_input["value-key"],
         name=bt_input["id"],
         type=type_,
         doc=bt_input.get("description", "Description missing"),
@@ -201,7 +203,6 @@ def _input_argument_from_boutiques(bt_input: dict) -> InputArgument:
         enum_values=enum_values,
         sub_command=sub_command,
         sub_command_union=sub_command_union,
-        internal_id=bt_input["value-key"],
     )
 
 
