@@ -17,7 +17,7 @@ def _docker_mount(host_path: str, container_path: str, readonly: bool) -> str:
     return f"type=bind,source={host_path},target={container_path}{',readonly' if readonly else ''}"
 
 
-class DockerExecution(Execution[pl.Path, pl.Path]):
+class DockerExecution(Execution):
     def __init__(self, metadata: Metadata, output_dir: pl.Path) -> None:
         self.metadata = metadata
         self.input_files: list[tuple[pl.Path, str]] = []
@@ -26,10 +26,11 @@ class DockerExecution(Execution[pl.Path, pl.Path]):
         self.output_file_next_id = 0
         self.output_dir = output_dir
 
-    def input_file(self, host_file: pl.Path) -> str:
-        local_file = f"/styx_input/{self.input_file_next_id}/{host_file.name}"
+    def input_file(self, host_file: pl.Path | str) -> str:
+        _host_file = pl.Path(host_file)
+        local_file = f"/styx_input/{self.input_file_next_id}/{_host_file.name}"
         self.input_file_next_id += 1
-        self.input_files.append((host_file, local_file))
+        self.input_files.append((_host_file, local_file))
         return local_file
 
     def output_file(self, local_file: str, optional: bool = False) -> pl.Path:
@@ -83,9 +84,9 @@ class DockerExecution(Execution[pl.Path, pl.Path]):
                 exhaust = partial(pool.submit, partial(deque, maxlen=0))
                 exhaust(stdout_handler(line[:-1]) for line in process.stdout)  # type: ignore
                 exhaust(stderr_handler(line[:-1]) for line in process.stderr)  # type: ignore
-        retcode = process.poll()
-        if retcode:
-            raise CalledProcessError(retcode, process.args)
+        return_code = process.poll()
+        if return_code:
+            raise CalledProcessError(return_code, process.args)
 
 
 def _default_execution_output_dir(metadata: Metadata) -> pl.Path:
@@ -93,7 +94,7 @@ def _default_execution_output_dir(metadata: Metadata) -> pl.Path:
     return pl.Path(f"output_{filesafe_name}")
 
 
-class DockerRunner(Runner[pl.Path, pl.Path]):
+class DockerRunner(Runner):
     def __init__(self, execution_output_dir: Callable[[Metadata], pl.Path] | None = None) -> None:
         """Create a new DockerRunner.
 
@@ -106,6 +107,6 @@ class DockerRunner(Runner[pl.Path, pl.Path]):
             _default_execution_output_dir if execution_output_dir is None else execution_output_dir
         )
 
-    def start_execution(self, metadata: Metadata) -> Execution[pl.Path, pl.Path]:
+    def start_execution(self, metadata: Metadata) -> Execution:
         output_dir = self.execution_output_dir(metadata)
         return DockerExecution(metadata, output_dir)
