@@ -124,6 +124,9 @@
                                 <a class="variable" href="#InputArgument.internal_id">internal_id</a>
                         </li>
                         <li>
+                                <a class="variable" href="#InputArgument.template_key">template_key</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#InputArgument.name">name</a>
                         </li>
                         <li>
@@ -340,67 +343,68 @@
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="nd">@dataclass</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="k">class</span> <span class="nc">InputArgument</span><span class="p">:</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">internal_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">InputType</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">constraints</span><span class="p">:</span> <span class="n">InputArgumentConstraints</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">has_default_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="n">default_value</span><span class="p">:</span> <span class="n">TYPE_INPUT_VALUE</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>    <span class="n">command_line_flag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="n">command_line_flag_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="n">list_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="n">enum_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TYPE_INPUT_VALUE_PRIMITIVE</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">sub_command</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;SubCommand&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="n">sub_command_union</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;SubCommand&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">template_key</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">InputType</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">constraints</span><span class="p">:</span> <span class="n">InputArgumentConstraints</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="n">has_default_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="n">default_value</span><span class="p">:</span> <span class="n">TYPE_INPUT_VALUE</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="n">command_line_flag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="n">command_line_flag_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="n">list_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>    <span class="n">enum_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TYPE_INPUT_VALUE_PRIMITIVE</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="n">sub_command</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;SubCommand&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="n">sub_command_union</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;SubCommand&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="nd">@dataclass</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="k">class</span> <span class="nc">OutputArgument</span><span class="p">:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">path_template</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="n">stripped_file_extensions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="nd">@dataclass</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="k">class</span> <span class="nc">OutputArgument</span><span class="p">:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="n">path_template</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="n">stripped_file_extensions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="nd">@dataclass</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="k">class</span> <span class="nc">GroupConstraint</span><span class="p">:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="n">members</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="n">members_mutually_exclusive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="n">members_must_include_one</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="n">members_must_include_all_or_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="nd">@dataclass</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="k">class</span> <span class="nc">GroupConstraint</span><span class="p">:</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">members</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="n">members_mutually_exclusive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="n">members_must_include_one</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="n">members_must_include_all_or_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="nd">@dataclass</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="k">class</span> <span class="nc">SubCommand</span><span class="p">:</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">internal_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">input_command_line_template</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">InputArgument</span><span class="p">]</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">outputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutputArgument</span><span class="p">]</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">group_constraints</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GroupConstraint</span><span class="p">]</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="nd">@dataclass</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="k">class</span> <span class="nc">SubCommand</span><span class="p">:</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="n">internal_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="n">input_command_line_template</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">InputArgument</span><span class="p">]</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">outputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutputArgument</span><span class="p">]</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="n">group_constraints</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GroupConstraint</span><span class="p">]</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="nd">@dataclass</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="k">class</span> <span class="nc">Descriptor</span><span class="p">:</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="nb">hash</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="n">metadata</span><span class="p">:</span> <span class="n">TYPE_METADATA</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">command</span><span class="p">:</span> <span class="n">SubCommand</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="nd">@dataclass</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="k">class</span> <span class="nc">Descriptor</span><span class="p">:</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="nb">hash</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">metadata</span><span class="p">:</span> <span class="n">TYPE_METADATA</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">command</span><span class="p">:</span> <span class="n">SubCommand</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="nd">@dataclass</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="k">class</span> <span class="nc">WithSymbol</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">T</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="nd">@dataclass</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="k">class</span> <span class="nc">WithSymbol</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">T</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span>
 </span></pre></div>
 
 
@@ -824,21 +828,22 @@ attributes -- see the documentation for details.</p>
             <div class="pdoc-code codehilite"><pre><span></span><span id="InputArgument-42"><a href="#InputArgument-42"><span class="linenos">42</span></a><span class="nd">@dataclass</span>
 </span><span id="InputArgument-43"><a href="#InputArgument-43"><span class="linenos">43</span></a><span class="k">class</span> <span class="nc">InputArgument</span><span class="p">:</span>
 </span><span id="InputArgument-44"><a href="#InputArgument-44"><span class="linenos">44</span></a>    <span class="n">internal_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="InputArgument-45"><a href="#InputArgument-45"><span class="linenos">45</span></a>
-</span><span id="InputArgument-46"><a href="#InputArgument-46"><span class="linenos">46</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="InputArgument-47"><a href="#InputArgument-47"><span class="linenos">47</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">InputType</span>
-</span><span id="InputArgument-48"><a href="#InputArgument-48"><span class="linenos">48</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="InputArgument-49"><a href="#InputArgument-49"><span class="linenos">49</span></a>    <span class="n">constraints</span><span class="p">:</span> <span class="n">InputArgumentConstraints</span>
-</span><span id="InputArgument-50"><a href="#InputArgument-50"><span class="linenos">50</span></a>    <span class="n">has_default_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="InputArgument-51"><a href="#InputArgument-51"><span class="linenos">51</span></a>    <span class="n">default_value</span><span class="p">:</span> <span class="n">TYPE_INPUT_VALUE</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="InputArgument-52"><a href="#InputArgument-52"><span class="linenos">52</span></a>
-</span><span id="InputArgument-53"><a href="#InputArgument-53"><span class="linenos">53</span></a>    <span class="n">command_line_flag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="InputArgument-54"><a href="#InputArgument-54"><span class="linenos">54</span></a>    <span class="n">command_line_flag_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="InputArgument-55"><a href="#InputArgument-55"><span class="linenos">55</span></a>    <span class="n">list_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="InputArgument-56"><a href="#InputArgument-56"><span class="linenos">56</span></a>    <span class="n">enum_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TYPE_INPUT_VALUE_PRIMITIVE</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="InputArgument-57"><a href="#InputArgument-57"><span class="linenos">57</span></a>
-</span><span id="InputArgument-58"><a href="#InputArgument-58"><span class="linenos">58</span></a>    <span class="n">sub_command</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;SubCommand&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="InputArgument-59"><a href="#InputArgument-59"><span class="linenos">59</span></a>    <span class="n">sub_command_union</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;SubCommand&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="InputArgument-45"><a href="#InputArgument-45"><span class="linenos">45</span></a>    <span class="n">template_key</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="InputArgument-46"><a href="#InputArgument-46"><span class="linenos">46</span></a>
+</span><span id="InputArgument-47"><a href="#InputArgument-47"><span class="linenos">47</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="InputArgument-48"><a href="#InputArgument-48"><span class="linenos">48</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">InputType</span>
+</span><span id="InputArgument-49"><a href="#InputArgument-49"><span class="linenos">49</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="InputArgument-50"><a href="#InputArgument-50"><span class="linenos">50</span></a>    <span class="n">constraints</span><span class="p">:</span> <span class="n">InputArgumentConstraints</span>
+</span><span id="InputArgument-51"><a href="#InputArgument-51"><span class="linenos">51</span></a>    <span class="n">has_default_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="InputArgument-52"><a href="#InputArgument-52"><span class="linenos">52</span></a>    <span class="n">default_value</span><span class="p">:</span> <span class="n">TYPE_INPUT_VALUE</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="InputArgument-53"><a href="#InputArgument-53"><span class="linenos">53</span></a>
+</span><span id="InputArgument-54"><a href="#InputArgument-54"><span class="linenos">54</span></a>    <span class="n">command_line_flag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="InputArgument-55"><a href="#InputArgument-55"><span class="linenos">55</span></a>    <span class="n">command_line_flag_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="InputArgument-56"><a href="#InputArgument-56"><span class="linenos">56</span></a>    <span class="n">list_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="InputArgument-57"><a href="#InputArgument-57"><span class="linenos">57</span></a>    <span class="n">enum_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TYPE_INPUT_VALUE_PRIMITIVE</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="InputArgument-58"><a href="#InputArgument-58"><span class="linenos">58</span></a>
+</span><span id="InputArgument-59"><a href="#InputArgument-59"><span class="linenos">59</span></a>    <span class="n">sub_command</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;SubCommand&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="InputArgument-60"><a href="#InputArgument-60"><span class="linenos">60</span></a>    <span class="n">sub_command_union</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;SubCommand&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 
 
@@ -847,7 +852,7 @@ attributes -- see the documentation for details.</p>
                             <div id="InputArgument.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">InputArgument</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">internal_id</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="n"><a href="#InputType">InputType</a></span>,</span><span class="param">	<span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">constraints</span><span class="p">:</span> <span class="n"><a href="#InputArgumentConstraints">InputArgumentConstraints</a></span>,</span><span class="param">	<span class="n">has_default_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">command_line_flag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">command_line_flag_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">list_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">enum_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">sub_command</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#SubCommand">SubCommand</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">sub_command_union</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#SubCommand">SubCommand</a></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">InputArgument</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">internal_id</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">template_key</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="n"><a href="#InputType">InputType</a></span>,</span><span class="param">	<span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">constraints</span><span class="p">:</span> <span class="n"><a href="#InputArgumentConstraints">InputArgumentConstraints</a></span>,</span><span class="param">	<span class="n">has_default_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">command_line_flag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">command_line_flag_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">list_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">enum_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">sub_command</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#SubCommand">SubCommand</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">sub_command_union</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#SubCommand">SubCommand</a></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -863,6 +868,17 @@ attributes -- see the documentation for details.</p>
         
     </div>
     <a class="headerlink" href="#InputArgument.internal_id"></a>
+    
+    
+
+                            </div>
+                            <div id="InputArgument.template_key" class="classattr">
+                                <div class="attr variable">
+            <span class="name">template_key</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#InputArgument.template_key"></a>
     
     
 
@@ -1020,14 +1036,14 @@ attributes -- see the documentation for details.</p>
 
     </div>
     <a class="headerlink" href="#OutputArgument"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="OutputArgument-62"><a href="#OutputArgument-62"><span class="linenos">62</span></a><span class="nd">@dataclass</span>
-</span><span id="OutputArgument-63"><a href="#OutputArgument-63"><span class="linenos">63</span></a><span class="k">class</span> <span class="nc">OutputArgument</span><span class="p">:</span>
-</span><span id="OutputArgument-64"><a href="#OutputArgument-64"><span class="linenos">64</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="OutputArgument-65"><a href="#OutputArgument-65"><span class="linenos">65</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="OutputArgument-66"><a href="#OutputArgument-66"><span class="linenos">66</span></a>    <span class="n">path_template</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="OutputArgument-67"><a href="#OutputArgument-67"><span class="linenos">67</span></a>    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="OutputArgument-68"><a href="#OutputArgument-68"><span class="linenos">68</span></a>
-</span><span id="OutputArgument-69"><a href="#OutputArgument-69"><span class="linenos">69</span></a>    <span class="n">stripped_file_extensions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="OutputArgument-63"><a href="#OutputArgument-63"><span class="linenos">63</span></a><span class="nd">@dataclass</span>
+</span><span id="OutputArgument-64"><a href="#OutputArgument-64"><span class="linenos">64</span></a><span class="k">class</span> <span class="nc">OutputArgument</span><span class="p">:</span>
+</span><span id="OutputArgument-65"><a href="#OutputArgument-65"><span class="linenos">65</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="OutputArgument-66"><a href="#OutputArgument-66"><span class="linenos">66</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="OutputArgument-67"><a href="#OutputArgument-67"><span class="linenos">67</span></a>    <span class="n">path_template</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="OutputArgument-68"><a href="#OutputArgument-68"><span class="linenos">68</span></a>    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="OutputArgument-69"><a href="#OutputArgument-69"><span class="linenos">69</span></a>
+</span><span id="OutputArgument-70"><a href="#OutputArgument-70"><span class="linenos">70</span></a>    <span class="n">stripped_file_extensions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 
 
@@ -1115,15 +1131,15 @@ attributes -- see the documentation for details.</p>
 
     </div>
     <a class="headerlink" href="#GroupConstraint"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GroupConstraint-72"><a href="#GroupConstraint-72"><span class="linenos">72</span></a><span class="nd">@dataclass</span>
-</span><span id="GroupConstraint-73"><a href="#GroupConstraint-73"><span class="linenos">73</span></a><span class="k">class</span> <span class="nc">GroupConstraint</span><span class="p">:</span>
-</span><span id="GroupConstraint-74"><a href="#GroupConstraint-74"><span class="linenos">74</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GroupConstraint-75"><a href="#GroupConstraint-75"><span class="linenos">75</span></a>    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GroupConstraint-76"><a href="#GroupConstraint-76"><span class="linenos">76</span></a>    <span class="n">members</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="GroupConstraint-77"><a href="#GroupConstraint-77"><span class="linenos">77</span></a>
-</span><span id="GroupConstraint-78"><a href="#GroupConstraint-78"><span class="linenos">78</span></a>    <span class="n">members_mutually_exclusive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="GroupConstraint-79"><a href="#GroupConstraint-79"><span class="linenos">79</span></a>    <span class="n">members_must_include_one</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="GroupConstraint-80"><a href="#GroupConstraint-80"><span class="linenos">80</span></a>    <span class="n">members_must_include_all_or_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GroupConstraint-73"><a href="#GroupConstraint-73"><span class="linenos">73</span></a><span class="nd">@dataclass</span>
+</span><span id="GroupConstraint-74"><a href="#GroupConstraint-74"><span class="linenos">74</span></a><span class="k">class</span> <span class="nc">GroupConstraint</span><span class="p">:</span>
+</span><span id="GroupConstraint-75"><a href="#GroupConstraint-75"><span class="linenos">75</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GroupConstraint-76"><a href="#GroupConstraint-76"><span class="linenos">76</span></a>    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GroupConstraint-77"><a href="#GroupConstraint-77"><span class="linenos">77</span></a>    <span class="n">members</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="GroupConstraint-78"><a href="#GroupConstraint-78"><span class="linenos">78</span></a>
+</span><span id="GroupConstraint-79"><a href="#GroupConstraint-79"><span class="linenos">79</span></a>    <span class="n">members_mutually_exclusive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="GroupConstraint-80"><a href="#GroupConstraint-80"><span class="linenos">80</span></a>    <span class="n">members_must_include_one</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="GroupConstraint-81"><a href="#GroupConstraint-81"><span class="linenos">81</span></a>    <span class="n">members_must_include_all_or_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -1223,16 +1239,16 @@ attributes -- see the documentation for details.</p>
 
     </div>
     <a class="headerlink" href="#SubCommand"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SubCommand-83"><a href="#SubCommand-83"><span class="linenos">83</span></a><span class="nd">@dataclass</span>
-</span><span id="SubCommand-84"><a href="#SubCommand-84"><span class="linenos">84</span></a><span class="k">class</span> <span class="nc">SubCommand</span><span class="p">:</span>
-</span><span id="SubCommand-85"><a href="#SubCommand-85"><span class="linenos">85</span></a>    <span class="n">internal_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="SubCommand-86"><a href="#SubCommand-86"><span class="linenos">86</span></a>
-</span><span id="SubCommand-87"><a href="#SubCommand-87"><span class="linenos">87</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="SubCommand-88"><a href="#SubCommand-88"><span class="linenos">88</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="SubCommand-89"><a href="#SubCommand-89"><span class="linenos">89</span></a>    <span class="n">input_command_line_template</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="SubCommand-90"><a href="#SubCommand-90"><span class="linenos">90</span></a>    <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">InputArgument</span><span class="p">]</span>
-</span><span id="SubCommand-91"><a href="#SubCommand-91"><span class="linenos">91</span></a>    <span class="n">outputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutputArgument</span><span class="p">]</span>
-</span><span id="SubCommand-92"><a href="#SubCommand-92"><span class="linenos">92</span></a>    <span class="n">group_constraints</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GroupConstraint</span><span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SubCommand-84"><a href="#SubCommand-84"><span class="linenos">84</span></a><span class="nd">@dataclass</span>
+</span><span id="SubCommand-85"><a href="#SubCommand-85"><span class="linenos">85</span></a><span class="k">class</span> <span class="nc">SubCommand</span><span class="p">:</span>
+</span><span id="SubCommand-86"><a href="#SubCommand-86"><span class="linenos">86</span></a>    <span class="n">internal_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="SubCommand-87"><a href="#SubCommand-87"><span class="linenos">87</span></a>
+</span><span id="SubCommand-88"><a href="#SubCommand-88"><span class="linenos">88</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="SubCommand-89"><a href="#SubCommand-89"><span class="linenos">89</span></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="SubCommand-90"><a href="#SubCommand-90"><span class="linenos">90</span></a>    <span class="n">input_command_line_template</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="SubCommand-91"><a href="#SubCommand-91"><span class="linenos">91</span></a>    <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">InputArgument</span><span class="p">]</span>
+</span><span id="SubCommand-92"><a href="#SubCommand-92"><span class="linenos">92</span></a>    <span class="n">outputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutputArgument</span><span class="p">]</span>
+</span><span id="SubCommand-93"><a href="#SubCommand-93"><span class="linenos">93</span></a>    <span class="n">group_constraints</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GroupConstraint</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -1340,11 +1356,11 @@ attributes -- see the documentation for details.</p>
 
     </div>
     <a class="headerlink" href="#Descriptor"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Descriptor-95"><a href="#Descriptor-95"><span class="linenos">95</span></a><span class="nd">@dataclass</span>
-</span><span id="Descriptor-96"><a href="#Descriptor-96"><span class="linenos">96</span></a><span class="k">class</span> <span class="nc">Descriptor</span><span class="p">:</span>
-</span><span id="Descriptor-97"><a href="#Descriptor-97"><span class="linenos">97</span></a>    <span class="nb">hash</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="Descriptor-98"><a href="#Descriptor-98"><span class="linenos">98</span></a>    <span class="n">metadata</span><span class="p">:</span> <span class="n">TYPE_METADATA</span>
-</span><span id="Descriptor-99"><a href="#Descriptor-99"><span class="linenos">99</span></a>    <span class="n">command</span><span class="p">:</span> <span class="n">SubCommand</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Descriptor-96"><a href="#Descriptor-96"><span class="linenos"> 96</span></a><span class="nd">@dataclass</span>
+</span><span id="Descriptor-97"><a href="#Descriptor-97"><span class="linenos"> 97</span></a><span class="k">class</span> <span class="nc">Descriptor</span><span class="p">:</span>
+</span><span id="Descriptor-98"><a href="#Descriptor-98"><span class="linenos"> 98</span></a>    <span class="nb">hash</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="Descriptor-99"><a href="#Descriptor-99"><span class="linenos"> 99</span></a>    <span class="n">metadata</span><span class="p">:</span> <span class="n">TYPE_METADATA</span>
+</span><span id="Descriptor-100"><a href="#Descriptor-100"><span class="linenos">100</span></a>    <span class="n">command</span><span class="p">:</span> <span class="n">SubCommand</span>
 </span></pre></div>
 
 
@@ -1408,10 +1424,10 @@ attributes -- see the documentation for details.</p>
 
     </div>
     <a class="headerlink" href="#WithSymbol"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="WithSymbol-102"><a href="#WithSymbol-102"><span class="linenos">102</span></a><span class="nd">@dataclass</span>
-</span><span id="WithSymbol-103"><a href="#WithSymbol-103"><span class="linenos">103</span></a><span class="k">class</span> <span class="nc">WithSymbol</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-</span><span id="WithSymbol-104"><a href="#WithSymbol-104"><span class="linenos">104</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">T</span>
-</span><span id="WithSymbol-105"><a href="#WithSymbol-105"><span class="linenos">105</span></a>    <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WithSymbol-103"><a href="#WithSymbol-103"><span class="linenos">103</span></a><span class="nd">@dataclass</span>
+</span><span id="WithSymbol-104"><a href="#WithSymbol-104"><span class="linenos">104</span></a><span class="k">class</span> <span class="nc">WithSymbol</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+</span><span id="WithSymbol-105"><a href="#WithSymbol-105"><span class="linenos">105</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">T</span>
+</span><span id="WithSymbol-106"><a href="#WithSymbol-106"><span class="linenos">106</span></a>    <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span>
 </span></pre></div>
 
 
