@@ -53,7 +53,7 @@ def _generate_run_function(
     generate_command_line_args_building(command.input_command_line_template, symbols, func, inputs)
 
     # Outputs static definition
-    generate_outputs_definition(module, symbols, outputs)
+    generate_outputs_definition(module, symbols, outputs, inputs)
     # Outputs building code
     generate_output_building(func, scopes, symbols, outputs, inputs)
 
