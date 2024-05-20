@@ -236,7 +236,7 @@ def _bt_template_str_parse(
     """Parse a Boutiques command line template string into segments."""
     bt_template_str = boutiques_split_command(input_command_line_template)
 
-    bt_id_inputs = {input_.data.template_key: input_ for input_ in inputs}
+    template_key_inputs = {input_.data.template_key: input_ for input_ in inputs}
 
     segments: list[list[str | WithSymbol[InputArgument]]] = []
 
@@ -250,13 +250,12 @@ def _bt_template_str_parse(
             token = stack.pop()
             if isinstance(token, str):
                 any_match = False
-                for _, bt_input in bt_id_inputs.items():
-                    value_key = bt_input.data.internal_id
-                    if value_key == token:
+                for template_key, bt_input in template_key_inputs.items():
+                    if template_key == token:
                         stack.append(bt_input)
                         any_match = True
                         break
-                    o = token.split(value_key, 1)
+                    o = token.split(template_key, 1)
                     if len(o) == 2:
                         stack.append(o[0])
                         stack.append(bt_input)
