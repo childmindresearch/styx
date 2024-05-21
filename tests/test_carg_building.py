@@ -267,7 +267,7 @@ def test_arg_order() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
-    test_module.dummy(dummy_runner, "aaa", "bbb")
+    test_module.dummy("aaa", "bbb", runner=dummy_runner)
 
     assert dummy_runner.last_cargs is not None
     assert dummy_runner.last_cargs == ["bbb", "aaa"]

@@ -22,6 +22,7 @@ def _generate_sub_command(
     """Generate the static output class definition."""
     class_name = _sub_command_class_name(symbols.function, sub_command)
 
+    module.exports.append(class_name)
     sub_command_class = PyDataClass(
         name=class_name,
         docstring=sub_command.doc,

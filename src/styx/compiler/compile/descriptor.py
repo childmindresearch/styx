@@ -112,8 +112,13 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
 
     # --- Code generation ---
     module = PyModule()
+
     module.imports.append("import typing")
     module.imports.append("import pathlib")
+
+    module.exports.append(symbols.function)
+    module.exports.append(symbols.output_class)
+    module.exports.append(symbols.metadata)
 
     # Definitions
     generate_definitions(module)
@@ -135,4 +140,5 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
     # --- Return code ---
 
     module.imports.sort()
+    module.exports.sort()
     return module.text()
