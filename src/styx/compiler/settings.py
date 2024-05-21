@@ -20,7 +20,4 @@ class CompilerSettings:
     input_path: pathlib.Path | None = None
     output_path: pathlib.Path | None = None
 
-    defs_module_path: str | None = None
-    defs_mode: DefsMode = DefsMode.IMPORT
-
     debug_mode: bool = False

@@ -13,7 +13,6 @@ from tests.utils.dynmodule import (
 
 def test_output_file() -> None:
     """Test an output file."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -33,7 +32,7 @@ def test_output_file() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -47,7 +46,6 @@ def test_output_file() -> None:
 
 def test_output_file_with_template() -> None:
     """Test an output file with a template."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -67,7 +65,7 @@ def test_output_file_with_template() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -81,9 +79,6 @@ def test_output_file_with_template() -> None:
 
 def test_output_file_with_template_and_stripped_extensions() -> None:
     """Test an output file with a template and stripped extensions."""
-    settings = styx.compiler.settings.CompilerSettings(
-        defs_mode=styx.compiler.settings.DefsMode.IMPORT,
-    )
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -104,7 +99,7 @@ def test_output_file_with_template_and_stripped_extensions() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()

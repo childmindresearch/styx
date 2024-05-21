@@ -1,4 +1,4 @@
-from styx.runners.styxdefs import Execution, InputPathType, Metadata, OutputPathType, Runner
+from styxdefs import Execution, InputPathType, Metadata, OutputPathType, Runner
 
 
 class DummyRunner(Runner, Execution):

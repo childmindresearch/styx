@@ -1,11 +1,11 @@
 from styx.compiler.compile.common import SharedScopes, SharedSymbols
 from styx.compiler.compile.constraints import generate_constraint_checks
-from styx.compiler.compile.definitions import compile_definitions, generate_definitions
+from styx.compiler.compile.definitions import generate_definitions
 from styx.compiler.compile.inputs import build_input_arguments, generate_command_line_args_building
 from styx.compiler.compile.metadata import generate_static_metadata
 from styx.compiler.compile.outputs import generate_output_building, generate_outputs_definition
 from styx.compiler.compile.subcommand import generate_sub_command_classes
-from styx.compiler.settings import CompilerSettings, DefsMode
+from styx.compiler.settings import CompilerSettings
 from styx.model.core import Descriptor, InputArgument, OutputArgument, SubCommand, WithSymbol
 from styx.pycodegen.core import PyArg, PyFunc, PyModule
 from styx.pycodegen.scope import Scope
@@ -37,8 +37,13 @@ def _generate_run_function(
     module.funcs.append(func)
 
     # Function arguments
-    func.args.append(PyArg(name="runner", type="Runner", default=None, docstring="Command runner"))
     func.args.extend(build_input_arguments(inputs, sub_aliases))
+    func.args.append(PyArg(name="runner", type="Runner", default="None", docstring="Command runner"))
+
+    # Function body: Runner instantiation
+    func.body.extend([
+        f"{symbols.runner} = {symbols.runner} or get_global_runner()",
+    ])
 
     # Constraint checking
     generate_constraint_checks(func, command.group_constraints, inputs)
@@ -66,9 +71,6 @@ def _generate_run_function(
 
 def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> str:
     """Compile a descriptor to Python code."""
-    if settings.defs_mode == DefsMode.DEFS_ONLY:
-        return compile_definitions()
-
     # --- Scopes and symbols ---
 
     _module_scope = Scope(parent=Scope.python())
@@ -111,9 +113,10 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
     # --- Code generation ---
     module = PyModule()
     module.imports.append("import typing")
+    module.imports.append("import pathlib")
 
     # Definitions
-    generate_definitions(module, settings)
+    generate_definitions(module)
     module.header.extend(["", ""])  # Two blank lines
 
     # Static metadata

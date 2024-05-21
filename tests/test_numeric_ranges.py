@@ -14,7 +14,6 @@ from tests.utils.dynmodule import (
 
 def test_below_range_minimum_inclusive() -> None:
     """Below range minimum."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -29,7 +28,7 @@ def test_below_range_minimum_inclusive() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -39,7 +38,6 @@ def test_below_range_minimum_inclusive() -> None:
 
 def test_above_range_maximum_inclusive() -> None:
     """Above range maximum."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -54,7 +52,7 @@ def test_above_range_maximum_inclusive() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -64,7 +62,6 @@ def test_above_range_maximum_inclusive() -> None:
 
 def test_above_range_maximum_exclusive() -> None:
     """Above range maximum exclusive."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -80,7 +77,7 @@ def test_above_range_maximum_exclusive() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -90,7 +87,6 @@ def test_above_range_maximum_exclusive() -> None:
 
 def test_below_range_minimum_exclusive() -> None:
     """Below range minimum exclusive."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -106,7 +102,7 @@ def test_below_range_minimum_exclusive() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -116,7 +112,6 @@ def test_below_range_minimum_exclusive() -> None:
 
 def test_outside_range() -> None:
     """Outside range."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -132,7 +127,7 @@ def test_outside_range() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()

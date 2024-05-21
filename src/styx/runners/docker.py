@@ -6,7 +6,7 @@ from functools import partial
 from subprocess import PIPE, CalledProcessError, Popen
 from typing import Callable
 
-from styx.runners.styxdefs import Execution, Metadata, Runner
+from styxdefs import Execution, Metadata, Runner
 
 
 def _docker_mount(host_path: str, container_path: str, readonly: bool) -> str:

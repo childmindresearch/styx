@@ -4,9 +4,8 @@ import pathlib
 
 import tomli as tomllib  # Remove once we move to python 3.11
 
-from styx.compiler.compile.definitions import compile_definitions
 from styx.compiler.core import compile_boutiques_dict
-from styx.compiler.settings import CompilerSettings, DefsMode
+from styx.compiler.settings import CompilerSettings
 from styx.pycodegen.utils import python_snakify
 
 
@@ -29,8 +28,6 @@ def load_settings_from_toml(
         return CompilerSettings(
             input_path=override_input_folder or pathlib.Path(settings.get("input_path", ".")),
             output_path=override_output_folder or pathlib.Path(settings.get("output_path", ".")),
-            defs_module_path=settings.get("defs_module_path", None),
-            defs_mode=DefsMode[settings.get("defs_mode", "IMPORT")],
         )
 
 
@@ -93,16 +90,6 @@ def main() -> None:
     )
     settings.debug_mode = settings.debug_mode or args.debug
 
-    if settings.defs_mode == DefsMode.IMPORT:
-        defs_path: str | pathlib.Path = "styxdefs.py"
-        if settings.output_path is not None:
-            # write out the definitions to a separate file
-            defs_path = settings.output_path / defs_path
-            defs = compile_definitions()
-            with open(defs_path, "w") as defs_file:
-                defs_file.write(defs)
-        print(f"Compiled definitions to {defs_path}")
-
     assert settings.input_path is not None
     json_files = settings.input_path.glob("**/*.json")
 
@@ -114,8 +101,6 @@ def main() -> None:
         # ensure module path is valid python symbol
         output_module_path = tuple(python_snakify(part) for part in output_module_path)
         output_file_name = f"{python_snakify(json_path.stem)}.py"
-
-        settings.defs_module_path = "." * (len(output_module_path) + 1) + "styxdefs"
 
         with open(json_path, "r", encoding="utf-8") as json_file:
             try:

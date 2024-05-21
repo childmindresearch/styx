@@ -41,7 +41,6 @@ _XYZ_INPUTS = [
 
 def test_mutually_exclusive() -> None:
     """Mutually exclusive argument group."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X] [Y] [Z]",
         "inputs": _XYZ_INPUTS,
@@ -55,7 +54,7 @@ def test_mutually_exclusive() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -74,7 +73,6 @@ def test_mutually_exclusive() -> None:
 
 def test_all_or_none() -> None:
     """All or none argument group."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X] [Y] [Z]",
         "inputs": _XYZ_INPUTS,
@@ -88,7 +86,7 @@ def test_all_or_none() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -103,7 +101,6 @@ def test_all_or_none() -> None:
 
 def test_one_required() -> None:
     """One required argument group."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X] [Y] [Z]",
         "inputs": _XYZ_INPUTS,
@@ -117,7 +114,7 @@ def test_one_required() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
     print(compiled_module)
 
     test_module = dynamic_module(compiled_module, "test_module")

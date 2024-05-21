@@ -12,7 +12,6 @@ from tests.utils.dynmodule import (
 
 def test_default_string_arg() -> None:
     """Default string argument."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -26,7 +25,7 @@ def test_default_string_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()

@@ -15,7 +15,6 @@ from tests.utils.dynmodule import (
 
 def test_positional_string_arg() -> None:
     """Positional string argument."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -28,7 +27,7 @@ def test_positional_string_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -40,7 +39,6 @@ def test_positional_string_arg() -> None:
 
 def test_positional_number_arg() -> None:
     """Positional number argument."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -53,7 +51,7 @@ def test_positional_number_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -65,7 +63,6 @@ def test_positional_number_arg() -> None:
 
 def test_positional_file_arg() -> None:
     """Positional file argument."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -78,7 +75,7 @@ def test_positional_file_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -90,7 +87,6 @@ def test_positional_file_arg() -> None:
 
 def test_flag_arg() -> None:
     """Flag argument."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -104,7 +100,7 @@ def test_flag_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -116,7 +112,6 @@ def test_flag_arg() -> None:
 
 def test_named_arg() -> None:
     """Named argument."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X]",
         "inputs": [
@@ -130,7 +125,7 @@ def test_named_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -142,7 +137,6 @@ def test_named_arg() -> None:
 
 def test_list_of_strings_arg() -> None:
     """List of strings."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X] [Y]",
         "inputs": [
@@ -165,7 +159,7 @@ def test_list_of_strings_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -177,7 +171,6 @@ def test_list_of_strings_arg() -> None:
 
 def test_list_of_numbers_arg() -> None:
     """List of numbers."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy [X] [Y]",
         "inputs": [
@@ -200,7 +193,7 @@ def test_list_of_numbers_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -213,7 +206,6 @@ def test_list_of_numbers_arg() -> None:
 
 def test_static_args() -> None:
     """Static arguments."""
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "dummy -a 1 -b 2 [X] -c 3 -d 4",
         "inputs": [
@@ -226,7 +218,7 @@ def test_static_args() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
@@ -253,7 +245,6 @@ def test_arg_order() -> None:
     The wrapper should respect the order of the arguments
     in the Boutiques descriptor input array.
     """
-    settings = styx.compiler.settings.CompilerSettings(defs_mode=styx.compiler.settings.DefsMode.IMPORT)
     model = boutiques_dummy({
         "command-line": "[B] [A]",
         "inputs": [
@@ -272,7 +263,7 @@ def test_arg_order() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model, settings)
+    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = styx.runners.dummy.DummyRunner()
