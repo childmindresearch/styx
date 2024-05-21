@@ -259,6 +259,28 @@ def _boutiques_metadata(tool: dict, tool_hash: str) -> dict:
     return metadata
 
 
+def _boutiques_documentation(tool: dict) -> str:
+    """Extract documentation from a Boutiques tool."""
+    if "name" not in tool:
+        raise ValueError(f"name is missing for tool '{tool}'")
+
+    doc = tool["name"]
+
+    if "author" in tool:
+        doc += f" by {tool['author']}"
+
+    description = tool.get("description", "Description missing.")
+    if not description.endswith("."):
+        description += "."
+
+    doc += f".\n\n{description}"
+
+    if "url" in tool:
+        doc += f"\n\nMore information: {tool['url']}"
+
+    return doc
+
+
 def descriptor_from_boutiques(tool: dict) -> Descriptor:
     """Convert a Boutiques tool to a Styx descriptor."""
     if "name" not in tool:
@@ -291,7 +313,7 @@ def descriptor_from_boutiques(tool: dict) -> Descriptor:
         command=SubCommand(
             internal_id=tool["name"],
             name=tool["name"],
-            doc=tool.get("description", "Description missing"),
+            doc=_boutiques_documentation(tool),
             input_command_line_template=tool["command-line"],
             inputs=inputs,
             outputs=outputs,
