@@ -93,6 +93,7 @@ def main() -> None:
     assert settings.input_path is not None
     json_files = settings.input_path.glob("**/*.json")
 
+    module_tree: dict = {}
     fail_counter = 0
     total_counter = 0
     for json_path in json_files:
@@ -100,7 +101,17 @@ def main() -> None:
         output_module_path = json_path.parent.relative_to(settings.input_path).parts
         # ensure module path is valid python symbol
         output_module_path = tuple(python_snakify(part) for part in output_module_path)
-        output_file_name = f"{python_snakify(json_path.stem)}.py"
+        output_module_name = python_snakify(json_path.stem)
+        output_file_name = f"{output_module_name}.py"
+
+        subtree = module_tree
+        for part in output_module_path:
+            if part not in subtree:
+                subtree[part] = {}
+            subtree = subtree[part]
+        if "__items__" not in subtree:
+            subtree["__items__"] = []
+        subtree["__items__"].append(output_module_name)
 
         with open(json_path, "r", encoding="utf-8") as json_file:
             try:
@@ -131,6 +142,24 @@ def main() -> None:
             import traceback
 
             print(traceback.format_exc())
+
+    # Re-export __init__.py files
+    # TODO: make optional
+    if settings.output_path is not None:
+
+        def _walk_tree(tree: dict, path: str) -> None:
+            for key, value in tree.items():
+                if key == "__items__":
+                    buf = list(map(lambda item: f"from .{item} import *", sorted(value)))
+                    assert settings.output_path is not None
+                    out_path = settings.output_path / path / "__init__.py"
+                    with open(out_path, "w") as init_file:
+                        init_file.write("\n".join(buf) + "\n")
+                    print(f"Generated {out_path}")
+                else:
+                    _walk_tree(value, f"{path}/{key}" if path else key)
+
+        _walk_tree(module_tree, "")
 
     if fail_counter > 0:
         print(f"Failed to compile {fail_counter}/{total_counter} descriptors.")
