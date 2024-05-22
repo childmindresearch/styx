@@ -529,13 +529,13 @@ testing = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "importlib-metad
 
 [[package]]
 name = "styxdefs"
-version = "0.1.1"
+version = "0.1.2"
 description = "Styx definitions and minimal runtime"
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "styxdefs-0.1.1-py3-none-any.whl", hash = "sha256:3c2cee4a0f04eecd18258154fc1e1927c61537a10cb9ee3f956ebede8d12e80b"},
-    {file = "styxdefs-0.1.1.tar.gz", hash = "sha256:1327c4ad6efc6c4a5c0e31878086ecd8ccea9188523e09635a73b0c3c606fd5c"},
+    {file = "styxdefs-0.1.2-py3-none-any.whl", hash = "sha256:55582e48bc4d1f6149319d9f627ec0fbb10c0ddfd37c683e83675d7087bcc276"},
+    {file = "styxdefs-0.1.2.tar.gz", hash = "sha256:f75b46367ff7d9f5b24a8e7d16895736730844c806fdf000cdc0f020de6b4028"},
 ]
 
 [[package]]
@@ -586,4 +586,4 @@ docs = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "5e8a5f1f5d6d6122aa5c710ecba49a220702ad5f887a6f594a80d6d6ac51ea47"
+content-hash = "1f90ce2da25f334aaf703913ddf6d43f38d856efb1f6119a62b467cfbb7b5e68"
