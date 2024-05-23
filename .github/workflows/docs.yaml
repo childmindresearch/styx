@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install poetry
-        poetry install -E docs
+        poetry install --with docs
     - name: Build docs
       run: |
         APP_MODULE_NAME=$(ls src -U | head -1)  # Get the first module name in the src directory
