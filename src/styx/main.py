@@ -4,6 +4,7 @@ import pathlib
 
 import tomli as tomllib  # Remove once we move to python 3.11
 
+from styx.compiler.compile.reexport_module import generate_reexport_module
 from styx.compiler.core import compile_boutiques_dict
 from styx.compiler.settings import CompilerSettings
 from styx.pycodegen.utils import python_snakify
@@ -150,11 +151,10 @@ def main() -> None:
         def _walk_tree(tree: dict, path: str) -> None:
             for key, value in tree.items():
                 if key == "__items__":
-                    buf = list(map(lambda item: f"from .{item} import *", sorted(value)))
                     assert settings.output_path is not None
                     out_path = settings.output_path / path / "__init__.py"
                     with open(out_path, "w") as init_file:
-                        init_file.write("\n".join(buf) + "\n")
+                        init_file.write(generate_reexport_module(value))
                     print(f"Generated {out_path}")
                 else:
                     _walk_tree(value, f"{path}/{key}" if path else key)
