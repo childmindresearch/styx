@@ -2,7 +2,7 @@
 
 import styx.compiler.core
 import styx.compiler.settings
-import styx.runners.dummy
+import tests.utils.dummy_runner
 from tests.utils.dynmodule import (
     BT_TYPE_STRING,
     boutiques_dummy,
@@ -28,7 +28,7 @@ def test_default_string_arg() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner)
 
     assert dummy_runner.last_cargs is not None

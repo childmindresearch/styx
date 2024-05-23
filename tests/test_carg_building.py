@@ -2,7 +2,7 @@
 
 import styx.compiler.core
 import styx.compiler.settings
-import styx.runners.dummy
+import tests.utils.dummy_runner
 from tests.utils.dynmodule import (
     BT_TYPE_FILE,
     BT_TYPE_FLAG,
@@ -30,7 +30,7 @@ def test_positional_string_arg() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="my_string")
 
     assert dummy_runner.last_cargs is not None
@@ -54,7 +54,7 @@ def test_positional_number_arg() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="123")
 
     assert dummy_runner.last_cargs is not None
@@ -78,7 +78,7 @@ def test_positional_file_arg() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="/my/file.txt")
 
     assert dummy_runner.last_cargs is not None
@@ -103,7 +103,7 @@ def test_flag_arg() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="my_string")
 
     assert dummy_runner.last_cargs is not None
@@ -128,7 +128,7 @@ def test_named_arg() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="my_string")
 
     assert dummy_runner.last_cargs is not None
@@ -162,7 +162,7 @@ def test_list_of_strings_arg() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner, x=["my_string1", "my_string2"], y=["my_string3", "my_string4"])
 
     assert dummy_runner.last_cargs is not None
@@ -196,7 +196,7 @@ def test_list_of_numbers_arg() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner, x=[1, 2], y=[3, 4])
 
     assert dummy_runner.last_cargs is not None
@@ -221,7 +221,7 @@ def test_static_args() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner, x="my_string")
 
     assert dummy_runner.last_cargs is not None
@@ -266,7 +266,7 @@ def test_arg_order() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     test_module.dummy("aaa", "bbb", runner=dummy_runner)
 
     assert dummy_runner.last_cargs is not None

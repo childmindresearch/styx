@@ -4,7 +4,7 @@ import pytest
 
 import styx.compiler.core
 import styx.compiler.settings
-import styx.runners.dummy
+import tests.utils.dummy_runner
 from tests.utils.dynmodule import (
     BT_TYPE_NUMBER,
     boutiques_dummy,
@@ -57,7 +57,7 @@ def test_mutually_exclusive() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
 
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=1, y=2)
@@ -89,7 +89,7 @@ def test_all_or_none() -> None:
     compiled_module = styx.compiler.core.compile_boutiques_dict(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=1, y=2)
     with pytest.raises(ValueError):
@@ -118,7 +118,7 @@ def test_one_required() -> None:
     print(compiled_module)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = styx.runners.dummy.DummyRunner()
+    dummy_runner = tests.utils.dummy_runner.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner)
 
