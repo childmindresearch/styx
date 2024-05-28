@@ -131,8 +131,9 @@ def _sub_command_from_boutiques(bt_subcommand: dict) -> SubCommand:
         raise ValueError(f"command-line is missing for sub-command: '{bt_subcommand}'")
 
     inputs = []
-    for input_ in bt_subcommand["inputs"]:
-        inputs.append(_input_argument_from_boutiques(input_))
+    if "inputs" in bt_subcommand:
+        for input_ in bt_subcommand["inputs"]:
+            inputs.append(_input_argument_from_boutiques(input_))
 
     outputs = []
     if "output-files" in bt_subcommand:
