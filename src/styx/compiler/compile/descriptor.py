@@ -3,7 +3,7 @@ from styx.compiler.compile.constraints import generate_constraint_checks
 from styx.compiler.compile.definitions import generate_definitions
 from styx.compiler.compile.inputs import build_input_arguments, generate_command_line_args_building
 from styx.compiler.compile.metadata import generate_static_metadata
-from styx.compiler.compile.outputs import generate_output_building, generate_outputs_definition
+from styx.compiler.compile.outputs import generate_output_building, generate_outputs_class
 from styx.compiler.compile.subcommand import generate_sub_command_classes
 from styx.compiler.settings import CompilerSettings
 from styx.model.core import Descriptor, InputArgument, OutputArgument, SubCommand, WithSymbol
@@ -25,7 +25,9 @@ def _generate_run_function(
     outputs: list[WithSymbol[OutputArgument]],
 ) -> None:
     # Sub-command classes
-    sub_aliases, _ = generate_sub_command_classes(module, symbols, command, scopes.module)
+    sub_aliases, sub_sub_command_class_aliases, _ = generate_sub_command_classes(
+        module, symbols, command, scopes.module
+    )
 
     # Function
     func = PyFunc(
@@ -58,9 +60,13 @@ def _generate_run_function(
     generate_command_line_args_building(command.input_command_line_template, symbols, func, inputs)
 
     # Outputs static definition
-    generate_outputs_definition(module, symbols, outputs, inputs)
+    generate_outputs_class(
+        module, symbols.output_class, symbols.function, outputs, inputs, sub_sub_command_class_aliases
+    )
     # Outputs building code
-    generate_output_building(func, scopes, symbols, outputs, inputs)
+    generate_output_building(
+        func, scopes.function, symbols.execution, symbols.output_class, symbols.ret, outputs, inputs
+    )
 
     # Function body: Run and return
     func.body.extend([

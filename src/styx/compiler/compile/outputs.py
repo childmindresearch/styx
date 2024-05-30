@@ -1,7 +1,7 @@
-from styx.compiler.compile.common import SharedScopes, SharedSymbols
 from styx.compiler.compile.inputs import codegen_var_is_set_by_user
 from styx.model.core import InputArgument, InputTypePrimitive, OutputArgument, WithSymbol
 from styx.pycodegen.core import PyFunc, PyModule, indent
+from styx.pycodegen.scope import Scope
 from styx.pycodegen.utils import as_py_literal, enbrace, enquote
 
 
@@ -17,20 +17,22 @@ def _find_output_dependencies(
     return dependencies
 
 
-def generate_outputs_definition(
+def generate_outputs_class(
     module: PyModule,
-    symbols: SharedSymbols,
+    symbol_output_class: str,
+    symbol_parent_function: str,
     outputs: list[WithSymbol[OutputArgument]],
     inputs: list[WithSymbol[InputArgument]],
+    sub_command_output_class_aliases: dict[str, str],
 ) -> None:
     """Generate the static output class definition."""
     module.header.extend([
         "",
         "",
-        f"class {symbols.output_class}(typing.NamedTuple):",
+        f"class {symbol_output_class}(typing.NamedTuple):",
         *indent([
             '"""',
-            f"Output object returned when calling `{symbols.function}(...)`.",
+            f"Output object returned when calling `{symbol_parent_function}(...)`.",
             '"""',
             "root: OutputPathType",
             '"""Output root folder. This is the root folder for all outputs."""',
@@ -51,16 +53,48 @@ def generate_outputs_definition(
             ])
         )
 
+    for input_ in inputs:
+        if input_.data.type.primitive == InputTypePrimitive.SubCommand:
+            assert input_.data.sub_command is not None
+            module.header.extend(
+                indent([
+                    f"{input_.symbol}: {sub_command_output_class_aliases[input_.data.sub_command.internal_id]}",
+                    '"""Subcommand outputs"""',
+                ])
+            )
+
+        if input_.data.type.primitive == InputTypePrimitive.SubCommandUnion:
+            assert input_.data.sub_command_union is not None
+
+            sub_commands = [
+                sub_command_output_class_aliases[sub_command.internal_id]
+                for sub_command in input_.data.sub_command_union
+            ]
+            sub_commands_type = ", ".join(sub_commands)
+            sub_commands_type = f"typing.Union[{sub_commands_type}]"
+
+            if input_.data.type.is_list:
+                sub_commands_type = f"typing.List[{sub_commands_type}]"
+
+            module.header.extend(
+                indent([
+                    f"{input_.symbol}: {sub_commands_type}",
+                    '"""Subcommand outputs"""',
+                ])
+            )
+
 
 def generate_output_building(
     func: PyFunc,
-    scopes: SharedScopes,
-    symbols: SharedSymbols,
+    func_scope: Scope,
+    symbol_execution: str,
+    symbol_output_class: str,
+    symbol_return_var: str,
     outputs: list[WithSymbol[OutputArgument]],
     inputs: list[WithSymbol[InputArgument]],
 ) -> None:
     """Generate the output building code."""
-    py_rstrip_fun = scopes.function.add_or_dodge("_rstrip")
+    py_rstrip_fun = func_scope.add_or_dodge("_rstrip")
     if any([out.data.stripped_file_extensions is not None for out in outputs]):
         func.body.extend([
             f"def {py_rstrip_fun}(s, r):",
@@ -74,10 +108,10 @@ def generate_output_building(
             ]),
         ])
 
-    func.body.append(f"{symbols.ret} = {symbols.output_class}(")
+    func.body.append(f"{symbol_return_var} = {symbol_output_class}(")
 
     # Set root output path
-    func.body.extend(indent([f'root={symbols.execution}.output_file("."),']))
+    func.body.extend(indent([f'root={symbol_execution}.output_file("."),']))
 
     for out in outputs:
         strip_extensions = out.data.stripped_file_extensions is not None
@@ -90,7 +124,7 @@ def generate_output_building(
             if len(input_dependencies) == 0:
                 # No substitutions needed
                 func.body.extend(
-                    indent([f"{out.symbol}={symbols.execution}.output_file(f{enquote(path_template)}{s_optional}),"])
+                    indent([f"{out.symbol}={symbol_execution}.output_file(f{enquote(path_template)}{s_optional}),"])
                 )
             else:
                 for input_ in input_dependencies:
@@ -100,9 +134,9 @@ def generate_output_building(
                         raise Exception(f"Output path template replacements cannot be lists. ({input_.data.name})")
 
                     if input_.data.type.primitive == InputTypePrimitive.File:
-                        # Just use the stem of the file
+                        # Just use the name of the file
                         # This is commonly used when output files 'inherit' the name of an input file
-                        substitute = f"pathlib.Path({substitute}).stem"
+                        substitute = f"pathlib.Path({substitute}).name"
                     elif (input_.data.type.primitive == InputTypePrimitive.Number) or (
                         input_.data.type.primitive == InputTypePrimitive.Integer
                     ):
@@ -120,7 +154,7 @@ def generate_output_building(
 
                     path_template = path_template.replace(input_.data.template_key, enbrace(substitute))
 
-                resolved_output = f"{symbols.execution}.output_file(f{enquote(path_template)}{s_optional})"
+                resolved_output = f"{symbol_execution}.output_file(f{enquote(path_template)}{s_optional})"
 
                 if any([input_.data.type.is_optional for input_ in input_dependencies]):
                     # Codegen: Condition: Is any variable in the segment set by the user?
@@ -130,5 +164,19 @@ def generate_output_building(
                 func.body.extend(indent([f"{out.symbol}={resolved_output},"]))
         else:
             raise NotImplementedError
+
+    for input_ in inputs:
+        if (input_.data.type.primitive == InputTypePrimitive.SubCommand) or (
+            input_.data.type.primitive == InputTypePrimitive.SubCommandUnion
+        ):
+            if input_.data.type.is_list:
+                func.body.extend(
+                    indent([
+                        f"{input_.symbol}="
+                        f"[{input_.symbol}.outputs({symbol_execution}) for {input_.symbol} in {input_.symbol}],"
+                    ])
+                )
+            else:
+                func.body.extend(indent([f"{input_.symbol}={input_.symbol}.outputs({symbol_execution}),"]))
 
     func.body.extend([")"])
