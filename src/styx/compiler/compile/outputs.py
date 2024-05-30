@@ -56,9 +56,14 @@ def generate_outputs_class(
     for input_ in inputs:
         if input_.data.type.primitive == InputTypePrimitive.SubCommand:
             assert input_.data.sub_command is not None
+
+            sub_commands_type = sub_command_output_class_aliases[input_.data.sub_command.internal_id]
+            if input_.data.type.is_list:
+                sub_commands_type = f"typing.List[{sub_commands_type}]"
+
             module.header.extend(
                 indent([
-                    f"{input_.symbol}: {sub_command_output_class_aliases[input_.data.sub_command.internal_id]}",
+                    f"{input_.symbol}: {sub_commands_type}",
                     '"""Subcommand outputs"""',
                 ])
             )

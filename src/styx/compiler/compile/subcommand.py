@@ -8,14 +8,16 @@ from styx.pycodegen.scope import Scope
 from styx.pycodegen.utils import python_pascalize, python_snakify
 
 
-def _sub_command_class_name(sub_command: SubCommand) -> str:
+def _sub_command_class_name(symbol_module: str, sub_command: SubCommand) -> str:
     """Return the name of the sub-command class."""
-    return python_pascalize(f"{sub_command.name}")
+    # Prefix the sub-command name with the module name so its likely unique across modules.
+    return python_pascalize(f"{symbol_module}_{sub_command.name}")
 
 
-def _sub_command_output_class_name(sub_command: SubCommand) -> str:
+def _sub_command_output_class_name(symbol_module: str, sub_command: SubCommand) -> str:
     """Return the name of the sub-command output class."""
-    return python_pascalize(f"{sub_command.name}_Outputs")
+    # Prefix the sub-command name with the module name so its likely unique across modules.
+    return python_pascalize(f"{symbol_module}_{sub_command.name}_Outputs")
 
 
 def _generate_sub_command(
@@ -29,8 +31,8 @@ def _generate_sub_command(
     sub_command_output_class_aliases: dict[str, str],
 ) -> tuple[str, str]:
     """Generate the static output class definition."""
-    class_name = scope_module.add_or_dodge(_sub_command_class_name(sub_command))
-    output_class_name = scope_module.add_or_dodge(_sub_command_output_class_name(sub_command))
+    class_name = scope_module.add_or_dodge(_sub_command_class_name(symbols.function, sub_command))
+    output_class_name = scope_module.add_or_dodge(_sub_command_output_class_name(symbols.function, sub_command))
 
     module.exports.append(class_name)
     sub_command_class = PyDataClass(
