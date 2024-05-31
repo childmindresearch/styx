@@ -31,21 +31,6 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#DefsMode">DefsMode</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="variable" href="#DefsMode.INLINE">INLINE</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#DefsMode.IMPORT">IMPORT</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#DefsMode.DEFS_ONLY">DEFS_ONLY</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
                     <a class="class" href="#CompilerSettings">CompilerSettings</a>
                             <ul class="memberlist">
                         <li>
@@ -90,100 +75,20 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">import</span> <span class="nn">pathlib</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="k">class</span> <span class="nc">DefsMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Runtime definitions mode.&quot;&quot;&quot;</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="nd">@dataclass</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="k">class</span> <span class="nc">CompilerSettings</span><span class="p">:</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compiler settings.&quot;&quot;&quot;</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="n">INLINE</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="n">IMPORT</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="n">DEFS_ONLY</span> <span class="o">=</span> <span class="mi">2</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="nd">@dataclass</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="k">class</span> <span class="nc">CompilerSettings</span><span class="p">:</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compiler settings.&quot;&quot;&quot;</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">input_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="n">input_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
             </section>
-                <section id="DefsMode">
-                            <input id="DefsMode-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">DefsMode</span><wbr>(<span class="base">enum.Enum</span>):
-
-                <label class="view-source-button" for="DefsMode-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#DefsMode"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DefsMode-9"><a href="#DefsMode-9"><span class="linenos"> 9</span></a><span class="k">class</span> <span class="nc">DefsMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="DefsMode-10"><a href="#DefsMode-10"><span class="linenos">10</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Runtime definitions mode.&quot;&quot;&quot;</span>
-</span><span id="DefsMode-11"><a href="#DefsMode-11"><span class="linenos">11</span></a>
-</span><span id="DefsMode-12"><a href="#DefsMode-12"><span class="linenos">12</span></a>    <span class="n">INLINE</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="DefsMode-13"><a href="#DefsMode-13"><span class="linenos">13</span></a>    <span class="n">IMPORT</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="DefsMode-14"><a href="#DefsMode-14"><span class="linenos">14</span></a>    <span class="n">DEFS_ONLY</span> <span class="o">=</span> <span class="mi">2</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Runtime definitions mode.</p>
-</div>
-
-
-                            <div id="DefsMode.INLINE" class="classattr">
-                                <div class="attr variable">
-            <span class="name">INLINE</span>        =
-<span class="default_value">&lt;<a href="#DefsMode.INLINE">DefsMode.INLINE</a>: 0&gt;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#DefsMode.INLINE"></a>
-    
-    
-
-                            </div>
-                            <div id="DefsMode.IMPORT" class="classattr">
-                                <div class="attr variable">
-            <span class="name">IMPORT</span>        =
-<span class="default_value">&lt;<a href="#DefsMode.IMPORT">DefsMode.IMPORT</a>: 1&gt;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#DefsMode.IMPORT"></a>
-    
-    
-
-                            </div>
-                            <div id="DefsMode.DEFS_ONLY" class="classattr">
-                                <div class="attr variable">
-            <span class="name">DEFS_ONLY</span>        =
-<span class="default_value">&lt;<a href="#DefsMode.DEFS_ONLY">DefsMode.DEFS_ONLY</a>: 2&gt;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#DefsMode.DEFS_ONLY"></a>
-    
-    
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>enum.Enum</dt>
-                                <dd id="DefsMode.name" class="variable">name</dd>
-                <dd id="DefsMode.value" class="variable">value</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
                 <section id="CompilerSettings">
                             <input id="CompilerSettings-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
@@ -196,14 +101,14 @@
 
     </div>
     <a class="headerlink" href="#CompilerSettings"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CompilerSettings-17"><a href="#CompilerSettings-17"><span class="linenos">17</span></a><span class="nd">@dataclass</span>
-</span><span id="CompilerSettings-18"><a href="#CompilerSettings-18"><span class="linenos">18</span></a><span class="k">class</span> <span class="nc">CompilerSettings</span><span class="p">:</span>
-</span><span id="CompilerSettings-19"><a href="#CompilerSettings-19"><span class="linenos">19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compiler settings.&quot;&quot;&quot;</span>
-</span><span id="CompilerSettings-20"><a href="#CompilerSettings-20"><span class="linenos">20</span></a>
-</span><span id="CompilerSettings-21"><a href="#CompilerSettings-21"><span class="linenos">21</span></a>    <span class="n">input_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="CompilerSettings-22"><a href="#CompilerSettings-22"><span class="linenos">22</span></a>    <span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="CompilerSettings-23"><a href="#CompilerSettings-23"><span class="linenos">23</span></a>
-</span><span id="CompilerSettings-24"><a href="#CompilerSettings-24"><span class="linenos">24</span></a>    <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CompilerSettings-8"><a href="#CompilerSettings-8"><span class="linenos"> 8</span></a><span class="nd">@dataclass</span>
+</span><span id="CompilerSettings-9"><a href="#CompilerSettings-9"><span class="linenos"> 9</span></a><span class="k">class</span> <span class="nc">CompilerSettings</span><span class="p">:</span>
+</span><span id="CompilerSettings-10"><a href="#CompilerSettings-10"><span class="linenos">10</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compiler settings.&quot;&quot;&quot;</span>
+</span><span id="CompilerSettings-11"><a href="#CompilerSettings-11"><span class="linenos">11</span></a>
+</span><span id="CompilerSettings-12"><a href="#CompilerSettings-12"><span class="linenos">12</span></a>    <span class="n">input_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="CompilerSettings-13"><a href="#CompilerSettings-13"><span class="linenos">13</span></a>    <span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="CompilerSettings-14"><a href="#CompilerSettings-14"><span class="linenos">14</span></a>
+</span><span id="CompilerSettings-15"><a href="#CompilerSettings-15"><span class="linenos">15</span></a>    <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
