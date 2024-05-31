@@ -20,6 +20,23 @@ def _sub_command_output_class_name(symbol_module: str, sub_command: SubCommand) 
     return python_pascalize(f"{symbol_module}_{sub_command.name}_Outputs")
 
 
+def _sub_command_has_outputs(sub_command: SubCommand) -> bool:
+    """Check if the sub-command has outputs."""
+    if len(sub_command.outputs) > 0:
+        return True
+    for input_ in sub_command.inputs:
+        if input_.type.primitive == InputTypePrimitive.SubCommand:
+            assert input_.sub_command is not None
+            if _sub_command_has_outputs(input_.sub_command):
+                return True
+        if input_.type.primitive == InputTypePrimitive.SubCommandUnion:
+            assert input_.sub_command_union is not None
+            for sub_command in input_.sub_command_union:
+                if _sub_command_has_outputs(sub_command):
+                    return True
+    return False
+
+
 def _generate_sub_command(
     module: PyModule,
     scope_module: Scope,
@@ -78,18 +95,22 @@ def _generate_sub_command(
         ],
         body=[],
     )
-    generate_outputs_class(
-        module,
-        output_class_name,
-        class_name + ".run",
-        outputs,
-        inputs_self,
-        sub_command_output_class_aliases,
-    )
-    module.exports.append(output_class_name)
-    generate_output_building(outputs_method, Scope(), symbols.execution, output_class_name, "ret", outputs, inputs_self)
-    outputs_method.body.extend(["return ret"])
-    sub_command_class.methods.append(outputs_method)
+
+    if _sub_command_has_outputs(sub_command):
+        generate_outputs_class(
+            module,
+            output_class_name,
+            class_name + ".run",
+            outputs,
+            inputs_self,
+            sub_command_output_class_aliases,
+        )
+        module.exports.append(output_class_name)
+        generate_output_building(
+            outputs_method, Scope(), symbols.execution, output_class_name, "ret", outputs, inputs_self
+        )
+        outputs_method.body.extend(["return ret"])
+        sub_command_class.methods.append(outputs_method)
 
     module.header.extend(blank_before(sub_command_class.generate(), 2))
     if "import dataclasses" not in module.imports:

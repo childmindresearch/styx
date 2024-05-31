@@ -1,5 +1,5 @@
 from styx.compiler.compile.inputs import codegen_var_is_set_by_user
-from styx.model.core import InputArgument, InputTypePrimitive, OutputArgument, WithSymbol
+from styx.model.core import InputArgument, InputTypePrimitive, OutputArgument, SubCommand, WithSymbol
 from styx.pycodegen.core import PyFunc, PyModule, indent
 from styx.pycodegen.scope import Scope
 from styx.pycodegen.utils import as_py_literal, enbrace, enquote
@@ -15,6 +15,23 @@ def _find_output_dependencies(
         if input_.data.template_key in output.data.path_template:
             dependencies.append(input_)
     return dependencies
+
+
+def _sub_command_has_outputs(sub_command: SubCommand) -> bool:
+    """Check if the sub-command has outputs."""
+    if len(sub_command.outputs) > 0:
+        return True
+    for input_ in sub_command.inputs:
+        if input_.type.primitive == InputTypePrimitive.SubCommand:
+            assert input_.sub_command is not None
+            if _sub_command_has_outputs(input_.sub_command):
+                return True
+        if input_.type.primitive == InputTypePrimitive.SubCommandUnion:
+            assert input_.sub_command_union is not None
+            for sub_command in input_.sub_command_union:
+                if _sub_command_has_outputs(sub_command):
+                    return True
+    return False
 
 
 def generate_outputs_class(
@@ -57,36 +74,39 @@ def generate_outputs_class(
         if input_.data.type.primitive == InputTypePrimitive.SubCommand:
             assert input_.data.sub_command is not None
 
-            sub_commands_type = sub_command_output_class_aliases[input_.data.sub_command.internal_id]
-            if input_.data.type.is_list:
-                sub_commands_type = f"typing.List[{sub_commands_type}]"
+            if _sub_command_has_outputs(input_.data.sub_command):
+                sub_commands_type = sub_command_output_class_aliases[input_.data.sub_command.internal_id]
+                if input_.data.type.is_list:
+                    sub_commands_type = f"typing.List[{sub_commands_type}]"
 
-            module.header.extend(
-                indent([
-                    f"{input_.symbol}: {sub_commands_type}",
-                    '"""Subcommand outputs"""',
-                ])
-            )
+                module.header.extend(
+                    indent([
+                        f"{input_.symbol}: {sub_commands_type}",
+                        '"""Subcommand outputs"""',
+                    ])
+                )
 
-        if input_.data.type.primitive == InputTypePrimitive.SubCommandUnion:
+        elif input_.data.type.primitive == InputTypePrimitive.SubCommandUnion:
             assert input_.data.sub_command_union is not None
 
             sub_commands = [
                 sub_command_output_class_aliases[sub_command.internal_id]
                 for sub_command in input_.data.sub_command_union
+                if _sub_command_has_outputs(sub_command)
             ]
-            sub_commands_type = ", ".join(sub_commands)
-            sub_commands_type = f"typing.Union[{sub_commands_type}]"
+            if len(sub_commands) > 0:
+                sub_commands_type = ", ".join(sub_commands)
+                sub_commands_type = f"typing.Union[{sub_commands_type}]"
 
-            if input_.data.type.is_list:
-                sub_commands_type = f"typing.List[{sub_commands_type}]"
+                if input_.data.type.is_list:
+                    sub_commands_type = f"typing.List[{sub_commands_type}]"
 
-            module.header.extend(
-                indent([
-                    f"{input_.symbol}: {sub_commands_type}",
-                    '"""Subcommand outputs"""',
-                ])
-            )
+                module.header.extend(
+                    indent([
+                        f"{input_.symbol}: {sub_commands_type}",
+                        '"""Subcommand outputs"""',
+                    ])
+                )
 
 
 def generate_output_building(
@@ -174,14 +194,23 @@ def generate_output_building(
         if (input_.data.type.primitive == InputTypePrimitive.SubCommand) or (
             input_.data.type.primitive == InputTypePrimitive.SubCommandUnion
         ):
-            if input_.data.type.is_list:
-                func.body.extend(
-                    indent([
-                        f"{input_.symbol}="
-                        f"[{input_.symbol}.outputs({symbol_execution}) for {input_.symbol} in {input_.symbol}],"
-                    ])
-                )
+            if input_.data.type.primitive == InputTypePrimitive.SubCommand:
+                assert input_.data.sub_command is not None
+                has_outouts = _sub_command_has_outputs(input_.data.sub_command)
             else:
-                func.body.extend(indent([f"{input_.symbol}={input_.symbol}.outputs({symbol_execution}),"]))
+                assert input_.data.sub_command_union is not None
+                has_outouts = any([
+                    _sub_command_has_outputs(sub_command) for sub_command in input_.data.sub_command_union
+                ])
+            if has_outouts:
+                if input_.data.type.is_list:
+                    func.body.extend(
+                        indent([
+                            f"{input_.symbol}="
+                            f"[{input_.symbol}.outputs({symbol_execution}) for {input_.symbol} in {input_.symbol}],"
+                        ])
+                    )
+                else:
+                    func.body.extend(indent([f"{input_.symbol}={input_.symbol}.outputs({symbol_execution}),"]))
 
     func.body.extend([")"])
