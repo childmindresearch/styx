@@ -1,6 +1,5 @@
 from styx.compiler.compile.common import SharedScopes, SharedSymbols
 from styx.compiler.compile.constraints import generate_constraint_checks
-from styx.compiler.compile.definitions import generate_definitions
 from styx.compiler.compile.inputs import build_input_arguments, generate_command_line_args_building
 from styx.compiler.compile.metadata import generate_static_metadata
 from styx.compiler.compile.outputs import generate_output_building, generate_outputs_class
@@ -57,7 +56,7 @@ def _generate_run_function(
     ])
 
     # Command line args building
-    generate_command_line_args_building(command.input_command_line_template, symbols, func, inputs)
+    generate_command_line_args_building(command.input_command_line_template, func, inputs)
 
     # Outputs static definition
     generate_outputs_class(
@@ -121,14 +120,11 @@ def compile_descriptor(descriptor: Descriptor, settings: CompilerSettings) -> st
 
     module.imports.append("import typing")
     module.imports.append("import pathlib")
+    module.imports.append("from styxdefs import *")
 
     module.exports.append(symbols.function)
     module.exports.append(symbols.output_class)
     module.exports.append(symbols.metadata)
-
-    # Definitions
-    generate_definitions(module)
-    module.header.extend(["", ""])  # Two blank lines
 
     # Static metadata
     generate_static_metadata(module, descriptor, symbols)

@@ -1,4 +1,3 @@
-from styx.compiler.compile.common import SharedSymbols
 from styx.model.boutiques_split_command import boutiques_split_command
 from styx.model.core import InputArgument, InputTypePrimitive, WithSymbol
 from styx.pycodegen.core import LineBuffer, PyArg, PyFunc, expand, indent
@@ -275,7 +274,6 @@ def _bt_template_str_parse(
 
 def generate_command_line_args_building(
     input_command_line_template: str,
-    symbols: SharedSymbols,
     func: PyFunc,
     inputs: list[WithSymbol[InputArgument]],
 ) -> None:

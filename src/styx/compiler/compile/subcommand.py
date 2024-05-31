@@ -76,7 +76,7 @@ def _generate_sub_command(
 
     generate_constraint_checks(run_method, sub_command.group_constraints, inputs_self)
 
-    generate_command_line_args_building(sub_command.input_command_line_template, symbols, run_method, inputs_self)
+    generate_command_line_args_building(sub_command.input_command_line_template, run_method, inputs_self)
     run_method.body.extend([
         "return cargs",
     ])

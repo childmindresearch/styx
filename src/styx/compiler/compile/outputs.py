@@ -10,11 +10,7 @@ def _find_output_dependencies(
     inputs: list[WithSymbol[InputArgument]],
 ) -> list[WithSymbol[InputArgument]]:
     """Find the input dependencies for an output."""
-    dependencies = []
-    for input_ in inputs:
-        if input_.data.template_key in output.data.path_template:
-            dependencies.append(input_)
-    return dependencies
+    return [input_ for input_ in inputs if input_.data.template_key in output.data.path_template]
 
 
 def _sub_command_has_outputs(sub_command: SubCommand) -> bool:
