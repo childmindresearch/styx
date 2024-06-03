@@ -114,6 +114,12 @@ def main() -> None:
             subtree["__items__"] = []
         subtree["__items__"].append(output_module_name)
 
+        # check if source is newer than target
+        if settings.output_path:
+            output_path = settings.output_path / pathlib.Path(*output_module_path) / output_file_name
+            if output_path.exists() and json_path.stat().st_mtime < output_path.stat().st_mtime:
+                continue
+
         with open(json_path, "r", encoding="utf-8") as json_file:
             try:
                 json_data = json.load(json_file)
