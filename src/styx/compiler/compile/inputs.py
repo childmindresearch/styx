@@ -73,7 +73,7 @@ def _codegen_var_to_str(arg: WithSymbol[InputArgument]) -> tuple[str, bool]:
     Return a boolean that indicates if the expression is an array.
     """
     if arg.data.type.primitive == InputTypePrimitive.Flag:
-        assert arg.data.command_line_flag is not None, "Flag input must have a command line flag"
+        assert arg.data.command_line_flag is not None, f"Flag input must have a command line flag ({arg.data.name})"
         return enquote(arg.data.command_line_flag), False
 
     def _val() -> tuple[str, bool]:
@@ -213,7 +213,7 @@ def _input_segment_to_py_arg_builder(buf: LineBuffer, segment: list[str | WithSy
                 statement.append(enquote(token))
             else:
                 var, is_list = _codegen_var_to_str(token)
-                assert not is_list, "List variables are not supported in this context"
+                assert not is_list, f"List variables are not supported in this context ({var})"
                 statement.append(var)
 
         buf.extend(

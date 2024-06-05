@@ -73,18 +73,18 @@ def _default_value_from_boutiques(bt_input: dict) -> tuple[bool, TYPE_INPUT_VALU
             return False, None
 
     if primitive == InputTypePrimitive.File:
-        assert isinstance(default_value, str)
+        assert isinstance(default_value, str), f"Expected string default-value, got {type(default_value)}"
         return True, pathlib.Path(default_value)
     elif primitive == InputTypePrimitive.String:
-        assert isinstance(default_value, str)
+        assert isinstance(default_value, str), f"Expected string default-value, got {type(default_value)}"
     elif primitive == InputTypePrimitive.Number:
-        assert isinstance(default_value, (int, float))
+        assert isinstance(default_value, (int, float)), f"Expected number default-value, got {type(default_value)}"
     elif primitive == InputTypePrimitive.Integer:
-        assert isinstance(default_value, int)
+        assert isinstance(default_value, int), f"Expected integer default-value, got {type(default_value)}"
     elif primitive == InputTypePrimitive.Flag:
-        assert isinstance(default_value, bool)
+        assert isinstance(default_value, bool), f"Expected boolean default-value, got {type(default_value)}"
     elif primitive == InputTypePrimitive.SubCommand:
-        assert isinstance(default_value, str)
+        assert isinstance(default_value, str), f"Expected string default-value, got {type(default_value)}"
     else:
         raise NotImplementedError
 
