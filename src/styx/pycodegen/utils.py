@@ -149,3 +149,8 @@ def linebreak_paragraph(text: str, width: int = 80, first_line_width: int = 80) 
         else:
             wrapped_lines.extend(linebreak_line(line, width=width))
     return wrapped_lines
+
+
+def ensure_endswith(text: str, suffix: str) -> str:
+    """Ensure that a string ends with a specific suffix."""
+    return text if text.endswith(suffix) else f"{text}{suffix}"

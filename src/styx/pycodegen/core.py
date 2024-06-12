@@ -3,7 +3,7 @@
 from abc import ABC
 from dataclasses import dataclass, field
 
-from styx.pycodegen.utils import enquote, linebreak_paragraph
+from styx.pycodegen.utils import enquote, ensure_endswith, linebreak_paragraph
 
 LineBuffer = list[str]
 INDENT = "    "
@@ -108,8 +108,9 @@ class PyFunc(PyGen):
         arg_docstr_buf = []
         for arg in self.args:
             arg_docstr = linebreak_paragraph(
-                f"{arg.name}: {arg.docstring}", width=80 - 12 - (len(arg.name) + 2), first_line_width=80 - 8
+                f"{arg.name}: {arg.docstring}", width=80 - (4 * 3) - 1, first_line_width=80 - (4 * 2) - 1
             )
+            arg_docstr = ensure_endswith("\\\n".join(arg_docstr), ".").split("\n")
             arg_docstr_buf.append(arg_docstr[0])
             arg_docstr_buf.extend(indent(arg_docstr[1:]))
 
