@@ -60,6 +60,9 @@
             <li>
                     <a class="function" href="#linebreak_paragraph">linebreak_paragraph</a>
             </li>
+            <li>
+                    <a class="function" href="#ensure_endswith">ensure_endswith</a>
+            </li>
     </ul>
 
 
@@ -232,6 +235,11 @@
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>            <span class="n">wrapped_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">linebreak_line</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">))</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="k">return</span> <span class="n">wrapped_lines</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="k">def</span> <span class="nf">ensure_endswith</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Ensure that a string ends with a specific suffix.&quot;&quot;&quot;</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="k">return</span> <span class="n">text</span> <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
 </span></pre></div>
 
 
@@ -600,6 +608,28 @@
 
 
             <div class="docstring"><p>Insert linebreaks into a paragraph of text. Breaks lines at word boundaries.</p>
+</div>
+
+
+                </section>
+                <section id="ensure_endswith">
+                            <input id="ensure_endswith-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">ensure_endswith</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">text</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="ensure_endswith-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#ensure_endswith"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ensure_endswith-155"><a href="#ensure_endswith-155"><span class="linenos">155</span></a><span class="k">def</span> <span class="nf">ensure_endswith</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="ensure_endswith-156"><a href="#ensure_endswith-156"><span class="linenos">156</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Ensure that a string ends with a specific suffix.&quot;&quot;&quot;</span>
+</span><span id="ensure_endswith-157"><a href="#ensure_endswith-157"><span class="linenos">157</span></a>    <span class="k">return</span> <span class="n">text</span> <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Ensure that a string ends with a specific suffix.</p>
 </div>
 
 
