@@ -146,6 +146,9 @@ class PyDataClass(PyGen):
     methods: list[PyFunc] = field(default_factory=list)
 
     def generate(self) -> LineBuffer:
+        # Sort fields so default arguments come last
+        self.fields.sort(key=lambda a: a.default is not None)
+
         def _arg_docstring(arg: PyArg) -> LineBuffer:
             return linebreak_paragraph(f'"""{arg.docstring}"""', width=80 - 4, first_line_width=80 - 4)
 
