@@ -102,12 +102,12 @@ def _generate_sub_command(
             output_class_name,
             class_name + ".run",
             outputs,
-            inputs_self,
+            inputs,
             sub_command_output_class_aliases,
         )
         module.exports.append(output_class_name)
         generate_output_building(
-            outputs_method, Scope(), symbols.execution, output_class_name, "ret", outputs, inputs_self
+            outputs_method, Scope(), symbols.execution, output_class_name, "ret", outputs, inputs, True
         )
         outputs_method.body.extend(["return ret"])
         sub_command_class.methods.append(outputs_method)

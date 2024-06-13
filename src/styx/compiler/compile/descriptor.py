@@ -64,7 +64,7 @@ def _generate_run_function(
     )
     # Outputs building code
     generate_output_building(
-        func, scopes.function, symbols.execution, symbols.output_class, symbols.ret, outputs, inputs
+        func, scopes.function, symbols.execution, symbols.output_class, symbols.ret, outputs, inputs, False
     )
 
     # Function body: Run and return

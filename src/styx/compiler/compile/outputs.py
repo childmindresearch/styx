@@ -113,6 +113,7 @@ def generate_output_building(
     symbol_return_var: str,
     outputs: list[WithSymbol[OutputArgument]],
     inputs: list[WithSymbol[InputArgument]],
+    access_via_self: bool = False,
 ) -> None:
     """Generate the output building code."""
     py_rstrip_fun = func_scope.add_or_dodge("_rstrip")
@@ -150,6 +151,9 @@ def generate_output_building(
             else:
                 for input_ in input_dependencies:
                     substitute = input_.symbol
+
+                    if access_via_self:
+                        substitute = f"self.{substitute}"
 
                     if input_.data.type.is_list:
                         raise Exception(f"Output path template replacements cannot be lists. ({input_.data.name})")
@@ -199,14 +203,15 @@ def generate_output_building(
                     _sub_command_has_outputs(sub_command) for sub_command in input_.data.sub_command_union
                 ])
             if has_outouts:
+                resolved_input = input_.symbol
+                if access_via_self:
+                    resolved_input = f"self.{resolved_input}"
+
                 if input_.data.type.is_list:
                     func.body.extend(
-                        indent([
-                            f"{input_.symbol}="
-                            f"[{input_.symbol}.outputs({symbol_execution}) for {input_.symbol} in {input_.symbol}],"
-                        ])
+                        indent([f"{input_.symbol}=" f"[i.outputs({symbol_execution}) for i in {resolved_input}],"])
                     )
                 else:
-                    func.body.extend(indent([f"{input_.symbol}={input_.symbol}.outputs({symbol_execution}),"]))
+                    func.body.extend(indent([f"{input_.symbol}={resolved_input}.outputs({symbol_execution}),"]))
 
     func.body.extend([")"])
