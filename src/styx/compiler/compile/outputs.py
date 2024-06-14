@@ -208,10 +208,16 @@ def generate_output_building(
                     resolved_input = f"self.{resolved_input}"
 
                 if input_.data.type.is_list:
+                    opt = ""
+                    if input_.data.type.is_optional:
+                        opt = f" if {resolved_input} else None"
                     func.body.extend(
-                        indent([f"{input_.symbol}=" f"[i.outputs({symbol_execution}) for i in {resolved_input}],"])
+                        indent([f"{input_.symbol}=" f"[i.outputs({symbol_execution}) for i in {resolved_input}]{opt},"])
                     )
                 else:
-                    func.body.extend(indent([f"{input_.symbol}={resolved_input}.outputs({symbol_execution}),"]))
+                    o = f"{resolved_input}.outputs({symbol_execution})"
+                    if input_.data.type.is_optional:
+                        o = f"{o} if {resolved_input} else None"
+                    func.body.extend(indent([f"{input_.symbol}={o},"]))
 
     func.body.extend([")"])
