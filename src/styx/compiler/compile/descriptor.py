@@ -39,7 +39,7 @@ def _generate_run_function(
 
     # Function arguments
     func.args.extend(build_input_arguments(inputs, sub_aliases))
-    func.args.append(PyArg(name="runner", type="Runner", default="None", docstring="Command runner"))
+    func.args.append(PyArg(name="runner", type="Runner | None", default="None", docstring="Command runner"))
 
     # Function body: Runner instantiation
     func.body.extend([

@@ -34,12 +34,13 @@ def _input_argument_to_py_type(arg: InputArgument, sub_command_types: dict[str, 
             case _:
                 assert False
 
+    type_ = _base()
     if arg.type.primitive != InputTypePrimitive.Flag:
         if arg.type.is_list:
-            return f"list[{_base()}]"
+            type_ = f"list[{type_}]"
         if arg.type.is_optional:
-            return f"{_base()} | None"
-    return _base()
+            type_ = f"{type_} | None"
+    return type_
 
 
 def build_input_arguments(
