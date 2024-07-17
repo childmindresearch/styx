@@ -166,6 +166,8 @@ def _input_argument_from_boutiques(bt_input: dict) -> InputArgument:
     # Note: Boutiques 0.5 does not require value-key and I don't know why.
     if "value-key" not in bt_input:
         raise ValueError(f"value-key is missing for input '{bt_input['id']}'")
+    if len(bt_input["value-key"]) == 0:
+        raise ValueError(f"value-key is empty for input '{bt_input['id']}'")
 
     type_ = _input_type_from_boutiques(bt_input)
     has_default_value, default_value = _default_value_from_boutiques(bt_input)

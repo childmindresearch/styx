@@ -22,8 +22,8 @@ def ensure_python_symbol(name: str, alt_prefix: str = "v_") -> str:
     """
     # Remove invalid characters
     name = re.sub(r"[^a-zA-Z0-9_]", "_", name)
-    # Prefix if name starts with a digit
-    if re.match(r"^\d", name):
+    # Prefix if name starts with a digit or underscore
+    if re.match(r"^[0-9_]", name):
         name = f"{alt_prefix}{name}"
     return name
 
