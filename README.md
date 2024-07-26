@@ -1,8 +1,4 @@
-# Styx
-
-<p align="center">
-  <img src="docs/logo.png" width="500em">
-</p>
+# Styx <img src="docs/logo.svg" align="right" width="25%"/>
 
 [![Build](https://github.com/childmindresearch/styx/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/childmindresearch/styx/actions/workflows/test.yaml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/childmindresearch/styx/branch/main/graph/badge.svg?token=22HWWFWPW5)](https://codecov.io/gh/childmindresearch/styx)
@@ -11,4 +7,37 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/childmindresearch/styx/blob/main/LICENSE)
 [![pages](https://img.shields.io/badge/api-docs-blue)](https://childmindresearch.github.io/styx)
 
-Compile Python command line tool wrappers from Boutiques descriptors.
+Command line tool wrapper compiler.
+
+Compile Python command line tool wrappers from JSON metadata.
+Supports a superset of the [Boutiques](https://boutiques.github.io/) descriptor format, and generates idiomatic Python
+(3.10+) wrappers with type hints, argument parsing, and documentation. No dependencies are required to run the generated
+wrappers (except static type definitions). Runtimes are decoupled via conde-injection.
+
+## The Styx-verse
+
+### Precompiled wrappers
+
+- [Neuroimaging](https://github.com/childmindresearch/niwrap)
+
+### Runtimes
+
+- [Docker](https://github.com/childmindresearch/styxdocker)
+- [Singularity](https://github.com/childmindresearch/styxsingularity)
+
+### Middleware
+
+- [Graph generation](https://github.com/childmindresearch/styxgraph)
+
+
+## Installation
+
+Styx is not needed to run the generated wrappers, but is required to compile them.
+
+```bash
+pip install git+https://github.com/childmindresearch/styx.git
+```
+
+## License
+
+Styx is MIT licensed. The license of the generated wrappers depends on the input metadata.
