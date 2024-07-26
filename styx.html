@@ -23,7 +23,12 @@
 
             <h2>Contents</h2>
             <ul>
-  <li><a href="#styx">Styx</a></li>
+  <li><a href="#styx-img-srcdocslogosvg-alignright-width25">Styx <img src="docs/logo.svg" align="right" width="25%"/></a>
+  <ul>
+    <li><a href="#the-styx-verse">The Styx-verse</a></li>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#license">License</a></li>
+  </ul></li>
 </ul>
 
 
@@ -49,11 +54,7 @@
                     <h1 class="modulename">
 styx    </h1>
 
-                        <div class="docstring"><h1 id="styx">Styx</h1>
-
-<p align="center">
-  <img src="docs/logo.png" width="500em">
-</p>
+                        <div class="docstring"><h1 id="styx-img-srcdocslogosvg-alignright-width25">Styx <img src="docs/logo.svg" align="right" width="25%"/></h1>
 
 <p><a href="https://github.com/childmindresearch/styx/actions/workflows/test.yaml?query=branch%3Amain"><img src="https://github.com/childmindresearch/styx/actions/workflows/test.yaml/badge.svg?branch=main" alt="Build" /></a>
 <a href="https://codecov.io/gh/childmindresearch/styx"><img src="https://codecov.io/gh/childmindresearch/styx/branch/main/graph/badge.svg?token=22HWWFWPW5" alt="codecov" /></a>
@@ -62,7 +63,46 @@ styx    </h1>
 <a href="https://github.com/childmindresearch/styx/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License" /></a>
 <a href="https://childmindresearch.github.io/styx"><img src="https://img.shields.io/badge/api-docs-blue" alt="pages" /></a></p>
 
-<p>Compile Python command line tool wrappers from Boutiques descriptors.</p>
+<p>Command line tool wrapper compiler.</p>
+
+<p>Compile Python command line tool wrappers from JSON metadata.
+Supports a superset of the <a href="https://boutiques.github.io/">Boutiques</a> descriptor format, and generates idiomatic Python
+(3.10+) wrappers with type hints, argument parsing, and documentation. No dependencies are required to run the generated
+wrappers (except static type definitions). Runtimes are decoupled via conde-injection.</p>
+
+<h2 id="the-styx-verse">The Styx-verse</h2>
+
+<h3 id="precompiled-wrappers">Precompiled wrappers</h3>
+
+<ul>
+<li><a href="https://github.com/childmindresearch/niwrap">Neuroimaging</a></li>
+</ul>
+
+<h3 id="runtimes">Runtimes</h3>
+
+<ul>
+<li><a href="https://github.com/childmindresearch/styxdocker">Docker</a></li>
+<li><a href="https://github.com/childmindresearch/styxsingularity">Singularity</a></li>
+</ul>
+
+<h3 id="middleware">Middleware</h3>
+
+<ul>
+<li><a href="https://github.com/childmindresearch/styxgraph">Graph generation</a></li>
+</ul>
+
+<h2 id="installation">Installation</h2>
+
+<p>Styx is not needed to run the generated wrappers, but is required to compile them.</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/childmindresearch/styx.git
+</code></pre>
+</div>
+
+<h2 id="license">License</h2>
+
+<p>Styx is MIT licensed. The license of the generated wrappers depends on the input metadata.</p>
 </div>
 
                         <input id="mod-styx-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
