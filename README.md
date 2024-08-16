@@ -11,8 +11,8 @@ Command line tool wrapper compiler.
 
 Compile Python command line tool wrappers from JSON metadata.
 Supports a superset of the [Boutiques](https://boutiques.github.io/) descriptor format, and generates idiomatic Python
-(3.10+) wrappers with type hints, argument parsing, and documentation. No dependencies are required to run the generated
-wrappers (except static type definitions). Runtimes are decoupled via conde-injection.
+(3.10+) wrappers with type hints, argument parsing, and documentation. Generated code only depends on the Python
+standard library (and on shared type definition). Runtimes are decoupled via conde-injection.
 
 ## The Styx-verse
 
