@@ -2,7 +2,7 @@ import dataclasses
 from dataclasses import is_dataclass, fields
 from typing import Any
 
-from styx.pycodegen.core import LineBuffer
+from styx.pycodegen.core import LineBuffer, expand
 
 
 def indent(lines: LineBuffer, level: int = 1) -> LineBuffer:
@@ -26,7 +26,6 @@ def _pretty_print(obj: Any, ind=0) -> str:
             return val == field_.default_factory()
         return False
 
-
     match obj:
         case bool():
             return f"{obj}"
@@ -41,9 +40,9 @@ def _pretty_print(obj: Any, ind=0) -> str:
                 return "{}"
             return f'\n{indentation(ind)}'.join([
                 "{",
-                *indent([
-                    f"{_pretty_print(key, ind+1)}: {_pretty_print(value, ind+1)}" for key, value in obj
-                ]),
+                *expand(",\n".join([
+                    f" {_pretty_print(key, 1)}: {_pretty_print(value, 1)}" for key, value in obj
+                ])),
                 "}"
             ])
         case list():
@@ -51,21 +50,21 @@ def _pretty_print(obj: Any, ind=0) -> str:
                 return "[]"
             return f'\n{indentation(ind)}'.join([
                 "[",
-                *indent([
-                    f"{_pretty_print(value, ind+1)}" for value in obj
-                ]),
+                *expand(",\n".join([
+                    f" {_pretty_print(value, 1)}" for value in obj
+                ])),
                 "]"
             ])
         case _:
             if is_dataclass(obj):
                 return f'\n{indentation(ind)}'.join([
                     f"{obj.__class__.__name__}(",
-                    *indent([
-                        f"{field.name}={_pretty_print(getattr(obj, field.name), ind+1)}"
+                    *expand(",\n".join([
+                        f" {field.name}={_pretty_print(getattr(obj, field.name), 1)}"
                         for field in fields(obj)
                         if not field_is_default(obj, field)
-                    ]),
-                    f")",
+                    ])),
+                    f") # end {obj.__class__.__name__}",
                 ])
             else:
                 return str(obj)
