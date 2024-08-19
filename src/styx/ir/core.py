@@ -5,16 +5,23 @@ from typing import Union, Optional
 
 
 @dataclass
+class Documentation:
+    title: str | None = None
+    description: str | None = None
+
+    authors: list[str] = dataclasses.field(default_factory=list)
+    literature: list[str] | None = dataclasses.field(default_factory=list)
+    urls: list[str] | None = dataclasses.field(default_factory=list)
+
+
+@dataclass
 class Package:
     """Metadata for software package containing command."""
     name: str
     version: str | None
     docker: str | None
 
-    description: str | None = None
-    authors: list[str] = dataclasses.field(default_factory=list)
-    references: list[str] | None = dataclasses.field(default_factory=list)
-    urls: list[str] | None = dataclasses.field(default_factory=list)
+    docs: Documentation = dataclasses.field(default_factory=Documentation)
 
 
 PackageReferenceType = str
@@ -27,29 +34,28 @@ class ConstantParameter:
 
 @dataclass
 class IntegerParameter:
-    name: str
-    description: str | None = None
+    default_value: int | None = None
+    choices: list[int] | None = None
+    min_value: int | None = None
+    max_value: int | None = None
 
 
 @dataclass
 class FloatParameter:
-    name: str
-    description: str | None = None
+    default_value: float | None = None
+    min_value: int | None = None
+    max_value: int | None = None
 
 
 @dataclass
 class StringParameter:
-    name: str
-    description: str | None = None
+    default_value: str | None = None
+    choices: list[str] | None = None
 
 
 @dataclass
 class FileParameter:
-    name: str
-    description: str | None = None
-
-
-ParameterReferenceType = str
+    pass
 
 
 ParameterType = Union[
@@ -59,49 +65,63 @@ ParameterType = Union[
     FileParameter,
 ]
 
-
-@dataclass
-class ArgSequence:
-    elements: list[Union[ConstantParameter, ParameterType, "Command"]]
+ExpressionIdType = int
 
 
 @dataclass
-class ArgUnion:
-    variants: list["Command"]
+class OutputExpressionReference:
+    id_: ExpressionIdType
+    file_remove_suffixes: list[str] = dataclasses.field(default_factory=list)
 
 
 @dataclass
-class CommandOutput:
+class ExpressionSequence:
+    elements: list["Expression"]
+
+
+@dataclass
+class ExpressionAlternation:
+    alternatives: list["Expression"]
+
+
+@dataclass
+class OutputExpressionSequence:
     name: str
-    sequence: Union[ConstantParameter, ParameterReferenceType]
+    sequence: list[ConstantParameter | OutputExpressionReference]
 
-    description: str | None = None
+    docs: Documentation = dataclasses.field(default_factory=Documentation)
+
+
+ExpressionBodyType = Union[
+    ExpressionSequence,
+    ExpressionAlternation,
+    ConstantParameter,
+    ParameterType,
+]
 
 
 @dataclass
-class Command:
+class Expression:
+    id_: ExpressionIdType
     name: str
 
-    args: Union[
-        ArgSequence,
-        ArgUnion,
-    ]
+    # Composition instead of inheritance
+    body: ExpressionBodyType
 
     required: bool = True
     repeatable: bool = False
+    repeatable_min: int | None = None
+    repeatable_max: int | None = None
     join: str | None = None
     """How args should be joined. `None`: Separate arguments"""
 
-    outputs: list[CommandOutput] = dataclasses.field(default_factory=list)
+    outputs: list[OutputExpressionSequence] = dataclasses.field(default_factory=list)
 
-    description: str | None = None
-    authors: list[str] = dataclasses.field(default_factory=list)
-    references: list[str] | None = dataclasses.field(default_factory=list)
-    urls: list[str] | None = dataclasses.field(default_factory=list)
+    docs: Documentation = dataclasses.field(default_factory=Documentation)
 
 
 @dataclass
 class Interface:
     uid: str
     package: Package | PackageReferenceType
-    command: Command
+    expression: Expression

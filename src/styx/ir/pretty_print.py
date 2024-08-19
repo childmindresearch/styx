@@ -64,7 +64,7 @@ def _pretty_print(obj: Any, ind=0) -> str:
                         for field in fields(obj)
                         if not field_is_default(obj, field)
                     ])),
-                    f") # end {obj.__class__.__name__}",
+                    f")",
                 ])
             else:
                 return str(obj)
@@ -73,4 +73,3 @@ def _pretty_print(obj: Any, ind=0) -> str:
 def pretty_print(obj: Any):
     from rich import print
     print(_pretty_print(obj))
-
