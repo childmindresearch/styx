@@ -1,7 +1,6 @@
 import dataclasses
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Union, Optional
+from typing import Union
 
 
 @dataclass
@@ -17,6 +16,7 @@ class Documentation:
 @dataclass
 class Package:
     """Metadata for software package containing command."""
+
     name: str
     version: str | None
     docker: str | None
@@ -77,6 +77,8 @@ class OutputExpressionReference:
 @dataclass
 class ExpressionSequence:
     elements: list["Expression"]
+    join: str | None = None
+    """How elements should be joined. `None`: Separate arguments"""
 
 
 @dataclass
@@ -112,8 +114,7 @@ class Expression:
     repeatable: bool = False
     repeatable_min: int | None = None
     repeatable_max: int | None = None
-    join: str | None = None
-    """How args should be joined. `None`: Separate arguments"""
+    repeatable_join: str | None = None
 
     outputs: list[OutputExpressionSequence] = dataclasses.field(default_factory=list)
 
