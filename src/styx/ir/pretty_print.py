@@ -2,17 +2,22 @@ import dataclasses
 from dataclasses import fields, is_dataclass
 from typing import Any
 
-from styx.pycodegen.core import LineBuffer, expand
+_LineBuffer = list[str]
 
 
-def indent(lines: LineBuffer, level: int = 1) -> LineBuffer:
+def _expand(text: str) -> _LineBuffer:
+    """Expand a string into a LineBuffer."""
+    return text.splitlines()
+
+
+def _indent(lines: _LineBuffer, level: int = 1) -> _LineBuffer:
     """Indent a LineBuffer by a given level."""
     if level == 0:
         return lines
     return [f"{' ' * level}{line}" for line in lines]
 
 
-def indentation(level: int = 1) -> str:
+def _indentation(level: int = 1) -> str:
     return " " * level
 
 
@@ -37,24 +42,24 @@ def _pretty_print(obj: Any, ind: int = 0) -> str:  # noqa: ANN401
         case dict():
             if len(obj) == 0:
                 return "{}"
-            return f"\n{indentation(ind)}".join([
+            return f"\n{_indentation(ind)}".join([
                 "{",
-                *expand(",\n".join([f" {_pretty_print(key, 1)}: {_pretty_print(value, 1)}" for key, value in obj])),
+                *_expand(",\n".join([f" {_pretty_print(key, 1)}: {_pretty_print(value, 1)}" for key, value in obj])),
                 "}",
             ])
         case list():
             if len(obj) == 0:
                 return "[]"
-            return f"\n{indentation(ind)}".join([
+            return f"\n{_indentation(ind)}".join([
                 "[",
-                *expand(",\n".join([f" {_pretty_print(value, 1)}" for value in obj])),
+                *_expand(",\n".join([f" {_pretty_print(value, 1)}" for value in obj])),
                 "]",
             ])
         case _:
             if is_dataclass(obj):
-                return f"\n{indentation(ind)}".join([
+                return f"\n{_indentation(ind)}".join([
                     f"{obj.__class__.__name__}(",
-                    *expand(
+                    *_expand(
                         ",\n".join([
                             f" {field.name}={_pretty_print(getattr(obj, field.name), 1)}"
                             for field in fields(obj)

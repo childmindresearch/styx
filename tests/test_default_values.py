@@ -1,8 +1,7 @@
 """Input argument default value tests."""
 
-import styx.compiler.core
-import styx.compiler.settings
 import tests.utils.dummy_runner
+from tests.utils.compile_boutiques import boutiques2python
 from tests.utils.dynmodule import (
     BT_TYPE_STRING,
     boutiques_dummy,
@@ -25,7 +24,7 @@ def test_default_string_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()

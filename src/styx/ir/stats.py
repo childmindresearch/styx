@@ -1,51 +1,43 @@
-from styx.ir.core import Interface, Expression, ExpressionSequence, ExpressionAlternation, StringParameter, \
-    FloatParameter, IntegerParameter, FileParameter
+import styx.ir.core as ir
 
 
-def _expr_counter(expr: Expression) -> int:
-    match expr.body:
-        case ExpressionSequence():
-            return 1 + sum([_expr_counter(e) for e in expr.body.elements])
-        case ExpressionAlternation():
-            return 1 + sum([_expr_counter(e) for e in expr.body.alternatives])
+def _expr_counter(expr: ir.IParam) -> int:
+    if isinstance(expr, ir.IStruct):
+        return 1 + sum([_expr_counter(e) for e in expr.struct.iter_params()])
+    if isinstance(expr, ir.IStructUnion):
+        return 1 + sum([_expr_counter(e) for e in expr.alts])
     return 1
 
 
-def _param_counter(expr: Expression) -> int:
-    match expr.body:
-        case ExpressionSequence():
-            return sum([_param_counter(e) for e in expr.body.elements])
-        case ExpressionAlternation():
-            return sum([_param_counter(e) for e in expr.body.alternatives])
-        case IntegerParameter():
-            return 1
-        case FloatParameter():
-            return 1
-        case StringParameter():
-            return 1
-        case FileParameter():
-            return 1
-    return 0
+def _param_counter(expr: ir.IParam) -> int:
+    if isinstance(expr, ir.IStruct):
+        return sum([_param_counter(e) for e in expr.struct.iter_params()])
+    if isinstance(expr, ir.IStructUnion):
+        return sum([_param_counter(e) for e in expr.alts])
+    return 1
 
 
-def _mccabe(expr: Expression) -> int:
+def _mccabe(expr: ir.IParam) -> int:
     complexity = 1
-    if expr.required is not True or expr.repeatable:
+
+    if isinstance(expr, ir.IOptional) or (
+        isinstance(expr, (ir.IStruct, ir.IStructUnion)) and isinstance(expr, ir.IList)
+    ):
         complexity = 2
 
-    match expr.body:
-        case ExpressionSequence():
-            x = [_mccabe(e) for e in expr.body.elements]
+    match expr:
+        case ir.IStruct():
+            x = [_mccabe(e) for e in expr.struct.iter_params()]
             return complexity * (sum(x) - len(x) + 1)
-        case ExpressionAlternation():
-            return complexity * sum([_mccabe(e) for e in expr.body.alternatives])
+        case ir.IStructUnion():
+            return complexity * sum([_mccabe(e) for e in expr.alts])
     return complexity
 
 
-def stats(interface: Interface) -> dict[str, str | int | float]:
+def stats(interface: ir.Interface) -> dict[str, str | int | float]:
     return {
-        "name": interface.expression.name,
-        "num_expressions": _expr_counter(interface.expression),
-        "num_params": _param_counter(interface.expression),
-        "mccabe": _mccabe(interface.expression)
+        "name": interface.command.param.name,
+        "num_expressions": _expr_counter(interface.command),
+        "num_params": _param_counter(interface.command),
+        "mccabe": _mccabe(interface.command),
     }

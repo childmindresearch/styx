@@ -1,6 +1,6 @@
 import dataclasses
+from abc import ABC
 from dataclasses import dataclass
-from typing import Union
 
 
 @dataclass
@@ -24,105 +24,283 @@ class Package:
     docs: Documentation = dataclasses.field(default_factory=Documentation)
 
 
-PackageReferenceType = str
+IdType = int
 
 
 @dataclass
-class ConstantParameter:
-    value: str
+class OutputParamReference:
+    ref_id: IdType
+    file_remove_suffixes: list[str] = dataclasses.field(default_factory=list)
 
 
 @dataclass
-class IntegerParameter:
-    default_value: int | None = None
+class Output:
+    id_: IdType
+    name: str
+    tokens: list[str | OutputParamReference] = dataclasses.field(default_factory=list)
+    docs: Documentation | None = None
+
+
+@dataclass
+class DParam:
+    id_: IdType
+    name: str
+
+    outputs: list[Output] = dataclasses.field(default_factory=list)
+
+    docs: Documentation | None = None
+
+
+@dataclass
+class IParam(ABC):
+    param: DParam
+
+
+class IOptional(ABC):
+    class SetToNoneAble:
+        pass
+
+    SetToNone = SetToNoneAble()
+    pass
+
+
+@dataclass
+class DList:
+    count_min: int | None = None
+    count_max: int | None = None
+    join: str | None = None
+
+
+@dataclass
+class IList(ABC):
+    list_: DList = dataclasses.field(default_factory=DList)
+
+
+@dataclass
+class IInt(ABC):
     choices: list[int] | None = None
+
+
+@dataclass
+class PInt(IInt, IParam):
+    default_value: int | None = None
     min_value: int | None = None
     max_value: int | None = None
 
 
 @dataclass
-class FloatParameter:
+class PIntOpt(IInt, IParam, IOptional):
+    default_value: int | IOptional.SetToNoneAble | None = IOptional.SetToNone
+    min_value: int | None = None
+    max_value: int | None = None
+
+
+@dataclass
+class PIntList(IInt, IList, IParam):
+    default_value: list[int] | None = None
+    all_min_value: int | None = None
+    all_max_value: int | None = None
+
+
+@dataclass
+class PIntListOpt(IInt, IList, IParam, IOptional):
+    default_value: list[int] | IOptional.SetToNoneAble | None = IOptional.SetToNone
+    all_min_value: int | None = None
+    all_max_value: int | None = None
+
+
+class IFloat(ABC):
+    pass
+
+
+@dataclass
+class PFloat(IFloat, IParam):
     default_value: float | None = None
     min_value: int | None = None
     max_value: int | None = None
 
 
 @dataclass
-class StringParameter:
-    default_value: str | None = None
+class PFloatOpt(IFloat, IParam, IOptional):
+    default_value: float | IOptional.SetToNoneAble | None = IOptional.SetToNone
+    min_value: int | None = None
+    max_value: int | None = None
+
+
+@dataclass
+class PFloatList(IFloat, IList, IParam):
+    default_value: list[float] | None = None
+    all_min_value: float | None = None
+    all_max_value: float | None = None
+
+
+@dataclass
+class PFloatListOpt(IFloat, IList, IParam, IOptional):
+    default_value: list[float] | IOptional.SetToNoneAble | None = IOptional.SetToNone
+    all_min_value: float | None = None
+    all_max_value: float | None = None
+
+
+@dataclass
+class IStr(ABC):
     choices: list[str] | None = None
 
 
 @dataclass
-class FileParameter:
+class PStr(IStr, IParam):
+    default_value: str | None = None
+
+
+@dataclass
+class PStrOpt(IStr, IParam, IOptional):
+    default_value: str | IOptional.SetToNoneAble | None = IOptional.SetToNone
+
+
+@dataclass
+class PStrList(IStr, IList, IParam):
+    default_value: list[str] | None = None
+
+
+@dataclass
+class PStrListOpt(IStr, IList, IParam, IOptional):
+    default_value: list[str] | IOptional.SetToNoneAble | None = IOptional.SetToNone
+
+
+class IFile(ABC):
     pass
 
 
-ParameterType = Union[
-    IntegerParameter,
-    FloatParameter,
-    StringParameter,
-    FileParameter,
-]
-
-ExpressionIdType = int
+@dataclass
+class PFile(IFile, IParam):
+    pass
 
 
 @dataclass
-class OutputExpressionReference:
-    id_: ExpressionIdType
-    file_remove_suffixes: list[str] = dataclasses.field(default_factory=list)
+class PFileOpt(IFile, IParam, IOptional):
+    default_value_set_to_none: bool = True
 
 
 @dataclass
-class ExpressionSequence:
-    elements: list["Expression"]
-    join: str | None = None
-    """How elements should be joined. `None`: Separate arguments"""
+class PFileList(IFile, IList, IParam):
+    pass
 
 
 @dataclass
-class ExpressionAlternation:
-    alternatives: list["Expression"]
+class PFileListOpt(IFile, IList, IParam, IOptional):
+    default_value_set_to_none: bool = True
 
 
 @dataclass
-class OutputExpressionSequence:
-    name: str
-    sequence: list[ConstantParameter | OutputExpressionReference]
-
-    docs: Documentation = dataclasses.field(default_factory=Documentation)
-
-
-ExpressionBodyType = Union[
-    ExpressionSequence,
-    ExpressionAlternation,
-    ConstantParameter,
-    ParameterType,
-]
+class IBool(ABC):
+    value_true: list[str] = dataclasses.field(default_factory=list)
+    value_false: list[str] = dataclasses.field(default_factory=list)
 
 
 @dataclass
-class Expression:
-    id_: ExpressionIdType
-    name: str
+class PBool(IBool, IParam):
+    default_value: bool | None = None
 
-    # Composition instead of inheritance
-    body: ExpressionBodyType
 
-    required: bool = True
-    repeatable: bool = False
-    repeatable_min: int | None = None
-    repeatable_max: int | None = None
-    repeatable_join: str | None = None
+@dataclass
+class PBoolOpt(IBool, IParam, IOptional):
+    default_value: bool | IOptional.SetToNoneAble | None = IOptional.SetToNone
 
-    outputs: list[OutputExpressionSequence] = dataclasses.field(default_factory=list)
 
-    docs: Documentation = dataclasses.field(default_factory=Documentation)
+@dataclass
+class PBoolList(IBool, IList, IParam):
+    default_value: list[bool] | None = None
+
+
+@dataclass
+class PBoolListOpt(IBool, IList, IParam, IOptional):
+    default_value: list[bool] | IOptional.SetToNoneAble | None = IOptional.SetToNone
+    value_true: list[str] = dataclasses.field(default_factory=list)
+    value_false: list[str] = dataclasses.field(default_factory=list)
+
+
+@dataclass
+class Carg:
+    tokens: list[IParam | str] = dataclasses.field(default_factory=list)
+
+    def iter_params(self):
+        for token in self.tokens:
+            if isinstance(token, IParam):
+                yield token
+
+
+@dataclass
+class ConditionalGroup:
+    cargs: list[Carg] = dataclasses.field(default_factory=list)
+
+    def iter_params(self):
+        for carg in self.cargs:
+            yield from carg.iter_params()
+
+
+@dataclass
+class DStruct:
+    name: str | None = None
+    groups: list[ConditionalGroup] = dataclasses.field(default_factory=list)
+    """(group (cargs (join str+params)))  """
+    docs: Documentation | None = None
+
+    def iter_params(self):
+        for group in self.groups:
+            yield from group.iter_params()
+
+
+@dataclass
+class IStruct(ABC):
+    struct: DStruct = dataclasses.field(default_factory=DStruct)
+
+
+@dataclass
+class PStruct(IStruct, IParam):
+    pass
+
+
+@dataclass
+class PStructOpt(IStruct, IParam, IOptional):
+    default_value_set_to_none: bool = True
+
+
+@dataclass
+class PStructList(IStruct, IList, IParam):
+    pass
+
+
+@dataclass
+class PStructListOpt(IStruct, IList, IParam, IOptional):
+    default_value_set_to_none: bool = True
+
+
+@dataclass
+class IStructUnion(ABC):
+    alts: list[PStruct] = dataclasses.field(default_factory=list)
+
+
+@dataclass
+class PStructUnion(IStructUnion, IParam):
+    pass
+
+
+@dataclass
+class PStructUnionOpt(IStructUnion, IParam, IOptional):
+    default_value_set_to_none: bool = True
+
+
+@dataclass
+class PStructUnionList(IStructUnion, IList, IParam):
+    pass
+
+
+@dataclass
+class PStructUnionListOpt(IStructUnion, IList, IParam, IOptional):
+    default_value_set_to_none: bool = True
 
 
 @dataclass
 class Interface:
     uid: str
-    package: Package | PackageReferenceType
-    expression: Expression
+    package: Package
+    command: PStruct

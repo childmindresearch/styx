@@ -1,8 +1,7 @@
 """Test command line argument building."""
 
-import styx.compiler.core
-import styx.compiler.settings
 import tests.utils.dummy_runner
+from tests.utils.compile_boutiques import boutiques2python
 from tests.utils.dynmodule import (
     BT_TYPE_FILE,
     BT_TYPE_FLAG,
@@ -27,7 +26,7 @@ def test_positional_string_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -51,7 +50,7 @@ def test_positional_number_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -75,7 +74,7 @@ def test_positional_file_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -100,7 +99,7 @@ def test_flag_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -125,7 +124,7 @@ def test_named_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -159,7 +158,7 @@ def test_list_of_strings_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -193,7 +192,7 @@ def test_list_of_numbers_arg() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -218,7 +217,7 @@ def test_static_args() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -263,7 +262,7 @@ def test_arg_order() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
