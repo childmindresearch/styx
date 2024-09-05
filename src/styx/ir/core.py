@@ -1,4 +1,5 @@
 import dataclasses
+import typing
 from abc import ABC
 from dataclasses import dataclass
 
@@ -79,66 +80,53 @@ class IList(ABC):
 @dataclass
 class IInt(ABC):
     choices: list[int] | None = None
+    min_value: int | None = None
+    max_value: int | None = None
 
 
 @dataclass
 class PInt(IInt, IParam):
     default_value: int | None = None
-    min_value: int | None = None
-    max_value: int | None = None
 
 
 @dataclass
 class PIntOpt(IInt, IParam, IOptional):
     default_value: int | IOptional.SetToNoneAble | None = IOptional.SetToNone
-    min_value: int | None = None
-    max_value: int | None = None
 
 
 @dataclass
 class PIntList(IInt, IList, IParam):
     default_value: list[int] | None = None
-    all_min_value: int | None = None
-    all_max_value: int | None = None
 
 
 @dataclass
 class PIntListOpt(IInt, IList, IParam, IOptional):
     default_value: list[int] | IOptional.SetToNoneAble | None = IOptional.SetToNone
-    all_min_value: int | None = None
-    all_max_value: int | None = None
 
 
 class IFloat(ABC):
-    pass
+    min_value: int | None = None
+    max_value: int | None = None
 
 
 @dataclass
 class PFloat(IFloat, IParam):
     default_value: float | None = None
-    min_value: int | None = None
-    max_value: int | None = None
 
 
 @dataclass
 class PFloatOpt(IFloat, IParam, IOptional):
     default_value: float | IOptional.SetToNoneAble | None = IOptional.SetToNone
-    min_value: int | None = None
-    max_value: int | None = None
 
 
 @dataclass
 class PFloatList(IFloat, IList, IParam):
     default_value: list[float] | None = None
-    all_min_value: float | None = None
-    all_max_value: float | None = None
 
 
 @dataclass
 class PFloatListOpt(IFloat, IList, IParam, IOptional):
     default_value: list[float] | IOptional.SetToNoneAble | None = IOptional.SetToNone
-    all_min_value: float | None = None
-    all_max_value: float | None = None
 
 
 @dataclass

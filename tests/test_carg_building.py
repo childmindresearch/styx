@@ -266,7 +266,7 @@ def test_arg_order() -> None:
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
-    test_module.dummy("aaa", "bbb", runner=dummy_runner)
+    test_module.dummy(a="aaa", b="bbb", runner=dummy_runner)
 
     assert dummy_runner.last_cargs is not None
     assert dummy_runner.last_cargs == ["bbb", "aaa"]

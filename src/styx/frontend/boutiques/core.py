@@ -8,6 +8,7 @@ from typing import TypeVar
 
 import styx.ir.core as ir
 from styx.frontend.boutiques.utils import boutiques_split_command
+from styx.ir.dyn import dyn_param
 
 T = TypeVar("T")
 
@@ -163,12 +164,14 @@ def _arg_elem_from_bt_elem(
         docs=input_docs,
     )
 
+    constraints = _collect_constraints(d, input_type)
+
     dlist = None
     if input_type.is_list:
         dlist = ir.DList(
             join=repeatable_join,
-            count_min=d.get("min-list-entries"),
-            count_max=d.get("max-list-entries"),
+            count_min=constraints.list_length_min,
+            count_max=constraints.list_length_max,
         )
 
     match input_type.primitive:
@@ -178,28 +181,15 @@ def _arg_elem_from_bt_elem(
                 isinstance(o, str) for o in choices
             ]), "value-choices must be all string for string input"
 
-            if input_type.is_list:
-                if input_type.is_optional:
-                    return ir.PStrListOpt(
-                        param=dparam,
-                        list_=dlist,
-                        default_value=d.get("default-value"),
-                    )
-                return ir.PStrList(
-                    param=dparam,
-                    list_=dlist,
-                    default_value=d.get("default-value"),
-                )
-            if input_type.is_optional:
-                return ir.PStrOpt(
-                    param=dparam,
-                    default_value=d.get("default-value"),
-                    choices=choices,
-                )
-            return ir.PStr(
+            return dyn_param(
+                dyn_type="str",
+                dyn_list=input_type.is_list,
+                dyn_optional=input_type.is_optional,
                 param=dparam,
-                default_value=d.get("default-value"),
-                choices=choices,
+                list_=dlist,
+                default_value=d.get("default-value", ir.IOptional.SetToNone)
+                if input_type.is_optional
+                else d.get("default-value"),
             )
 
         case InputTypePrimitive.Integer:
@@ -208,70 +198,41 @@ def _arg_elem_from_bt_elem(
                 isinstance(o, int) for o in choices
             ]), "value-choices must be all int for integer input"
 
-            if input_type.is_list:
-                if input_type.is_optional:
-                    return ir.PIntListOpt(
-                        param=dparam,
-                        list_=dlist,
-                        default_value=d.get("default-value"),
-                    )
-                return ir.PIntList(
-                    param=dparam,
-                    list_=dlist,
-                    default_value=d.get("default-value"),
-                )
-            if input_type.is_optional:
-                return ir.PIntOpt(
-                    param=dparam,
-                    default_value=d.get("default-value"),
-                    choices=choices,
-                )
-            return ir.PInt(
+            return dyn_param(
+                dyn_type="int",
+                dyn_list=input_type.is_list,
+                dyn_optional=input_type.is_optional,
                 param=dparam,
-                default_value=d.get("default-value"),
-                choices=choices,
+                list_=dlist,
+                default_value=d.get("default-value", ir.IOptional.SetToNone)
+                if input_type.is_optional
+                else d.get("default-value"),
+                min_value=constraints.value_min,
+                max_value=constraints.value_max,
             )
 
         case InputTypePrimitive.Float:
-            if input_type.is_list:
-                if input_type.is_optional:
-                    return ir.PFloatListOpt(
-                        param=dparam,
-                        list_=dlist,
-                        default_value=d.get("default-value"),
-                    )
-                return ir.PFloatList(
-                    param=dparam,
-                    list_=dlist,
-                    default_value=d.get("default-value"),
-                )
-            if input_type.is_optional:
-                return ir.PFloatOpt(
-                    param=dparam,
-                    default_value=d.get("default-value"),
-                )
-            return ir.PFloat(
+            return dyn_param(
+                dyn_type="float",
+                dyn_list=input_type.is_list,
+                dyn_optional=input_type.is_optional,
                 param=dparam,
-                default_value=d.get("default-value"),
+                list_=dlist,
+                default_value=d.get("default-value", ir.IOptional.SetToNone)
+                if input_type.is_optional
+                else d.get("default-value"),
+                min_value=constraints.value_min,
+                max_value=constraints.value_max,
             )
 
         case InputTypePrimitive.File:
-            if input_type.is_list:
-                if input_type.is_optional:
-                    return ir.PFileListOpt(
-                        param=dparam,
-                        list_=dlist,
-                    )
-                return ir.PFileList(
-                    param=dparam,
-                    list_=dlist,
-                )
-            if input_type.is_optional:
-                return ir.PFileOpt(
-                    param=dparam,
-                )
-            return ir.PFile(
+            return dyn_param(
+                dyn_type="file",
+                dyn_list=input_type.is_list,
+                dyn_optional=input_type.is_optional,
                 param=dparam,
+                list_=dlist,
+                default_value_set_to_none=True,
             )
 
         case InputTypePrimitive.Flag:
@@ -289,28 +250,14 @@ def _arg_elem_from_bt_elem(
             dparam, dstruct = _struct_from_boutiques(d, id_counter)
             ir_id_lookup[input_bt_ref] = dparam.id_  # override
 
-            if input_type.is_list:
-                if input_type.is_optional:
-                    return ir.PStructListOpt(
-                        param=dparam,
-                        struct=dstruct,
-                        list_=dlist,
-                        default_value_set_to_none=True,
-                    )
-                return ir.PStructList(
-                    param=dparam,
-                    struct=dstruct,
-                    list_=dlist,
-                )
-            if input_type.is_optional:
-                return ir.PStructOpt(
-                    param=dparam,
-                    struct=dstruct,
-                    default_value_set_to_none=True,
-                )
-            return ir.PStruct(
+            return dyn_param(
+                dyn_type="struct",
+                dyn_list=input_type.is_list,
+                dyn_optional=input_type.is_optional,
                 param=dparam,
                 struct=dstruct,
+                list_=dlist,
+                default_value_set_to_none=True,
             )
 
         case InputTypePrimitive.SubCommandUnion:
@@ -327,30 +274,45 @@ def _arg_elem_from_bt_elem(
                     )
                 )
 
-            if input_type.is_list:
-                if input_type.is_optional:
-                    return ir.PStructUnionListOpt(
-                        param=dparam,
-                        alts=alts,
-                        list_=dlist,
-                        default_value_set_to_none=True,
-                    )
-                return ir.PStructUnionList(
-                    param=dparam,
-                    alts=alts,
-                    list_=dlist,
-                )
-            if input_type.is_optional:
-                return ir.PStructUnionOpt(
-                    param=dparam,
-                    alts=alts,
-                    default_value_set_to_none=True,
-                )
-            return ir.PStructUnion(
+            return dyn_param(
+                dyn_type="struct_union",
+                dyn_list=input_type.is_list,
+                dyn_optional=input_type.is_optional,
                 param=dparam,
                 alts=alts,
+                list_=dlist,
+                default_value_set_to_none=True,
             )
     assert False
+
+
+@dataclass
+class _NumericConstraints:
+    value_min: int | float | None = None
+    value_max: int | float | None = None
+    list_length_min: int | None = None
+    list_length_max: int | None = None
+
+
+def _collect_constraints(d, input_type):
+    ret = _NumericConstraints()
+    value_min_exclusive = False
+    value_max_exclusive = False
+    if input_type.primitive in (InputTypePrimitive.Float, InputTypePrimitive.Integer):
+        if (val := d.get("minimum")) is not None:
+            ret.value_min = int(val) if d.get("integer") else val
+            value_min_exclusive = d.get("exclusive-minimum") is True
+        if (val := d.get("maximum")) is not None:
+            ret.value_max = int(val) if d.get("integer") else val
+            value_max_exclusive = d.get("exclusive-maximum") is True
+    if d.get("list") is True:
+        ret.list_length_min = d.get("min-list-entries")
+        ret.list_length_max = d.get("max-list-entries")
+    if ret.value_min is not None and value_min_exclusive and input_type.primitive == InputTypePrimitive.Integer:
+        ret.value_min += 1
+    if ret.value_max is not None and value_max_exclusive and input_type.primitive == InputTypePrimitive.Integer:
+        ret.value_max -= 1
+    return ret
 
 
 def _struct_from_boutiques(

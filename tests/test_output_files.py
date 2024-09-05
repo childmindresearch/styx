@@ -59,7 +59,7 @@ def test_output_file_with_template() -> None:
             {
                 "id": "out",
                 "name": "The out",
-                "path-template": "out-{x}.txt",
+                "path-template": "out-[X].txt",
             }
         ],
     })
