@@ -1,6 +1,6 @@
 import styx.ir.core as ir
 from styx.backend.python.pycodegen.scope import Scope
-from styx.backend.python.pycodegen.utils import python_snakify, python_pascalize
+from styx.backend.python.pycodegen.utils import python_pascalize, python_snakify
 from styx.backend.python.utils import iter_params_recursively, param_py_type
 
 

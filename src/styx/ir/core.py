@@ -1,7 +1,7 @@
 import dataclasses
-import typing
 from abc import ABC
 from dataclasses import dataclass
+from typing import Any, Generator
 
 
 @dataclass
@@ -58,7 +58,7 @@ class IParam(ABC):
 
 
 class IOptional(ABC):
-    class SetToNoneAble:
+    class SetToNoneAble:  # noqa
         pass
 
     SetToNone = SetToNoneAble()
@@ -210,7 +210,7 @@ class PBoolListOpt(IBool, IList, IParam, IOptional):
 class Carg:
     tokens: list[IParam | str] = dataclasses.field(default_factory=list)
 
-    def iter_params(self):
+    def iter_params(self) -> Generator[IParam, Any, None]:
         for token in self.tokens:
             if isinstance(token, IParam):
                 yield token
@@ -220,7 +220,7 @@ class Carg:
 class ConditionalGroup:
     cargs: list[Carg] = dataclasses.field(default_factory=list)
 
-    def iter_params(self):
+    def iter_params(self) -> Generator[IParam, Any, None]:
         for carg in self.cargs:
             yield from carg.iter_params()
 
@@ -232,7 +232,7 @@ class DStruct:
     """(group (cargs (join str+params)))  """
     docs: Documentation | None = None
 
-    def iter_params(self):
+    def iter_params(self) -> Generator[IParam, Any, None]:
         for group in self.groups:
             yield from group.iter_params()
 

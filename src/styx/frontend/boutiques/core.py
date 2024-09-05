@@ -446,9 +446,6 @@ def _collect_inputs(bt, id_counter):
 
 def from_boutiques(tool: dict, package_name: str) -> ir.Interface:
     """Convert a Boutiques tool to a Styx descriptor."""
-    if not (tool_name := tool.get("name")):
-        raise ValueError(f"name is missing for tool '{tool}'")
-
     hash_ = _hash_from_boutiques(tool)
 
     docker: str | None = None
@@ -463,7 +460,7 @@ def from_boutiques(tool: dict, package_name: str) -> ir.Interface:
         uid=f"{hash_}.boutiques",
         package=ir.Package(
             name=package_name,
-            version="1.0",
+            version=tool.get("tool-version"),
             docker=docker,
         ),
         command=ir.PStruct(

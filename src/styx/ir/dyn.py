@@ -10,10 +10,9 @@ def dyn_param(
     dyn_type: typing.Literal["int", "float", "str", "file", "bool", "struct", "struct_union"],
     dyn_list: bool,
     dyn_optional: bool,
-    **kwargs,
+    **kwargs,  # noqa
 ) -> ir.IParam:
     """Convenience function that allows dynamic param class creation."""
-
     cls = {
         ("int", True, True): ir.PIntListOpt,
         ("int", True, False): ir.PIntList,

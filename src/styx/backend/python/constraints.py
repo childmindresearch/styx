@@ -1,6 +1,6 @@
+import styx.ir.core as ir
 from styx.backend.python.lookup import LookupParam
 from styx.backend.python.pycodegen.core import LineBuffer, PyFunc, indent
-import styx.ir.core as ir
 
 
 def _generate_raise_value_err(obj: str, expectation: str, reality: str | None = None) -> LineBuffer:
