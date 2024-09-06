@@ -331,6 +331,9 @@ def _struct_from_boutiques(
 
     parent_input: dict | None = None
     if "type" not in bt:  # Root boutiques descriptor
+        if (bt_id := bt.get("id", bt.get("name"))) is None:
+            raise Exception(f"Descriptor is missing id/name: {bt_id}")
+
         groups, ir_id_lookup = _collect_inputs(bt, id_counter)
         outputs = _collect_outputs(bt, ir_id_lookup, id_counter)
 
@@ -342,11 +345,11 @@ def _struct_from_boutiques(
 
         return ir.DParam(
             id_=id_counter.next(),
-            name=bt.get("id", bt["name"]),
+            name=bt_id,
             outputs=outputs,
             docs=docs,
         ), ir.DStruct(
-            name=bt.get("id", bt["name"]),
+            name=bt_id,
             groups=groups,
             docs=docs,
         )
@@ -444,7 +447,11 @@ def _collect_inputs(bt, id_counter):
     return groups, ir_id_lookup
 
 
-def from_boutiques(tool: dict, package_name: str) -> ir.Interface:
+def from_boutiques(
+    tool: dict,
+    package_name: str,
+    package_docs: ir.Documentation | None = None,
+) -> ir.Interface:
     """Convert a Boutiques tool to a Styx descriptor."""
     hash_ = _hash_from_boutiques(tool)
 
@@ -462,6 +469,7 @@ def from_boutiques(tool: dict, package_name: str) -> ir.Interface:
             name=package_name,
             version=tool.get("tool-version"),
             docker=docker,
+            docs=package_docs if package_docs else ir.Documentation(),
         ),
         command=ir.PStruct(
             param=dparam,
@@ -476,7 +484,7 @@ if __name__ == "__main__":
     print(json_path)
     with open(json_path, "r", encoding="utf-8") as json_file:
         json_data = json.load(json_file)
-    ir_data = from_boutiques(json_data, package_name="AFNI")
+    ir_data = from_boutiques(json_data, package_name="afni", package_docs=ir.Documentation(urls=["Helo hehe"]))
     from styx.ir.pretty_print import pretty_print
 
     pretty_print(ir_data)
@@ -485,8 +493,8 @@ if __name__ == "__main__":
     print(stats(ir_data))
     from styx.backend.python.core import to_python
 
-    for module, module_path in to_python([ir_data]):
+    for py, module_path in to_python([ir_data]):
         print("=" * 80)
         print("File: " + ".".join(module_path))
         print("-" * 80)
-        print(module.text())
+        print(py)

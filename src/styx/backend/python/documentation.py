@@ -38,14 +38,16 @@ def docs_to_docstring(docs: Documentation) -> str | None:
         if len(docs.literature) == 1:
             re += f"Literature: {docs.literature[0]}"
         else:
-            re += f"Literature:\n{'\n'.join(docs.literature)}"
+            entries = '\n'.join(docs.literature)
+            re += f"Literature:\n{entries}"
 
-    if docs.authors:
+    if docs.urls:
         re = _ensure_double_linebreak_if_not_empty(re)
         if len(docs.urls) == 1:
             re += f"URL: {docs.urls[0]}"
         else:
-            re += f"URLs:\n{'\n'.join(docs.urls)}"
+            entries = '\n'.join(docs.urls)
+            re += f"URLs:\n{entries}"
 
     if re:
         return re

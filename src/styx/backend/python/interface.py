@@ -48,7 +48,6 @@ def _compile_struct(
             docstring_body=docs_to_docstring(param.param.docs),
         )
         pyargs = func_cargs_building.args
-        interface_module.funcs.append(func_cargs_building)
     else:
         func_cargs_building = PyFunc(
             name="run",
@@ -78,7 +77,6 @@ def _compile_struct(
             )
             struct_class.methods.append(func_outputs)
         pyargs = struct_class.fields
-        interface_module.funcs.append(struct_class)
 
     # Collect param python symbols
     for elem in param.struct.iter_params():
@@ -131,13 +129,14 @@ def _compile_struct(
             "execution.run(cargs)",
             "return ret",
         ])
+        interface_module.funcs_and_classes.append(func_cargs_building)
     else:
         if has_outputs:
             _compile_outputs_building(
                 param=param,
                 func=func_outputs,
                 lookup=lookup,
-                access_via_self=False,
+                access_via_self=True,
             )
             func_outputs.body.extend([
                 "return ret",
@@ -145,6 +144,7 @@ def _compile_struct(
         func_cargs_building.body.extend([
             "return cargs",
         ])
+        interface_module.funcs_and_classes.append(struct_class)
 
 
 def _compile_cargs_building(

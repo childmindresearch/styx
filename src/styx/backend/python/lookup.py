@@ -19,7 +19,7 @@ class LookupParam:
         ) -> None:
             scope = Scope(parent=package_scope)
             for output in param.param.outputs:
-                output_field_symbol = scope.add_or_dodge(output.name)
+                output_field_symbol = scope.add_or_dodge(python_snakify(output.name))
                 assert output.id_ not in lookup_output_field_symbol
                 lookup_output_field_symbol[output.id_] = output_field_symbol
 
