@@ -294,7 +294,7 @@ class _NumericConstraints:
     list_length_max: int | None = None
 
 
-def _collect_constraints(d, input_type):
+def _collect_constraints(d: dict, input_type: InputType) -> _NumericConstraints:
     ret = _NumericConstraints()
     value_min_exclusive = False
     value_max_exclusive = False
@@ -385,7 +385,7 @@ def _struct_from_boutiques(
         )
 
 
-def _collect_outputs(bt, ir_id_lookup, id_counter: IdCounter):
+def _collect_outputs(bt: dict, ir_id_lookup: dict[str, ir.IdType], id_counter: IdCounter) -> list[ir.Output]:
     outputs: list[ir.Output] = []
     for bt_output in bt.get("output-files", []):
         path_template = bt_output["path-template"]
@@ -410,7 +410,7 @@ def _collect_outputs(bt, ir_id_lookup, id_counter: IdCounter):
     return outputs
 
 
-def _collect_inputs(bt, id_counter):
+def _collect_inputs(bt: dict, id_counter: IdCounter) -> tuple[list[ir.ConditionalGroup], dict[str, ir.IdType]]:
     inputs_lookup = {i["value-key"]: i for i in bt.get("inputs", [])}
     # maps boutiques 'value-keys' to expressions
     ir_id_lookup: dict[str, ir.IdType] = {}
@@ -476,25 +476,3 @@ def from_boutiques(
             struct=dstruct,
         ),
     )
-
-
-if __name__ == "__main__":
-    # json_path = r"C:\Users\floru\Downloads\bet.json"
-    json_path = r"C:\Users\floru\Downloads\registration.json"
-    print(json_path)
-    with open(json_path, "r", encoding="utf-8") as json_file:
-        json_data = json.load(json_file)
-    ir_data = from_boutiques(json_data, package_name="afni", package_docs=ir.Documentation(urls=["Helo hehe"]))
-    from styx.ir.pretty_print import pretty_print
-
-    pretty_print(ir_data)
-    from styx.ir.stats import stats
-
-    print(stats(ir_data))
-    from styx.backend.python.core import to_python
-
-    for py, module_path in to_python([ir_data]):
-        print("=" * 80)
-        print("File: " + ".".join(module_path))
-        print("-" * 80)
-        print(py)

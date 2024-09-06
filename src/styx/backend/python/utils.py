@@ -62,7 +62,9 @@ def param_py_var_to_str(
     param: ir.IParam,
     symbol: str,
 ) -> tuple[str, bool]:
-    """Return a Python expression that converts the variable to a string or string array
+    """Python var to str.
+
+    Return a Python expression that converts the variable to a string or string array
     and a boolean that indicates if the expression value is an array.
     """
 
