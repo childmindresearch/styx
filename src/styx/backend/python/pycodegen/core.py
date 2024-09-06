@@ -153,8 +153,9 @@ class PyDataClass(PyGen):
     docstring: str
     fields: list[PyArg] = field(default_factory=list)
     methods: list[PyFunc] = field(default_factory=list)
+    is_named_tuple: bool = False
 
-    def generate(self, named_tuple: bool = False) -> LineBuffer:
+    def generate(self) -> LineBuffer:
         # Sort fields so default arguments come last
         self.fields.sort(key=lambda a: a.default is not None)
 
@@ -166,7 +167,7 @@ class PyDataClass(PyGen):
         args = concat([[f.declaration(), *_arg_docstring(f)] for f in self.fields])
         methods = concat([method.generate() for method in self.methods], [""])
 
-        if not named_tuple:
+        if not self.is_named_tuple:
             buf = [
                 "@dataclasses.dataclass",
                 f"class {self.name}:",

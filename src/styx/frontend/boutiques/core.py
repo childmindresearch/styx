@@ -190,6 +190,7 @@ def _arg_elem_from_bt_elem(
                 default_value=d.get("default-value", ir.IOptional.SetToNone)
                 if input_type.is_optional
                 else d.get("default-value"),
+                choices=choices,
             )
 
         case InputTypePrimitive.Integer:
@@ -209,6 +210,7 @@ def _arg_elem_from_bt_elem(
                 else d.get("default-value"),
                 min_value=constraints.value_min,
                 max_value=constraints.value_max,
+                choices=choices,
             )
 
         case InputTypePrimitive.Float:

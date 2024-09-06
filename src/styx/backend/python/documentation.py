@@ -38,7 +38,7 @@ def docs_to_docstring(docs: Documentation) -> str | None:
         if len(docs.literature) == 1:
             re += f"Literature: {docs.literature[0]}"
         else:
-            entries = '\n'.join(docs.literature)
+            entries = "\n".join(docs.literature)
             re += f"Literature:\n{entries}"
 
     if docs.urls:
@@ -46,7 +46,7 @@ def docs_to_docstring(docs: Documentation) -> str | None:
         if len(docs.urls) == 1:
             re += f"URL: {docs.urls[0]}"
         else:
-            entries = '\n'.join(docs.urls)
+            entries = "\n".join(docs.urls)
             re += f"URLs:\n{entries}"
 
     if re:

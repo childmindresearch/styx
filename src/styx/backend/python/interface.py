@@ -30,13 +30,7 @@ def _compile_struct(
     metadata_symbol: str,
     root_function: bool,
 ) -> None:
-    has_outputs = struct_has_outputs(param)
-    if has_outputs:
-        _compile_outputs_class(
-            param=param,
-            interface_module=interface_module,
-            lookup=lookup,
-        )
+    has_outputs = root_function or struct_has_outputs(param)
 
     outputs_type = lookup.py_output_type[param.param.id_]
 
@@ -53,14 +47,14 @@ def _compile_struct(
             name="run",
             docstring_body="Build command line arguments. This method is called by the main command.",
             return_type="list[str]",
-            return_descr=None,
+            return_descr="Command line arguments",
             args=[
                 PyArg(name="self", type=None, default=None, docstring="The sub-command object."),
                 PyArg(name="execution", type="Execution", default=None, docstring="The execution object."),
             ],
         )
         struct_class = PyDataClass(
-            name=lookup.py_type[param.param.id_],
+            name=lookup.py_struct_type[param.param.id_],
             docstring=docs_to_docstring(param.param.docs),
             methods=[func_cargs_building],
         )
@@ -75,7 +69,6 @@ def _compile_struct(
                     PyArg(name="execution", type="Execution", default=None, docstring="The execution object."),
                 ],
             )
-            struct_class.methods.append(func_outputs)
         pyargs = struct_class.fields
 
     # Collect param python symbols
@@ -110,10 +103,18 @@ def _compile_struct(
 
     struct_compile_constraint_checks(func=func_cargs_building, struct=param, lookup=lookup)
 
-    func_cargs_building.body.extend([
-        "runner = runner or get_global_runner()",
-        f"execution = runner.start_execution({metadata_symbol})",
-    ])
+    if has_outputs:
+        _compile_outputs_class(
+            param=param,
+            interface_module=interface_module,
+            lookup=lookup,
+        )
+
+    if root_function:
+        func_cargs_building.body.extend([
+            "runner = runner or get_global_runner()",
+            f"execution = runner.start_execution({metadata_symbol})",
+        ])
 
     _compile_cargs_building(param, lookup, func_cargs_building, access_via_self=not root_function)
 
@@ -141,10 +142,12 @@ def _compile_struct(
             func_outputs.body.extend([
                 "return ret",
             ])
+            struct_class.methods.append(func_outputs)
         func_cargs_building.body.extend([
             "return cargs",
         ])
         interface_module.funcs_and_classes.append(struct_class)
+        interface_module.exports.append(struct_class.name)
 
 
 def _compile_cargs_building(
@@ -209,6 +212,7 @@ def _compile_outputs_class(
     outputs_class = PyDataClass(
         name=lookup.py_output_type[param.param.id_],
         docstring=f"Output object returned when calling `{lookup.py_type[param.param.id_]}(...)`.",
+        is_named_tuple=True,
     )
     outputs_class.fields.append(
         PyArg(
@@ -243,7 +247,7 @@ def _compile_outputs_class(
             )
         )
 
-    interface_module.header.extend(blank_before(outputs_class.generate(True), 2))
+    interface_module.funcs_and_classes.append(outputs_class)
     interface_module.exports.append(outputs_class.name)
 
 

@@ -37,7 +37,7 @@ def param_py_type(param: ir.IParam, lookup_struct_type: dict[ir.IdType, str]) ->
         if isinstance(param, ir.IInt):
             if param.choices:
                 return f"typing.Literal[{', '.join(map(as_py_literal, param.choices))}]"
-            return "str"
+            return "int"
         if isinstance(param, ir.IFloat):
             return "float"
         if isinstance(param, ir.IFile):
@@ -55,6 +55,7 @@ def param_py_type(param: ir.IParam, lookup_struct_type: dict[ir.IdType, str]) ->
         type_ = f"list[{type_}]"
     if isinstance(param, ir.IOptional):
         type_ = f"{type_} | None"
+
     return type_
 
 

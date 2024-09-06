@@ -32,6 +32,9 @@ class LookupParam:
 
         self.param: dict[ir.IdType, ir.IParam] = {interface.command.param.id_: interface.command}
         """Find param object by its ID. IParam.id_ -> IParam"""
+        self.py_struct_type: dict[ir.IdType, str] = {interface.command.param.id_: function_symbol}
+        """Find Python struct type by param id. IParam.id_ -> Python type
+        (this is different from py_type because of optionals and lists)"""
         self.py_type: dict[ir.IdType, str] = {interface.command.param.id_: function_symbol}
         """Find Python type by param id. IParam.id_ -> Python type"""
         self.py_symbol: dict[ir.IdType, str] = {}
@@ -58,10 +61,11 @@ class LookupParam:
             self.param[elem.param.id_] = elem
 
             if isinstance(elem, ir.IStruct):
-                if elem.param.id_ not in self.py_type:  # Struct unions may resolve these first
-                    self.py_type[elem.param.id_] = package_scope.add_or_dodge(
+                if elem.param.id_ not in self.py_struct_type:  # Struct unions may resolve these first
+                    self.py_struct_type[elem.param.id_] = package_scope.add_or_dodge(
                         python_pascalize(f"{interface.command.struct.name}_{elem.struct.name}")
                     )
+                    self.py_type[elem.param.id_] = param_py_type(elem, self.py_struct_type)
                 self.py_output_type[elem.param.id_] = package_scope.add_or_dodge(
                     python_pascalize(f"{interface.command.struct.name}_{elem.struct.name}_Outputs")
                 )
@@ -75,9 +79,10 @@ class LookupParam:
                 )
             elif isinstance(elem, ir.IStructUnion):
                 for alternative in elem.alts:
-                    self.py_type[alternative.param.id_] = package_scope.add_or_dodge(
+                    self.py_struct_type[alternative.param.id_] = package_scope.add_or_dodge(
                         python_pascalize(f"{interface.command.struct.name}_{alternative.struct.name}")
                     )
-                self.py_type[elem.param.id_] = param_py_type(elem, self.py_type)
+                    self.py_type[alternative.param.id_] = param_py_type(alternative, self.py_struct_type)
+                self.py_type[elem.param.id_] = param_py_type(elem, self.py_struct_type)
             else:
-                self.py_type[elem.param.id_] = param_py_type(elem, self.py_type)
+                self.py_type[elem.param.id_] = param_py_type(elem, self.py_struct_type)
