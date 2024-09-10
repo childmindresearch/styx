@@ -9,12 +9,11 @@ from styx.backend.python.pycodegen.core import (
     PyDataClass,
     PyFunc,
     PyModule,
-    blank_before,
     expand,
     indent,
 )
 from styx.backend.python.pycodegen.scope import Scope
-from styx.backend.python.pycodegen.utils import as_py_literal, python_snakify, enquote
+from styx.backend.python.pycodegen.utils import as_py_literal, enquote, python_snakify
 from styx.backend.python.utils import (
     param_py_default_value,
     param_py_var_is_set_by_user,
@@ -298,12 +297,13 @@ def _compile_outputs_class(
                     if isinstance(sub_struct, ir.IList):
                         docs_append = "This is a list of outputs with the same length and order as the inputs."
 
+                    input_types_human = ' or '.join([enquote(t, '`') for t in alt_input_types])
                     outputs_class.fields.append(
                         PyArg(
                             name=output_symbol,
                             type=output_type,
                             default=None,
-                            docstring=f"Outputs from {' or '.join([enquote(t, '`') for t in alt_input_types])}.{docs_append}",
+                            docstring=f"Outputs from {input_types_human}.{docs_append}",
                         )
                     )
 
