@@ -14,7 +14,7 @@ from styx.backend.python.pycodegen.core import (
     indent,
 )
 from styx.backend.python.pycodegen.scope import Scope
-from styx.backend.python.pycodegen.utils import as_py_literal, python_snakify
+from styx.backend.python.pycodegen.utils import as_py_literal, python_snakify, enquote
 from styx.backend.python.utils import (
     param_py_default_value,
     param_py_var_is_set_by_user,
@@ -24,22 +24,22 @@ from styx.backend.python.utils import (
 
 
 def _compile_struct(
-    param: ir.IStruct | ir.IParam,
+    struct: ir.IStruct | ir.IParam,
     interface_module: PyModule,
     lookup: LookupParam,
     metadata_symbol: str,
     root_function: bool,
 ) -> None:
-    has_outputs = root_function or struct_has_outputs(param)
+    has_outputs = root_function or struct_has_outputs(struct)
 
-    outputs_type = lookup.py_output_type[param.param.id_]
+    outputs_type = lookup.py_output_type[struct.param.id_]
 
     if root_function:
         func_cargs_building = PyFunc(
-            name=lookup.py_type[param.param.id_],
+            name=lookup.py_type[struct.param.id_],
             return_type=outputs_type,
             return_descr=f"NamedTuple of outputs " f"(described in `{outputs_type}`).",
-            docstring_body=docs_to_docstring(param.param.docs),
+            docstring_body=docs_to_docstring(struct.param.docs),
         )
         pyargs = func_cargs_building.args
     else:
@@ -54,8 +54,8 @@ def _compile_struct(
             ],
         )
         struct_class = PyDataClass(
-            name=lookup.py_struct_type[param.param.id_],
-            docstring=docs_to_docstring(param.param.docs),
+            name=lookup.py_struct_type[struct.param.id_],
+            docstring=docs_to_docstring(struct.param.docs),
             methods=[func_cargs_building],
         )
         if has_outputs:
@@ -72,7 +72,7 @@ def _compile_struct(
         pyargs = struct_class.fields
 
     # Collect param python symbols
-    for elem in param.struct.iter_params():
+    for elem in struct.struct.iter_params():
         symbol = lookup.py_symbol[elem.param.id_]
         pyargs.append(
             PyArg(
@@ -85,7 +85,7 @@ def _compile_struct(
 
         if isinstance(elem, ir.IStruct):
             _compile_struct(
-                param=elem,
+                struct=elem,
                 interface_module=interface_module,
                 lookup=lookup,
                 metadata_symbol=metadata_symbol,
@@ -94,18 +94,18 @@ def _compile_struct(
         elif isinstance(elem, ir.IStructUnion):
             for child in elem.alts:
                 _compile_struct(
-                    param=child,
+                    struct=child,
                     interface_module=interface_module,
                     lookup=lookup,
                     metadata_symbol=metadata_symbol,
                     root_function=False,
                 )
 
-    struct_compile_constraint_checks(func=func_cargs_building, struct=param, lookup=lookup)
+    struct_compile_constraint_checks(func=func_cargs_building, struct=struct, lookup=lookup)
 
     if has_outputs:
         _compile_outputs_class(
-            param=param,
+            struct=struct,
             interface_module=interface_module,
             lookup=lookup,
         )
@@ -116,12 +116,12 @@ def _compile_struct(
             f"execution = runner.start_execution({metadata_symbol})",
         ])
 
-    _compile_cargs_building(param, lookup, func_cargs_building, access_via_self=not root_function)
+    _compile_cargs_building(struct, lookup, func_cargs_building, access_via_self=not root_function)
 
     if root_function:
         pyargs.append(PyArg(name="runner", type="Runner | None", default="None", docstring="Command runner"))
         _compile_outputs_building(
-            param=param,
+            struct=struct,
             func=func_cargs_building,
             lookup=lookup,
             access_via_self=False,
@@ -134,7 +134,7 @@ def _compile_struct(
     else:
         if has_outputs:
             _compile_outputs_building(
-                param=param,
+                struct=struct,
                 func=func_outputs,
                 lookup=lookup,
                 access_via_self=True,
@@ -205,13 +205,13 @@ def _compile_cargs_building(
 
 
 def _compile_outputs_class(
-    param: ir.IStruct | ir.IParam,
+    struct: ir.IStruct | ir.IParam,
     interface_module: PyModule,
     lookup: LookupParam,
 ) -> None:
     outputs_class = PyDataClass(
-        name=lookup.py_output_type[param.param.id_],
-        docstring=f"Output object returned when calling `{lookup.py_type[param.param.id_]}(...)`.",
+        name=lookup.py_output_type[struct.param.id_],
+        docstring=f"Output object returned when calling `{lookup.py_type[struct.param.id_]}(...)`.",
         is_named_tuple=True,
     )
     outputs_class.fields.append(
@@ -223,7 +223,7 @@ def _compile_outputs_class(
         )
     )
 
-    for output in param.param.outputs:
+    for output in struct.param.outputs:
         output_symbol = lookup.py_output_field_symbol[output.id_]
 
         # Optional if any of its param references is optional
@@ -247,18 +247,78 @@ def _compile_outputs_class(
             )
         )
 
+    for sub_struct in struct.struct.iter_params():
+        if isinstance(sub_struct, ir.IStruct):
+            if struct_has_outputs(sub_struct):
+                output_type = lookup.py_output_type[sub_struct.param.id_]
+                if isinstance(sub_struct, ir.IList):
+                    output_type = f"typing.List[{output_type}]"
+                if isinstance(sub_struct, ir.IOptional):
+                    output_type = f"{output_type} | None"
+
+                output_symbol = lookup.py_symbol[sub_struct.param.id_]  # todo: name collisions
+
+                input_type = lookup.py_struct_type[sub_struct.param.id_]
+                docs_append = ""
+                if isinstance(sub_struct, ir.IList):
+                    docs_append = "This is a list of outputs with the same length and order as the inputs."
+
+                outputs_class.fields.append(
+                    PyArg(
+                        name=output_symbol,
+                        type=output_type,
+                        default=None,
+                        docstring=f"Outputs from {enquote(input_type, '`')}.{docs_append}",
+                    )
+                )
+        elif isinstance(sub_struct, ir.IStructUnion):
+            if any([struct_has_outputs(s) for s in sub_struct.alts]):
+                alt_types = [
+                    lookup.py_output_type[sub_command.param.id_]
+                    for sub_command in sub_struct.alts
+                    if struct_has_outputs(sub_command)
+                ]
+                if len(alt_types) > 0:
+                    output_type = ", ".join(alt_types)
+                    output_type = f"typing.Union[{output_type}]"
+
+                    if isinstance(sub_struct, ir.IList):
+                        output_type = f"typing.List[{output_type}]"
+                    if isinstance(sub_struct, ir.IOptional):
+                        output_type = f"{output_type} | None"
+
+                    output_symbol = lookup.py_symbol[sub_struct.param.id_]  # todo: name collisions
+
+                    alt_input_types = [
+                        lookup.py_struct_type[sub_command.param.id_]
+                        for sub_command in sub_struct.alts
+                        if struct_has_outputs(sub_command)
+                    ]
+                    docs_append = ""
+                    if isinstance(sub_struct, ir.IList):
+                        docs_append = "This is a list of outputs with the same length and order as the inputs."
+
+                    outputs_class.fields.append(
+                        PyArg(
+                            name=output_symbol,
+                            type=output_type,
+                            default=None,
+                            docstring=f"Outputs from {' or '.join([enquote(t, '`') for t in alt_input_types])}.{docs_append}",
+                        )
+                    )
+
     interface_module.funcs_and_classes.append(outputs_class)
     interface_module.exports.append(outputs_class.name)
 
 
 def _compile_outputs_building(
-    param: ir.IStruct | ir.IParam,
+    struct: ir.IStruct | ir.IParam,
     func: PyFunc,
     lookup: LookupParam,
     access_via_self: bool = False,
 ) -> None:
     """Generate the outputs building code."""
-    func.body.append(f"ret = {lookup.py_output_type[param.param.id_]}(")
+    func.body.append(f"ret = {lookup.py_output_type[struct.param.id_]}(")
 
     # Set root output path
     func.body.extend(indent(['root=execution.output_file("."),']))
@@ -292,7 +352,7 @@ def _compile_outputs_building(
             raise Exception(f"Unsupported input type " f"for output path template of '{param.param.name}'.")
         assert False
 
-    for output in param.param.outputs:
+    for output in struct.param.outputs:
         output_symbol = lookup.py_output_field_symbol[output.id_]
 
         output_segments: list[str] = []
@@ -303,9 +363,9 @@ def _compile_outputs_building(
                 continue
             output_segments.append(_py_get_val(token))
 
-            param = lookup.param[token.ref_id]
-            param_symbol = lookup.py_symbol[param.param.id_]
-            if (py_var_is_set_by_user := param_py_var_is_set_by_user(param, param_symbol, False)) is not None:
+            ostruct = lookup.param[token.ref_id]
+            param_symbol = lookup.py_symbol[ostruct.param.id_]
+            if (py_var_is_set_by_user := param_py_var_is_set_by_user(ostruct, param_symbol, False)) is not None:
                 conditions.append(py_var_is_set_by_user)
 
         condition_py = ""
@@ -316,6 +376,34 @@ def _compile_outputs_building(
         func.body.extend(
             indent([f"{output_symbol}=execution.output_file({' + '.join(output_segments)}){condition_py},"])
         )
+
+    # sub struct outputs
+    for sub_struct in struct.struct.iter_params():
+        has_outputs = False
+        if isinstance(sub_struct, ir.IStruct):
+            has_outputs = struct_has_outputs(sub_struct)
+        elif isinstance(sub_struct, ir.IStructUnion):
+            has_outputs = any([struct_has_outputs(s) for s in sub_struct.alts])
+        if not has_outputs:
+            continue
+
+        output_symbol = lookup.py_symbol[sub_struct.param.id_]  # todo: name collisions
+        output_symbol_resolved = output_symbol
+        if access_via_self:
+            output_symbol_resolved = f"self.{output_symbol_resolved}"
+
+        if isinstance(sub_struct, ir.IList):
+            opt = ""
+            if isinstance(sub_struct, ir.IOptional):
+                opt = f" if {output_symbol_resolved} else None"
+            func.body.extend(
+                indent([f"{output_symbol}=" f"[i.outputs(execution) for i in {output_symbol_resolved}]{opt},"])
+            )
+        else:
+            o = f"{output_symbol_resolved}.outputs(execution)"
+            if isinstance(sub_struct, ir.IOptional):
+                o = f"{o} if {output_symbol_resolved} else None"
+            func.body.extend(indent([f"{output_symbol}={o},"]))
 
     func.body.extend([")"])
 
@@ -358,7 +446,7 @@ def compile_interface(
     )
 
     _compile_struct(
-        param=interface.command,
+        struct=interface.command,
         interface_module=interface_module,
         lookup=lookup,
         metadata_symbol=metadata_symbol,
