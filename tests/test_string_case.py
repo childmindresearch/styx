@@ -2,7 +2,7 @@
 
 import pytest
 
-from styx.pycodegen.string_case import (
+from styx.backend.python.pycodegen.string_case import (
     camel_case,
     pascal_case,
     screaming_snake_case,

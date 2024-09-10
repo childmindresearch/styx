@@ -3,7 +3,7 @@
 from abc import ABC
 from dataclasses import dataclass, field
 
-from styx.pycodegen.utils import enquote, ensure_endswith, linebreak_paragraph
+from styx.backend.python.pycodegen.utils import enquote, ensure_endswith, linebreak_paragraph
 
 LineBuffer = list[str]
 INDENT = "    "
@@ -68,9 +68,9 @@ class PyArg:
     """Python function argument."""
 
     name: str
-    type: str | None
-    default: str | None
-    docstring: str
+    type: str | None = None
+    default: str | None = None
+    docstring: str | None = None
 
     def declaration(self) -> str:
         """Generate the argument declaration ("var[: type][ = default]")."""
@@ -84,11 +84,11 @@ class PyArg:
 class PyFunc(PyGen):
     """Python function."""
 
-    name: str = ""
+    name: str
     args: list[PyArg] = field(default_factory=list)
-    docstring_body: str = ""
+    docstring_body: str | None = None
     body: LineBuffer = field(default_factory=list)
-    return_descr: str = ""
+    return_descr: str | None = None
     return_type: str | None = None
 
     def generate(self) -> LineBuffer:
@@ -107,8 +107,12 @@ class PyFunc(PyGen):
 
         arg_docstr_buf = []
         for arg in self.args:
+            if arg.name == "self":
+                continue
             arg_docstr = linebreak_paragraph(
-                f"{arg.name}: {arg.docstring}", width=80 - (4 * 3) - 1, first_line_width=80 - (4 * 2) - 1
+                f"{arg.name}: {arg.docstring if arg.docstring else ''}",
+                width=80 - (4 * 3) - 1,
+                first_line_width=80 - (4 * 2) - 1,
             )
             arg_docstr = ensure_endswith("\\\n".join(arg_docstr), ".").split("\n")
             arg_docstr_buf.append(arg_docstr[0])
@@ -116,7 +120,10 @@ class PyFunc(PyGen):
 
         # Add docstring (Google style)
 
-        docstring_linebroken = linebreak_paragraph(self.docstring_body, width=80 - 4)
+        if self.docstring_body:
+            docstring_linebroken = linebreak_paragraph(self.docstring_body, width=80 - 4)
+        else:
+            docstring_linebroken = ""
 
         buf.extend(
             indent([
@@ -125,14 +132,16 @@ class PyFunc(PyGen):
                 "",
                 "Args:",
                 *indent(arg_docstr_buf),
-                "Returns:",
-                *indent([f"{self.return_descr}"]),
+                *(["Returns:", *indent([f"{self.return_descr}"])] if self.return_descr else []),
                 '"""',
             ])
         )
 
         # Add function body
-        buf.extend(indent(self.body))
+        if self.body:
+            buf.extend(indent(self.body))
+        else:
+            buf.extend(indent(["pass"]))
         return buf
 
 
@@ -144,28 +153,46 @@ class PyDataClass(PyGen):
     docstring: str
     fields: list[PyArg] = field(default_factory=list)
     methods: list[PyFunc] = field(default_factory=list)
+    is_named_tuple: bool = False
 
     def generate(self) -> LineBuffer:
         # Sort fields so default arguments come last
         self.fields.sort(key=lambda a: a.default is not None)
 
         def _arg_docstring(arg: PyArg) -> LineBuffer:
+            if not arg.docstring:
+                return []
             return linebreak_paragraph(f'"""{arg.docstring}"""', width=80 - 4, first_line_width=80 - 4)
 
         args = concat([[f.declaration(), *_arg_docstring(f)] for f in self.fields])
         methods = concat([method.generate() for method in self.methods], [""])
 
-        buf = [
-            "@dataclasses.dataclass",
-            f"class {self.name}:",
-            *indent([
-                '"""',
-                f"{self.docstring}",
-                '"""',
-                *args,
-                *blank_before(methods),
-            ]),
-        ]
+        if not self.is_named_tuple:
+            buf = [
+                "@dataclasses.dataclass",
+                f"class {self.name}:",
+                *indent([
+                    *(
+                        ['"""', *linebreak_paragraph(self.docstring, width=80 - 4, first_line_width=80 - 4), '"""']
+                        if self.docstring
+                        else []
+                    ),
+                    *args,
+                    *blank_before(methods),
+                ]),
+            ]
+        else:
+            buf = [
+                f"class {self.name}(typing.NamedTuple):",
+                *indent([
+                    '"""',
+                    f"{self.docstring}",
+                    '"""',
+                    *args,
+                    *blank_before(methods),
+                ]),
+            ]
+
         return buf
 
 
@@ -175,15 +202,16 @@ class PyModule(PyGen):
 
     imports: LineBuffer = field(default_factory=list)
     header: LineBuffer = field(default_factory=list)
-    funcs: list[PyFunc] = field(default_factory=list)
+    funcs_and_classes: list[PyFunc | PyDataClass] = field(default_factory=list)
     footer: LineBuffer = field(default_factory=list)
     exports: list[str] = field(default_factory=list)
+    docstr: str | None = None
 
     def generate(self) -> LineBuffer:
         exports = (
             [
                 "__all__ = [",
-                *indent(list(map(lambda x: f"{enquote(x)},", self.exports))),
+                *indent(list(map(lambda x: f"{enquote(x)},", sorted(self.exports)))),
                 "]",
             ]
             if self.exports
@@ -191,13 +219,14 @@ class PyModule(PyGen):
         )
 
         return blank_after([
+            *(['"""', *linebreak_paragraph(self.docstr), '"""'] if self.docstr else []),
             *comment([
                 "This file was auto generated by Styx.",
                 "Do not edit this file directly.",
             ]),
             *blank_before(self.imports),
             *blank_before(self.header),
-            *[line for func in self.funcs for line in blank_before(func.generate(), 2)],
+            *[line for func in self.funcs_and_classes for line in blank_before(func.generate(), 2)],
             *blank_before(self.footer),
             *blank_before(exports, 2),
         ])

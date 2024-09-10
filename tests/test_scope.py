@@ -2,7 +2,7 @@
 
 import pytest
 
-from styx.pycodegen.scope import Scope
+from styx.backend.python.pycodegen.scope import Scope
 
 
 def test_scope_add_or_die() -> None:

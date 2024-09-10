@@ -1,8 +1,7 @@
 """Test output file paths."""
 
-import styx.compiler.core
-import styx.compiler.settings
 import tests.utils.dummy_runner
+from tests.utils.compile_boutiques import boutiques2python
 from tests.utils.dynmodule import (
     BT_TYPE_FILE,
     BT_TYPE_NUMBER,
@@ -32,7 +31,7 @@ def test_output_file() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -60,12 +59,12 @@ def test_output_file_with_template() -> None:
             {
                 "id": "out",
                 "name": "The out",
-                "path-template": "out-{x}.txt",
+                "path-template": "out-[X].txt",
             }
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
@@ -99,7 +98,7 @@ def test_output_file_with_template_and_stripped_extensions() -> None:
         ],
     })
 
-    compiled_module = styx.compiler.core.compile_boutiques_dict(model)
+    compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
     dummy_runner = tests.utils.dummy_runner.DummyRunner()
