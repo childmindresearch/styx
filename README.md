@@ -16,6 +16,10 @@ standard library (and on shared type definition). Runtimes are decoupled via con
 
 ## The Styx-verse
 
+### Documentation
+
+- [Styx Book](https://childmindresearch.github.io/styxbook/)
+
 ### Precompiled wrappers
 
 - [Neuroimaging](https://github.com/childmindresearch/niwrap)
