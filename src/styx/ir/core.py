@@ -104,6 +104,7 @@ class PIntListOpt(IInt, IList, IParam, IOptional):
     default_value: list[int] | IOptional.SetToNoneAble | None = IOptional.SetToNone
 
 
+@dataclass
 class IFloat(ABC):
     min_value: int | None = None
     max_value: int | None = None
@@ -154,8 +155,9 @@ class PStrListOpt(IStr, IList, IParam, IOptional):
     default_value: list[str] | IOptional.SetToNoneAble | None = IOptional.SetToNone
 
 
+@dataclass
 class IFile(ABC):
-    pass
+    resolve_parent: bool = False
 
 
 @dataclass

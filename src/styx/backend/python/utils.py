@@ -90,6 +90,8 @@ def param_py_var_to_str(
                 assert len(param.value_false) > 0
                 return as_py_literal(value_false), as_list
             if isinstance(param, ir.IFile):
+                if param.resolve_parent:
+                    return f"execution.input_file({symbol}, resolve_parent=True)", False
                 return f"execution.input_file({symbol})", False
             if isinstance(param, (ir.IStruct, ir.IStructUnion)):
                 return f"{symbol}.run(execution)", True
@@ -103,6 +105,8 @@ def param_py_var_to_str(
             if isinstance(param, ir.IBool):
                 assert False, "TODO: Not implemented yet"
             if isinstance(param, ir.IFile):
+                if param.resolve_parent:
+                    return f"[execution.input_file(f, resolve_parent=True) for f in {symbol}]", False
                 return f"[execution.input_file(f) for f in {symbol}]", True
             if isinstance(param, (ir.IStruct, ir.IStructUnion)):
                 return f"[a for c in [s.run(execution) for s in {symbol}] for a in c]", True
@@ -117,6 +121,8 @@ def param_py_var_to_str(
         if isinstance(param, ir.IBool):
             assert False, "TODO: Not implemented yet"
         if isinstance(param, ir.IFile):
+            if param.resolve_parent:
+                return f"{sep_join}([execution.input_file(f, resolve_parent=True) for f in {symbol}])", False
             return f"{sep_join}([execution.input_file(f) for f in {symbol}])", False
         if isinstance(param, (ir.IStruct, ir.IStructUnion)):
             return f"{sep_join}([a for c in [s.run(execution) for s in {symbol}] for a in c])", False
