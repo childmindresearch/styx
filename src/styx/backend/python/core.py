@@ -50,4 +50,5 @@ def to_python(interfaces: Iterable[Interface]) -> Generator[tuple[str, list[str]
         yield interface_module.text(), [package_data.package_symbol, interface_module_symbol]
 
     for package_data in packages.values():
+        package_data.module.imports.sort()
         yield package_data.module.text(), [package_data.package_symbol, "__init__"]
