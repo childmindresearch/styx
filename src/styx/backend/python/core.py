@@ -52,3 +52,8 @@ def to_python(interfaces: Iterable[Interface]) -> Generator[tuple[str, list[str]
     for package_data in packages.values():
         package_data.module.imports.sort()
         yield package_data.module.text(), [package_data.package_symbol, "__init__"]
+
+
+def styxdefs_compat() -> str:
+    """Return what version of styxdefs generated wrappers will be compatible with."""
+    return "^0.2.0"
