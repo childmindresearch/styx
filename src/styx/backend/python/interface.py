@@ -431,7 +431,7 @@ def compile_interface(
     function_symbol = package_scope.add_or_dodge(python_snakify(interface.command.param.name))
     interface_module.exports.append(function_symbol)
 
-    function_scope = Scope(parent=package_scope)
+    function_scope = Scope(parent=Scope.python())
     function_scope.add_or_die("runner")
     function_scope.add_or_die("execution")
     function_scope.add_or_die("cargs")
