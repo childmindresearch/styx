@@ -255,7 +255,7 @@ def _compile_outputs_class(
                 if isinstance(sub_struct, ir.IOptional):
                     output_type = f"{output_type} | None"
 
-                output_symbol = lookup.py_symbol[sub_struct.param.id_]  # todo: name collisions
+                output_symbol = lookup.py_output_field_symbol[sub_struct.param.id_]
 
                 input_type = lookup.py_struct_type[sub_struct.param.id_]
                 docs_append = ""
@@ -286,7 +286,7 @@ def _compile_outputs_class(
                     if isinstance(sub_struct, ir.IOptional):
                         output_type = f"{output_type} | None"
 
-                    output_symbol = lookup.py_symbol[sub_struct.param.id_]  # todo: name collisions
+                    output_symbol = lookup.py_output_field_symbol[sub_struct.param.id_]
 
                     alt_input_types = [
                         lookup.py_struct_type[sub_command.param.id_]
@@ -387,8 +387,8 @@ def _compile_outputs_building(
         if not has_outputs:
             continue
 
-        output_symbol = lookup.py_symbol[sub_struct.param.id_]  # todo: name collisions
-        output_symbol_resolved = output_symbol
+        output_symbol = lookup.py_output_field_symbol[sub_struct.param.id_]
+        output_symbol_resolved = lookup.py_symbol[sub_struct.param.id_]
         if access_via_self:
             output_symbol_resolved = f"self.{output_symbol_resolved}"
 

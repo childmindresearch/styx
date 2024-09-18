@@ -18,10 +18,17 @@ class LookupParam:
             param: ir.IStruct | ir.IParam, lookup_output_field_symbol: dict[ir.IdType, str]
         ) -> None:
             scope = Scope(parent=package_scope)
+            scope.add_or_die("root")
             for output in param.param.outputs:
                 output_field_symbol = scope.add_or_dodge(python_snakify(output.name))
                 assert output.id_ not in lookup_output_field_symbol
                 lookup_output_field_symbol[output.id_] = output_field_symbol
+
+            for sub_struct in param.struct.iter_params():
+                if isinstance(sub_struct, (ir.IStruct, ir.IStructUnion)):
+                    output_field_symbol = scope.add_or_dodge(python_snakify(sub_struct.param.name))
+                    assert sub_struct.param.id_ not in lookup_output_field_symbol
+                    lookup_output_field_symbol[sub_struct.param.id_] = output_field_symbol
 
         def _collect_py_symbol(param: ir.IStruct | ir.IParam, lookup_py_symbol: dict[ir.IdType, str]) -> None:
             scope = Scope(parent=function_scope)
