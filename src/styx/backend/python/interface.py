@@ -337,6 +337,8 @@ def _compile_outputs_building(
             raise Exception(f"Output path template replacements cannot be lists. ({param.param.name})")
 
         if isinstance(param, ir.IStr):
+            for suffix in output_param_reference.file_remove_suffixes:
+                substitute += f".removesuffix({as_py_literal(suffix)})"
             return substitute
 
         if isinstance(param, (ir.IInt, ir.IFloat)):
