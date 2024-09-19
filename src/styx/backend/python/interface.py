@@ -396,8 +396,10 @@ def _compile_outputs_building(
             opt = ""
             if isinstance(sub_struct, ir.IOptional):
                 opt = f" if {output_symbol_resolved} else None"
+            # Need to check for attr because some alts might have outputs others not.
+            # todo: think about alternative solutions
             func.body.extend(
-                indent([f"{output_symbol}=" f"[i.outputs(execution) for i in {output_symbol_resolved}]{opt},"])
+                indent([f"{output_symbol}=" f"[i.outputs(execution) if hasattr(i, \"outputs\") else None for i in {output_symbol_resolved}]{opt},"])
             )
         else:
             o = f"{output_symbol_resolved}.outputs(execution)"
