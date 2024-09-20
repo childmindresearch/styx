@@ -235,7 +235,7 @@ def _arg_elem_from_bt_elem(
                 param=dparam,
                 list_=dlist,
                 default_value_set_to_none=True,
-                resolve_parent=d.get("resolve-parent")
+                resolve_parent=d.get("resolve-parent"),
             )
 
         case InputTypePrimitive.Flag:

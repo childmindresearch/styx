@@ -297,7 +297,7 @@ def _compile_outputs_class(
                     if isinstance(sub_struct, ir.IList):
                         docs_append = "This is a list of outputs with the same length and order as the inputs."
 
-                    input_types_human = ' or '.join([enquote(t, '`') for t in alt_input_types])
+                    input_types_human = " or ".join([enquote(t, "`") for t in alt_input_types])
                     outputs_class.fields.append(
                         PyArg(
                             name=output_symbol,
@@ -401,7 +401,10 @@ def _compile_outputs_building(
             # Need to check for attr because some alts might have outputs others not.
             # todo: think about alternative solutions
             func.body.extend(
-                indent([f"{output_symbol}=" f"[i.outputs(execution) if hasattr(i, \"outputs\") else None for i in {output_symbol_resolved}]{opt},"])
+                indent([
+                    f"{output_symbol}="
+                    f'[i.outputs(execution) if hasattr(i, "outputs") else None for i in {output_symbol_resolved}]{opt},'
+                ])
             )
         else:
             o = f"{output_symbol_resolved}.outputs(execution)"
