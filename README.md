@@ -19,6 +19,7 @@ standard library (and on shared type definition). Runtimes are decoupled via con
 ### Documentation
 
 - [Styx Book](https://childmindresearch.github.io/styxbook/)
+- [Styx Playground](https://childmindresearch.github.io/styxplayground/)
 
 ### Precompiled wrappers
 
