@@ -12,7 +12,7 @@ def generate_static_metadata(
     """Generate the static metadata."""
     metadata_symbol = scope.add_or_dodge(f"{python_screaming_snakify(interface.command.base.name)}_METADATA")
 
-    entries = {
+    entries: dict = {
         "id": interface.uid,
         "name": interface.command.base.name,
         "package": interface.package.name,

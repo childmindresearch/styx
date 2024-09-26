@@ -123,7 +123,7 @@ class PyFunc(PyGen):
         if self.docstring_body:
             docstring_linebroken = linebreak_paragraph(self.docstring_body, width=80 - 4)
         else:
-            docstring_linebroken = ""
+            docstring_linebroken = [""]
 
         buf.extend(
             indent([
@@ -150,7 +150,7 @@ class PyDataClass(PyGen):
     """Python generate."""
 
     name: str
-    docstring: str
+    docstring: str | None
     fields: list[PyArg] = field(default_factory=list)
     methods: list[PyFunc] = field(default_factory=list)
     is_named_tuple: bool = False

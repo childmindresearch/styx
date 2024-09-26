@@ -78,8 +78,8 @@ def param_py_var_to_str(
             if isinstance(param.body, ir.Param.Bool):
                 as_list = (len(param.body.value_true) > 1) or (len(param.body.value_false) > 1)
                 if as_list:
-                    value_true = param.body.value_true
-                    value_false = param.body.value_false
+                    value_true: str | list[str] | None = param.body.value_true
+                    value_false: str | list[str] | None = param.body.value_false
                 else:
                     value_true = param.body.value_true[0] if len(param.body.value_true) > 0 else None
                     value_false = param.body.value_false[0] if len(param.body.value_false) > 0 else None
@@ -136,7 +136,7 @@ def param_py_default_value(param: ir.Param) -> str | None:
         return "None"
     if param.default_value is None:
         return None
-    return as_py_literal(param.default_value)
+    return as_py_literal(param.default_value)  # type: ignore
 
 
 def param_py_var_is_set_by_user(

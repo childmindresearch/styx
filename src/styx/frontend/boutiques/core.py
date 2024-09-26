@@ -196,6 +196,8 @@ def _arg_elem_from_bt_elem(
             assert choices is None or all([
                 isinstance(o, int) for o in choices
             ]), "value-choices must be all int for integer input"
+            assert constraints.value_min is None or isinstance(constraints.value_min, int)
+            assert constraints.value_max is None or isinstance(constraints.value_max, int)
 
             return ir.Param(
                 base=dparam,
@@ -229,7 +231,7 @@ def _arg_elem_from_bt_elem(
             return ir.Param(
                 base=dparam,
                 body=ir.Param.File(
-                    resolve_parent=d.get("resolve-parent"),
+                    resolve_parent=d.get("resolve-parent") is True,
                 ),
                 list_=dlist,
                 nullable=input_type.is_optional,
@@ -240,7 +242,6 @@ def _arg_elem_from_bt_elem(
             input_prefix = d.get("command-line-flag")
             assert input_prefix is not None, "Flag type input must have command-line-flag"
 
-            dparam.prefix = []
             return ir.Param(
                 base=dparam,
                 body=ir.Param.Bool(
@@ -390,7 +391,7 @@ def _collect_outputs(bt: dict, ir_id_lookup: dict[str, ir.IdType], id_counter: I
     for bt_output in bt.get("output-files", []):
         path_template = bt_output["path-template"]
         destructed = destruct_template(path_template, ir_id_lookup)
-        output_sequence = [
+        output_sequence: list[str, ir.OutputParamReference] = [  # type: ignore  # mypy is wrong
             ir.OutputParamReference(
                 ref_id=x,
                 file_remove_suffixes=bt_output.get("path-template-stripped-extensions", []),
