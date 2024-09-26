@@ -8,7 +8,6 @@ from typing import TypeVar
 
 import styx.ir.core as ir
 from styx.frontend.boutiques.utils import boutiques_split_command
-from styx.ir.dyn import dyn_param
 
 T = TypeVar("T")
 
@@ -139,7 +138,7 @@ def _arg_elem_from_bt_elem(
     elem: dict,
     id_counter: IdCounter,
     ir_id_lookup: dict[str, ir.IdType],
-) -> ir.IParam:
+) -> ir.Param:
     if not isinstance(elem, dict):
         assert False
 
@@ -158,7 +157,7 @@ def _arg_elem_from_bt_elem(
     input_id = id_counter.next()
     ir_id_lookup[input_bt_ref] = input_id
 
-    dparam = ir.DParam(
+    dparam = ir.Param.Base(
         id_=input_id,
         name=input_name,
         docs=input_docs,
@@ -168,7 +167,7 @@ def _arg_elem_from_bt_elem(
 
     dlist = None
     if input_type.is_list:
-        dlist = ir.DList(
+        dlist = ir.Param.List(
             join=repeatable_join,
             count_min=constraints.list_length_min,
             count_max=constraints.list_length_max,
@@ -181,13 +180,12 @@ def _arg_elem_from_bt_elem(
                 isinstance(o, str) for o in choices
             ]), "value-choices must be all string for string input"
 
-            return dyn_param(
-                dyn_type="str",
-                dyn_list=input_type.is_list,
-                dyn_optional=input_type.is_optional,
-                param=dparam,
+            return ir.Param(
+                base=dparam,
+                body=ir.Param.String(),
                 list_=dlist,
-                default_value=d.get("default-value", ir.IOptional.SetToNone)
+                nullable=input_type.is_optional,
+                default_value=d.get("default-value", ir.Param.SetToNone)
                 if input_type.is_optional
                 else d.get("default-value"),
                 choices=choices,
@@ -199,43 +197,43 @@ def _arg_elem_from_bt_elem(
                 isinstance(o, int) for o in choices
             ]), "value-choices must be all int for integer input"
 
-            return dyn_param(
-                dyn_type="int",
-                dyn_list=input_type.is_list,
-                dyn_optional=input_type.is_optional,
-                param=dparam,
+            return ir.Param(
+                base=dparam,
+                body=ir.Param.Int(
+                    min_value=constraints.value_min,
+                    max_value=constraints.value_max,
+                ),
                 list_=dlist,
-                default_value=d.get("default-value", ir.IOptional.SetToNone)
+                nullable=input_type.is_optional,
+                default_value=d.get("default-value", ir.Param.SetToNone)
                 if input_type.is_optional
                 else d.get("default-value"),
-                min_value=constraints.value_min,
-                max_value=constraints.value_max,
                 choices=choices,
             )
 
         case InputTypePrimitive.Float:
-            return dyn_param(
-                dyn_type="float",
-                dyn_list=input_type.is_list,
-                dyn_optional=input_type.is_optional,
-                param=dparam,
+            return ir.Param(
+                base=dparam,
+                body=ir.Param.Float(
+                    min_value=constraints.value_min,
+                    max_value=constraints.value_max,
+                ),
                 list_=dlist,
-                default_value=d.get("default-value", ir.IOptional.SetToNone)
+                nullable=input_type.is_optional,
+                default_value=d.get("default-value", ir.Param.SetToNone)
                 if input_type.is_optional
                 else d.get("default-value"),
-                min_value=constraints.value_min,
-                max_value=constraints.value_max,
             )
 
         case InputTypePrimitive.File:
-            return dyn_param(
-                dyn_type="file",
-                dyn_list=input_type.is_list,
-                dyn_optional=input_type.is_optional,
-                param=dparam,
+            return ir.Param(
+                base=dparam,
+                body=ir.Param.File(
+                    resolve_parent=d.get("resolve-parent"),
+                ),
                 list_=dlist,
-                default_value_set_to_none=True,
-                resolve_parent=d.get("resolve-parent"),
+                nullable=input_type.is_optional,
+                default_value=ir.Param.SetToNone if input_type.is_optional else None,
             )
 
         case InputTypePrimitive.Flag:
@@ -243,48 +241,47 @@ def _arg_elem_from_bt_elem(
             assert input_prefix is not None, "Flag type input must have command-line-flag"
 
             dparam.prefix = []
-            return ir.PBool(
-                param=dparam,
+            return ir.Param(
+                base=dparam,
+                body=ir.Param.Bool(
+                    value_true=[input_prefix] if input_prefix else [],
+                ),
                 default_value=d.get("default-value") is True,
-                value_true=[input_prefix] if input_prefix else [],
-                value_false=[],
             )
         case InputTypePrimitive.SubCommand:
             dparam, dstruct = _struct_from_boutiques(d, id_counter)
             ir_id_lookup[input_bt_ref] = dparam.id_  # override
 
-            return dyn_param(
-                dyn_type="struct",
-                dyn_list=input_type.is_list,
-                dyn_optional=input_type.is_optional,
-                param=dparam,
-                struct=dstruct,
+            return ir.Param(
+                base=dparam,
+                body=dstruct,
                 list_=dlist,
-                default_value_set_to_none=True,
+                nullable=input_type.is_optional,
+                default_value=ir.Param.SetToNone if input_type.is_optional else None,
             )
 
         case InputTypePrimitive.SubCommandUnion:
             bt_alts = d.get("type")
             assert isinstance(bt_alts, list)
 
-            alts: list[ir.PStruct] = []
+            alts: list[ir.Param[ir.Param.Struct]] = []
             for bt_alt in bt_alts:
                 alt_dparam, alt_dstruct = _struct_from_boutiques(bt_alt, id_counter)
                 alts.append(
-                    ir.PStruct(
-                        param=alt_dparam,
-                        struct=alt_dstruct,
+                    ir.Param(
+                        base=alt_dparam,
+                        body=alt_dstruct,
                     )
                 )
 
-            return dyn_param(
-                dyn_type="struct_union",
-                dyn_list=input_type.is_list,
-                dyn_optional=input_type.is_optional,
-                param=dparam,
-                alts=alts,
+            return ir.Param(
+                base=dparam,
+                body=ir.Param.StructUnion(
+                    alts=alts,
+                ),
                 list_=dlist,
-                default_value_set_to_none=True,
+                nullable=input_type.is_optional,
+                default_value=ir.Param.SetToNone if input_type.is_optional else None,
             )
     assert False
 
@@ -321,7 +318,7 @@ def _collect_constraints(d: dict, input_type: InputType) -> _NumericConstraints:
 def _struct_from_boutiques(
     bt: dict,
     id_counter: IdCounter,
-) -> tuple[ir.DParam, ir.DStruct]:
+) -> tuple[ir.Param.Base, ir.Param.Struct]:
     def _get_authors(bt: dict) -> list[str]:
         if "author" in bt:
             return [bt["author"]]
@@ -346,12 +343,12 @@ def _struct_from_boutiques(
             urls=_get_urls(bt),
         )
 
-        return ir.DParam(
+        return ir.Param.Base(
             id_=id_counter.next(),
             name=bt_id,
             outputs=outputs,
             docs=docs,
-        ), ir.DStruct(
+        ), ir.Param.Struct(
             name=bt_id,
             groups=groups,
             docs=docs,
@@ -376,12 +373,12 @@ def _struct_from_boutiques(
             urls=_get_urls(bt),
         )
 
-        return ir.DParam(
+        return ir.Param.Base(
             id_=id_counter.next(),
             name=parent_input["id"],
             outputs=outputs,
             docs=docs_parent,
-        ), ir.DStruct(
+        ), ir.Param.Struct(
             name=bt["id"],
             groups=groups,
             docs=docs,
@@ -433,7 +430,7 @@ def _collect_inputs(bt: dict, id_counter: IdCounter) -> tuple[list[ir.Conditiona
                 ir_id_lookup,
             )
 
-            if not isinstance(param, ir.IBool):
+            if not isinstance(param.body, ir.Param.Bool):
                 # bool arguments use command line flag as value
                 input_prefix: str | None = bt_elem.get("command-line-flag")
                 input_prefix_join: str | None = bt_elem.get("command-line-flag-separator")
@@ -474,8 +471,8 @@ def from_boutiques(
             docker=docker,
             docs=package_docs if package_docs else ir.Documentation(),
         ),
-        command=ir.PStruct(
-            param=dparam,
-            struct=dstruct,
+        command=ir.Param(
+            base=dparam,
+            body=dstruct,
         ),
     )

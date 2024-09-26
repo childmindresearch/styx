@@ -42,7 +42,7 @@ def to_python(interfaces: Iterable[Interface]) -> Generator[tuple[str, list[str]
         package_data = packages[interface.package.name]
 
         # interface_module_symbol = global_scope.add_or_dodge(python_snakify(interface.command.param.name))
-        interface_module_symbol = python_snakify(interface.command.param.name)
+        interface_module_symbol = python_snakify(interface.command.base.name)
 
         interface_module = PyModule()
         compile_interface(interface=interface, package_scope=package_data.scope, interface_module=interface_module)

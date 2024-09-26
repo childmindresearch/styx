@@ -10,16 +10,16 @@ def generate_static_metadata(
     interface: Interface,
 ) -> str:
     """Generate the static metadata."""
-    metadata_symbol = scope.add_or_dodge(f"{python_screaming_snakify(interface.command.param.name)}_METADATA")
+    metadata_symbol = scope.add_or_dodge(f"{python_screaming_snakify(interface.command.base.name)}_METADATA")
 
     entries = {
         "id": interface.uid,
-        "name": interface.command.param.name,
+        "name": interface.command.base.name,
         "package": interface.package.name,
     }
 
-    if interface.command.param.docs.literature:
-        entries["citations"] = interface.command.param.docs.literature
+    if interface.command.base.docs.literature:
+        entries["citations"] = interface.command.base.docs.literature
 
     if interface.package.docker:
         entries["container_image_tag"] = interface.package.docker

@@ -15,24 +15,24 @@ def _generate_raise_value_err(obj: str, expectation: str, reality: str | None = 
     )
 
 
-def _param_compile_constraint_checks(buf: LineBuffer, param: ir.IParam, lookup: LookupParam) -> None:
+def _param_compile_constraint_checks(buf: LineBuffer, param: ir.Param, lookup: LookupParam) -> None:
     """Generate input constraint validation code for an input argument."""
-    py_symbol = lookup.py_symbol[param.param.id_]
+    py_symbol = lookup.py_symbol[param.base.id_]
 
     min_value: float | int | None = None
     max_value: float | int | None = None
     list_count_min: int | None = None
     list_count_max: int | None = None
 
-    if isinstance(param, (ir.IFloat, ir.IInt)):
-        min_value = param.min_value
-        max_value = param.max_value
-    elif isinstance(param, ir.IList):
+    if isinstance(param.body, (ir.Param.Float, ir.Param.Int)):
+        min_value = param.body.min_value
+        max_value = param.body.max_value
+    elif param.list_:
         list_count_min = param.list_.count_min
         list_count_max = param.list_.count_max
 
     val_opt = ""
-    if isinstance(param, ir.IOptional):
+    if param.nullable:
         val_opt = f"{py_symbol} is not None and "
 
     # List argument length validation
@@ -93,7 +93,7 @@ def _param_compile_constraint_checks(buf: LineBuffer, param: ir.IParam, lookup: 
     if min_value is not None and max_value is not None:
         # Case: X <= arg <= Y
         assert min_value <= max_value
-        if isinstance(param, ir.IList):
+        if param.list_:
             buf.extend([
                 f"if {val_opt}not ({min_value} {op_min} min({py_symbol}) "
                 f"and max({py_symbol}) {op_max} {max_value}): ",
@@ -117,7 +117,7 @@ def _param_compile_constraint_checks(buf: LineBuffer, param: ir.IParam, lookup: 
             ])
     elif min_value is not None:
         # Case: X <= arg
-        if isinstance(param, ir.IList):
+        if param.list_:
             buf.extend([
                 f"if {val_opt}not ({min_value} {op_min} min({py_symbol})): ",
                 *indent(
@@ -140,7 +140,7 @@ def _param_compile_constraint_checks(buf: LineBuffer, param: ir.IParam, lookup: 
             ])
     elif max_value is not None:
         # Case: arg <= X
-        if isinstance(param, ir.IList):
+        if param.list_:
             buf.extend([
                 f"if {val_opt}not (max({py_symbol}) {op_max} {max_value}): ",
                 *indent(
@@ -165,8 +165,8 @@ def _param_compile_constraint_checks(buf: LineBuffer, param: ir.IParam, lookup: 
 
 def struct_compile_constraint_checks(
     func: PyFunc,
-    struct: ir.IStruct | ir.IParam,
+    struct: ir.Param[ir.Param.Struct],
     lookup: LookupParam,
 ) -> None:
-    for param in struct.struct.iter_params():
+    for param in struct.body.iter_params():
         _param_compile_constraint_checks(func.body, param, lookup)
