@@ -1,1 +1,1 @@
-"""Styx Python backend."""
+"""Styx backends."""
