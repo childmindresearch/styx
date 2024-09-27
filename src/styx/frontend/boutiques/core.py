@@ -391,7 +391,7 @@ def _collect_outputs(bt: dict, ir_id_lookup: dict[str, ir.IdType], id_counter: I
     for bt_output in bt.get("output-files", []):
         path_template = bt_output["path-template"]
         destructed = destruct_template(path_template, ir_id_lookup)
-        output_sequence: list[str, ir.OutputParamReference] = [  # type: ignore  # mypy is wrong
+        output_sequence: list[str | ir.OutputParamReference] = [
             ir.OutputParamReference(
                 ref_id=x,
                 file_remove_suffixes=bt_output.get("path-template-stripped-extensions", []),
@@ -405,7 +405,7 @@ def _collect_outputs(bt: dict, ir_id_lookup: dict[str, ir.IdType], id_counter: I
                 id_=id_counter.next(),
                 name=bt_output["id"],
                 tokens=output_sequence,
-                docs=ir.Documentation(description=bt_output.get("description")),
+                docs=ir.Documentation(description=bt_output.get("description"), title=bt_output.get("name")),
             )
         )
     return outputs

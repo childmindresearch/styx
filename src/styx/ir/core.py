@@ -178,6 +178,17 @@ class Param(Generic[T]):
             for group in self.groups:
                 yield from group.iter_params()
 
+    def iter_params_recursively(self, skip_self: bool = True) -> Generator[Param, Any, None]:
+        """Iterate through all child-params recursively."""
+        if not skip_self:
+            yield self
+        if isinstance(self.body, Param.Struct):
+            for e in self.body.iter_params():
+                yield from e.iter_params_recursively(False)
+        elif isinstance(self.body, Param.StructUnion):
+            for e in self.body.alts:
+                yield from e.iter_params_recursively(False)
+
     @dataclass
     class StructUnion:
         """Represents a union of struct parameters."""
@@ -330,6 +341,24 @@ class Param(Generic[T]):
             return None
         else:
             raise TypeError("Unknown body type")
+
+    def __repr__(self) -> str:
+        """Return a string representation of the Param instance."""
+        parts = [
+            f"Param(id={self.base.id_!r}, name={self.base.name!r}",
+            f"type={self.body}",
+        ]
+
+        if self.list_:
+            parts.append(f"list={self.list_!r}")
+        if self.nullable:
+            parts.append("nullable=True")
+        if self.choices:
+            parts.append(f"choices={self.choices!r}")
+        if self.default_value is not None:
+            parts.append(f"default={self.default_value!r}")
+
+        return ", ".join(parts) + ")"
 
 
 # Unfortunately TypeGuards dont work as methods with implicit self

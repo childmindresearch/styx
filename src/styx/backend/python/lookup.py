@@ -1,7 +1,7 @@
 import styx.ir.core as ir
 from styx.backend.python.pycodegen.scope import Scope
 from styx.backend.python.pycodegen.utils import python_pascalize, python_snakify
-from styx.backend.python.utils import iter_params_recursively, param_py_type
+from styx.backend.python.utils import param_py_type
 
 
 class LookupParam:
@@ -64,7 +64,7 @@ class LookupParam:
             lookup_output_field_symbol=self.py_output_field_symbol,
         )
 
-        for elem in iter_params_recursively(interface.command):
+        for elem in interface.command.iter_params_recursively():
             self.param[elem.base.id_] = elem
 
             if isinstance(elem.body, ir.Param.Struct):

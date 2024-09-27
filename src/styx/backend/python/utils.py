@@ -1,21 +1,5 @@
-from typing import Any, Generator
-
 import styx.ir.core as ir
 from styx.backend.python.pycodegen.utils import as_py_literal, enquote
-
-
-def iter_params_recursively(param: ir.Param | str, skip_self: bool = True) -> Generator[ir.Param, Any, None]:
-    """Iterate through all child-params recursively."""
-    if isinstance(param, str):
-        return
-    if not skip_self:
-        yield param
-    if isinstance(param.body, ir.Param.Struct):
-        for e in param.body.iter_params():
-            yield from iter_params_recursively(e, False)
-    elif isinstance(param.body, ir.Param.StructUnion):
-        for e in param.body.alts:
-            yield from iter_params_recursively(e, False)
 
 
 def param_py_type(param: ir.Param, lookup_struct_type: dict[ir.IdType, str]) -> str:
