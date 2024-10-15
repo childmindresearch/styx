@@ -14,12 +14,12 @@ styxdefs = "^0.3.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.0"
 mypy = "^1.10.0"
-pre-commit = "^3.7.0"
+pre-commit = "^4.0.1"
 pytest-cov = "^5.0.0"
-ruff = "^0.5.5"
+ruff = "^0.6.9"
 
 [tool.poetry.group.docs.dependencies]
-pdoc = "^14.2.0"
+pdoc = "^15.0.0"
 
 [tool.poetry.extras]
 docs = ["pdoc"]
