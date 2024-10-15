@@ -56,4 +56,4 @@ def to_python(interfaces: Iterable[Interface]) -> Generator[tuple[str, list[str]
 
 def styxdefs_compat() -> str:
     """Return what version of styxdefs generated wrappers will be compatible with."""
-    return "^0.2.0"
+    return "^0.3.0"
