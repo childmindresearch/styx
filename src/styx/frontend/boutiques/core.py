@@ -232,6 +232,7 @@ def _arg_elem_from_bt_elem(
                 base=dparam,
                 body=ir.Param.File(
                     resolve_parent=d.get("resolve-parent") is True,
+                    mutable=d.get("mutable") is True,
                 ),
                 list_=dlist,
                 nullable=input_type.is_optional,

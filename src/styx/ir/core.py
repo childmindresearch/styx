@@ -156,6 +156,9 @@ class Param(Generic[T]):
         resolve_parent: bool = False
         """Whether to resolve parent directory."""
 
+        mutable: bool = False
+        """This file may be mutated."""
+
     @dataclass
     class Struct:
         """Represents struct parameters."""
