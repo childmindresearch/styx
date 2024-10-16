@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "styxcompiler"
-version = "0.1.0"
+version = "0.1.1"
 description = "Boutiques code generator"
 authors = ["Florian Rupprecht <floruppr@gmail.com>"]
 license = "LGPL-2.1"
