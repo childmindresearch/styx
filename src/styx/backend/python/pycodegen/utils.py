@@ -154,3 +154,8 @@ def linebreak_paragraph(text: str, width: int = 80, first_line_width: int = 80) 
 def ensure_endswith(text: str, suffix: str) -> str:
     """Ensure that a string ends with a specific suffix."""
     return text if text.endswith(suffix) else f"{text}{suffix}"
+
+
+def escape_backslash(s: str) -> str:
+    """Escape backslashes with double backslash."""
+    return s.replace("\\", "\\\\")
