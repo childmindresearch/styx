@@ -161,35 +161,49 @@ def _compile_cargs_building(
         group_conditions_py = []
 
         building_cargs_py: list[tuple[str, bool]] = []
+        building_cargs_py_maybe_null: list[tuple[str, bool]] = []
         for carg in group.cargs:
             building_carg_py: list[tuple[str, bool]] = []
+            building_carg_py_maybe_null: list[tuple[str, bool]] = []
             for token in carg.tokens:
                 if isinstance(token, str):
                     building_carg_py.append((as_py_literal(token), False))
+                    building_carg_py_maybe_null.append((as_py_literal(token), False))
                     continue
                 elem_symbol = lookup.py_symbol[token.base.id_]
                 if access_via_self:
                     elem_symbol = f"self.{elem_symbol}"
-                building_carg_py.append(param_py_var_to_str(token, elem_symbol))
+                py_var_as_str, py_var_as_str_is_array = param_py_var_to_str(token, elem_symbol)
+                building_carg_py.append((py_var_as_str, py_var_as_str_is_array))
                 if (py_var_is_set_by_user := param_py_var_is_set_by_user(token, elem_symbol, False)) is not None:
                     group_conditions_py.append(py_var_is_set_by_user)
+                    building_carg_py_maybe_null.append(
+                        (f"({py_var_as_str} if {py_var_is_set_by_user} else [])", py_var_as_str_is_array)
+                        if py_var_as_str_is_array else
+                        (f"({py_var_as_str} if {py_var_is_set_by_user} else \"\")", py_var_as_str_is_array)
+                    )
+                else:
+                    building_carg_py_maybe_null.append((py_var_as_str, py_var_as_str_is_array))
 
             if len(building_carg_py) == 1:
                 building_cargs_py.append(building_carg_py[0])
+                building_cargs_py_maybe_null.append(building_carg_py_maybe_null[0])
             else:
-                destructured = [s if not s_is_list else f'" ".join({s})' for s, s_is_list in building_carg_py]
+                destructured = [s if not s_is_list else f'"".join({s})' for s, s_is_list in building_carg_py]
                 building_cargs_py.append((" + ".join(destructured), False))
+                destructured = [s if not s_is_list else f'"".join({s})' for s, s_is_list in building_carg_py_maybe_null]
+                building_cargs_py_maybe_null.append((" + ".join(destructured), False))
 
         buf_appending: LineBuffer = []
 
         if len(building_cargs_py) == 1:
-            for val, val_is_list in building_cargs_py:
+            for val, val_is_list in (building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py):
                 if val_is_list:
                     buf_appending.append(f"cargs.extend({val})")
                 else:
                     buf_appending.append(f"cargs.append({val})")
         else:
-            x = [(f"*{val}" if val_is_list else val) for val, val_is_list in building_cargs_py]
+            x = [(f"*{val}" if val_is_list else val) for val, val_is_list in (building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py)]
             buf_appending.extend([
                 "cargs.extend([",
                 *indent(expand(",\n".join(x))),
@@ -197,7 +211,7 @@ def _compile_cargs_building(
             ])
 
         if len(group_conditions_py) > 0:
-            func.body.append(f"if {' and '.join(group_conditions_py)}:")
+            func.body.append(f"if {' or '.join(group_conditions_py)}:")
             func.body.extend(indent(buf_appending))
         else:
             func.body.extend(buf_appending)
