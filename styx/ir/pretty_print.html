@@ -129,9 +129,12 @@
 </span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>
 </span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
 </span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="k">def</span> <span class="nf">pretty_print</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="kn">from</span> <span class="nn">rich</span> <span class="kn">import</span> <span class="nb">print</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">_pretty_print</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="kn">from</span> <span class="nn">rich</span> <span class="kn">import</span> <span class="nb">print</span> <span class="k">as</span> <span class="n">rprint</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>        <span class="n">rprint</span><span class="p">(</span><span class="n">_pretty_print</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">_pretty_print</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -148,9 +151,12 @@
     </div>
     <a class="headerlink" href="#pretty_print"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="pretty_print-76"><a href="#pretty_print-76"><span class="linenos">76</span></a><span class="k">def</span> <span class="nf">pretty_print</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
-</span><span id="pretty_print-77"><a href="#pretty_print-77"><span class="linenos">77</span></a>    <span class="kn">from</span> <span class="nn">rich</span> <span class="kn">import</span> <span class="nb">print</span>
-</span><span id="pretty_print-78"><a href="#pretty_print-78"><span class="linenos">78</span></a>
-</span><span id="pretty_print-79"><a href="#pretty_print-79"><span class="linenos">79</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">_pretty_print</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+</span><span id="pretty_print-77"><a href="#pretty_print-77"><span class="linenos">77</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="pretty_print-78"><a href="#pretty_print-78"><span class="linenos">78</span></a>        <span class="kn">from</span> <span class="nn">rich</span> <span class="kn">import</span> <span class="nb">print</span> <span class="k">as</span> <span class="n">rprint</span>
+</span><span id="pretty_print-79"><a href="#pretty_print-79"><span class="linenos">79</span></a>
+</span><span id="pretty_print-80"><a href="#pretty_print-80"><span class="linenos">80</span></a>        <span class="n">rprint</span><span class="p">(</span><span class="n">_pretty_print</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+</span><span id="pretty_print-81"><a href="#pretty_print-81"><span class="linenos">81</span></a>    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa</span>
+</span><span id="pretty_print-82"><a href="#pretty_print-82"><span class="linenos">82</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">_pretty_print</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
 </span></pre></div>
 
 
