@@ -1,16 +1,17 @@
-from styx.backend.python.pycodegen.core import PyModule, indent
-from styx.backend.python.pycodegen.scope import Scope
-from styx.backend.python.pycodegen.utils import as_py_literal, python_screaming_snakify
+from styx.backend.generic.languageprovider import LanguageProvider
+from styx.backend.generic.model import GenericModule
+from styx.backend.generic.scope import Scope
 from styx.ir.core import Interface
 
 
 def generate_static_metadata(
-    module: PyModule,
+    lang: LanguageProvider,
+    module: GenericModule,
     scope: Scope,
     interface: Interface,
 ) -> str:
     """Generate the static metadata."""
-    metadata_symbol = scope.add_or_dodge(f"{python_screaming_snakify(interface.command.base.name)}_METADATA")
+    metadata_symbol = scope.add_or_dodge(lang.metadata_symbol(interface.command.base.name))
 
     entries: dict = {
         "id": interface.uid,
@@ -24,10 +25,6 @@ def generate_static_metadata(
     if interface.package.docker:
         entries["container_image_tag"] = interface.package.docker
 
-    module.header.extend([
-        f"{metadata_symbol} = Metadata(",
-        *indent([f"{k}={as_py_literal(v)}," for k, v in entries.items()]),
-        ")",
-    ])
+    module.header.extend(lang.generate_metadata(metadata_symbol, entries))
 
     return metadata_symbol

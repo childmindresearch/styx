@@ -75,6 +75,7 @@ def _pretty_print(obj: Any, ind: int = 0) -> str:  # noqa: ANN401
 def pretty_print(obj: Any) -> None:  # noqa: ANN401
     try:
         from rich import print as rprint
+
         rprint(_pretty_print(obj))
     except:  # noqa
         print(_pretty_print(obj))

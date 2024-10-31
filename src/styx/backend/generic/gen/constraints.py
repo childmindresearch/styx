@@ -1,6 +1,9 @@
 import styx.ir.core as ir
-from styx.backend.python.lookup import LookupParam
-from styx.backend.python.pycodegen.core import LineBuffer, PyFunc, indent
+from styx.backend.generic.gen.lookup import LookupParam
+from styx.backend.generic.languageprovider import LanguageProvider
+from styx.backend.generic.linebuffer import LineBuffer, indent
+from styx.backend.generic.model import GenericFunc
+from styx.backend.python.languageprovider import PythonLanguageProvider
 
 
 def _generate_raise_value_err(obj: str, expectation: str, reality: str | None = None) -> LineBuffer:
@@ -15,7 +18,9 @@ def _generate_raise_value_err(obj: str, expectation: str, reality: str | None = 
     )
 
 
-def _param_compile_constraint_checks(buf: LineBuffer, param: ir.Param, lookup: LookupParam) -> None:
+def _param_compile_constraint_checks(
+    lang: LanguageProvider, buf: LineBuffer, param: ir.Param, lookup: LookupParam
+) -> None:
     """Generate input constraint validation code for an input argument."""
     py_symbol = lookup.py_symbol[param.base.id_]
 
@@ -164,9 +169,12 @@ def _param_compile_constraint_checks(buf: LineBuffer, param: ir.Param, lookup: L
 
 
 def struct_compile_constraint_checks(
-    func: PyFunc,
+    lang: LanguageProvider,
+    func: GenericFunc,
     struct: ir.Param[ir.Param.Struct],
     lookup: LookupParam,
 ) -> None:
+    if not isinstance(lang, PythonLanguageProvider):  # todo
+        return
     for param in struct.body.iter_params():
-        _param_compile_constraint_checks(func.body, param, lookup)
+        _param_compile_constraint_checks(lang, func.body, param, lookup)

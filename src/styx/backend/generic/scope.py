@@ -1,12 +1,20 @@
 from __future__ import annotations
 
+from styx.backend.generic.languageprovider import LanguageProvider
+
 
 class Scope:
-    """A scope for Python symbols."""
-
-    def __init__(self, parent: Scope | None = None) -> None:
+    def __init__(self, parent: Scope | LanguageProvider) -> None:
         """Create a scope."""
-        self.parent: Scope | None = parent
+        self.parent: Scope | None = None
+        if isinstance(parent, LanguageProvider):
+            self._lang = parent
+            self.parent = None
+        elif isinstance(parent, Scope):
+            self._lang = parent._lang
+            self.parent = parent
+        else:
+            raise ValueError
         self._symbols: set[str] = set()
 
     def __contains__(self, symbol: str) -> bool:
@@ -39,32 +47,14 @@ class Scope:
     def add_or_die(self, symbol: str) -> str:
         """Add a symbol to the scope."""
         if not self._legal(symbol):
-            raise ValueError(f"Symbol '{symbol}' is not a legal Python identifier")
+            raise ValueError(f"Symbol '{symbol}' is not a legal identifier")
         if symbol in self:
             raise ValueError(f"Symbol '{symbol}' already exists in scope")
         self._symbols.add(symbol)
         return symbol
 
-    @classmethod
-    def _legal(cls, symbol: str) -> bool:
-        """Check if a symbol is legal."""
-        return symbol.isidentifier()
+    def _legal(self, symbol: str) -> bool:
+        return self._lang.legal_symbol(symbol)
 
-    @classmethod
-    def python(cls) -> Scope:
-        """Create a scope with all Python keywords, standard library modules, and builtins."""
-        import builtins
-        import keyword
-        import sys
-
-        scope = Scope()
-
-        for s in {
-            *keyword.kwlist,
-            *sys.stdlib_module_names,
-            *dir(builtins),
-            *dir(__builtins__),
-        }:
-            scope.add_or_die(s)
-
-        return scope
+    def language_base_scope(self) -> Scope:
+        return self._lang.language_scope()

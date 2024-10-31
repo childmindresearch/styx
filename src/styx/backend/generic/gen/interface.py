@@ -1,30 +1,19 @@
 import styx.ir.core as ir
-from styx.backend.python.constraints import struct_compile_constraint_checks
-from styx.backend.python.documentation import docs_to_docstring
-from styx.backend.python.lookup import LookupParam
-from styx.backend.python.metadata import generate_static_metadata
-from styx.backend.python.pycodegen.core import (
-    LineBuffer,
-    PyArg,
-    PyDataClass,
-    PyFunc,
-    PyModule,
-    expand,
-    indent,
-)
-from styx.backend.python.pycodegen.scope import Scope
-from styx.backend.python.pycodegen.utils import as_py_literal, enquote, python_snakify
-from styx.backend.python.utils import (
-    param_py_default_value,
-    param_py_var_is_set_by_user,
-    param_py_var_to_str,
-    struct_has_outputs,
-)
+from styx.backend.generic.documentation import docs_to_docstring
+from styx.backend.generic.gen.constraints import struct_compile_constraint_checks
+from styx.backend.generic.gen.lookup import LookupParam
+from styx.backend.generic.gen.metadata import generate_static_metadata
+from styx.backend.generic.languageprovider import LanguageProvider
+from styx.backend.generic.linebuffer import LineBuffer
+from styx.backend.generic.model import GenericArg, GenericDataClass, GenericFunc, GenericModule, GenericNamedTuple
+from styx.backend.generic.scope import Scope
+from styx.backend.generic.utils import enquote, struct_has_outputs
 
 
 def _compile_struct(
+    lang: LanguageProvider,
     struct: ir.Param[ir.Param.Struct],
-    interface_module: PyModule,
+    interface_module: GenericModule,
     lookup: LookupParam,
     metadata_symbol: str,
     root_function: bool,
@@ -33,8 +22,9 @@ def _compile_struct(
 
     outputs_type = lookup.py_output_type[struct.base.id_]
 
+    func_cargs_building: GenericFunc
     if root_function:
-        func_cargs_building = PyFunc(
+        func_cargs_building = GenericFunc(
             name=lookup.py_type[struct.base.id_],
             return_type=outputs_type,
             return_descr=f"NamedTuple of outputs " f"(described in `{outputs_type}`).",
@@ -42,30 +32,34 @@ def _compile_struct(
         )
         pyargs = func_cargs_building.args
     else:
-        func_cargs_building = PyFunc(
+        func_cargs_building = GenericFunc(
             name="run",
             docstring_body="Build command line arguments. This method is called by the main command.",
-            return_type="list[str]",
+            return_type=lang.type_string_list(),
             return_descr="Command line arguments",
             args=[
-                PyArg(name="self", type=None, default=None, docstring="The sub-command object."),
-                PyArg(name="execution", type="Execution", default=None, docstring="The execution object."),
+                GenericArg(name="self", type=None, default=None, docstring="The sub-command object."),
+                GenericArg(
+                    name="execution", type=lang.execution_type(), default=None, docstring="The execution object."
+                ),
             ],
         )
-        struct_class = PyDataClass(
+        struct_class: GenericDataClass = GenericDataClass(
             name=lookup.py_struct_type[struct.base.id_],
             docstring=docs_to_docstring(struct.base.docs),
             methods=[func_cargs_building],
         )
         if has_outputs:
-            func_outputs = PyFunc(
+            func_outputs = GenericFunc(
                 name="outputs",
                 docstring_body="Collect output file paths.",
                 return_type=outputs_type,
                 return_descr=f"NamedTuple of outputs " f"(described in `{outputs_type}`).",
                 args=[
-                    PyArg(name="self", type=None, default=None, docstring="The sub-command object."),
-                    PyArg(name="execution", type="Execution", default=None, docstring="The execution object."),
+                    GenericArg(name="self", type=None, default=None, docstring="The sub-command object."),
+                    GenericArg(
+                        name="execution", type=lang.execution_type(), default=None, docstring="The execution object."
+                    ),
                 ],
             )
         pyargs = struct_class.fields
@@ -74,16 +68,17 @@ def _compile_struct(
     for elem in struct.body.iter_params():
         symbol = lookup.py_symbol[elem.base.id_]
         pyargs.append(
-            PyArg(
+            GenericArg(
                 name=symbol,
                 type=lookup.py_type[elem.base.id_],
-                default=param_py_default_value(elem),
+                default=lang.param_default_value(elem),
                 docstring=elem.base.docs.description,
             )
         )
 
         if isinstance(elem.body, ir.Param.Struct):
             _compile_struct(
+                lang=lang,
                 struct=elem,
                 interface_module=interface_module,
                 lookup=lookup,
@@ -93,6 +88,7 @@ def _compile_struct(
         elif isinstance(elem.body, ir.Param.StructUnion):
             for child in elem.body.alts:
                 _compile_struct(
+                    lang=lang,
                     struct=child,
                     interface_module=interface_module,
                     lookup=lookup,
@@ -100,10 +96,11 @@ def _compile_struct(
                     root_function=False,
                 )
 
-    struct_compile_constraint_checks(func=func_cargs_building, struct=struct, lookup=lookup)
+    struct_compile_constraint_checks(lang=lang, func=func_cargs_building, struct=struct, lookup=lookup)
 
     if has_outputs:
         _compile_outputs_class(
+            lang=lang,
             struct=struct,
             interface_module=interface_module,
             lookup=lookup,
@@ -111,51 +108,54 @@ def _compile_struct(
 
     if root_function:
         func_cargs_building.body.extend([
-            "runner = runner or get_global_runner()",
-            f"execution = runner.start_execution({metadata_symbol})",
+            *lang.runner_declare("runner"),
+            *lang.execution_declare("execution", metadata_symbol),
         ])
 
-    _compile_cargs_building(struct, lookup, func_cargs_building, access_via_self=not root_function)
+    _compile_cargs_building(lang, struct, lookup, func_cargs_building, access_via_self=not root_function)
 
     if root_function:
-        pyargs.append(PyArg(name="runner", type="Runner | None", default="None", docstring="Command runner"))
+        pyargs.append(
+            GenericArg(
+                name="runner",
+                type=lang.type_symbol_as_optional(lang.runner_type()),
+                default=lang.null(),
+                docstring="Command runner",
+            )
+        )
         _compile_outputs_building(
+            lang=lang,
             struct=struct,
             func=func_cargs_building,
             lookup=lookup,
             access_via_self=False,
         )
-        func_cargs_building.body.extend([
-            "execution.run(cargs)",
-            "return ret",
-        ])
+        func_cargs_building.body.extend([*lang.execution_run("execution", "cargs"), lang.return_statement("ret")])
         interface_module.funcs_and_classes.append(func_cargs_building)
     else:
         if has_outputs:
             _compile_outputs_building(
+                lang=lang,
                 struct=struct,
                 func=func_outputs,
                 lookup=lookup,
                 access_via_self=True,
             )
-            func_outputs.body.extend([
-                "return ret",
-            ])
+            func_outputs.body.extend([lang.return_statement("ret")])
             struct_class.methods.append(func_outputs)
-        func_cargs_building.body.extend([
-            "return cargs",
-        ])
+        func_cargs_building.body.extend([lang.return_statement("cargs")])
         interface_module.funcs_and_classes.append(struct_class)
         interface_module.exports.append(struct_class.name)
 
 
 def _compile_cargs_building(
+    lang: LanguageProvider,
     param: ir.Param[ir.Param.Struct],
     lookup: LookupParam,
-    func: PyFunc,
+    func: GenericFunc,
     access_via_self: bool,
 ) -> None:
-    func.body.append("cargs = []")
+    func.body.extend(lang.cargs_declare("cargs"))
 
     for group in param.body.groups:
         group_conditions_py = []
@@ -167,20 +167,26 @@ def _compile_cargs_building(
             building_carg_py_maybe_null: list[tuple[str, bool]] = []
             for token in carg.tokens:
                 if isinstance(token, str):
-                    building_carg_py.append((as_py_literal(token), False))
-                    building_carg_py_maybe_null.append((as_py_literal(token), False))
+                    building_carg_py.append((lang.as_literal(token), False))
+                    building_carg_py_maybe_null.append((lang.as_literal(token), False))
                     continue
                 elem_symbol = lookup.py_symbol[token.base.id_]
                 if access_via_self:
-                    elem_symbol = f"self.{elem_symbol}"
-                py_var_as_str, py_var_as_str_is_array = param_py_var_to_str(token, elem_symbol)
+                    elem_symbol = lang.member_access(elem_symbol)
+                py_var_as_str, py_var_as_str_is_array = lang.param_var_to_str(token, elem_symbol)
                 building_carg_py.append((py_var_as_str, py_var_as_str_is_array))
-                if (py_var_is_set_by_user := param_py_var_is_set_by_user(token, elem_symbol, False)) is not None:
+                if (py_var_is_set_by_user := lang.param_var_is_set_by_user(token, elem_symbol, False)) is not None:
                     group_conditions_py.append(py_var_is_set_by_user)
                     building_carg_py_maybe_null.append(
-                        (f"({py_var_as_str} if {py_var_is_set_by_user} else [])", py_var_as_str_is_array)
-                        if py_var_as_str_is_array else
-                        (f"({py_var_as_str} if {py_var_is_set_by_user} else \"\")", py_var_as_str_is_array)
+                        (
+                            lang.ternary(py_var_is_set_by_user, py_var_as_str, lang.empty_str_list(), True),
+                            py_var_as_str_is_array,
+                        )
+                        if py_var_as_str_is_array
+                        else (
+                            lang.ternary(py_var_is_set_by_user, py_var_as_str, lang.empty_str(), True),
+                            py_var_as_str_is_array,
+                        )
                     )
                 else:
                     building_carg_py_maybe_null.append((py_var_as_str, py_var_as_str_is_array))
@@ -189,46 +195,53 @@ def _compile_cargs_building(
                 building_cargs_py.append(building_carg_py[0])
                 building_cargs_py_maybe_null.append(building_carg_py_maybe_null[0])
             else:
-                destructured = [s if not s_is_list else f'"".join({s})' for s, s_is_list in building_carg_py]
-                building_cargs_py.append((" + ".join(destructured), False))
-                destructured = [s if not s_is_list else f'"".join({s})' for s, s_is_list in building_carg_py_maybe_null]
-                building_cargs_py_maybe_null.append((" + ".join(destructured), False))
+                destructured = [
+                    s if not s_is_list else lang.join_string_list_expr(s) for s, s_is_list in building_carg_py
+                ]
+                building_cargs_py.append((lang.concat_strings(destructured), False))
+                destructured = [
+                    s if not s_is_list else lang.join_string_list_expr(s)
+                    for s, s_is_list in building_carg_py_maybe_null
+                ]
+                building_cargs_py_maybe_null.append((lang.concat_strings(destructured), False))
 
         buf_appending: LineBuffer = []
 
         if len(building_cargs_py) == 1:
-            for val, val_is_list in (building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py):
+            for val, val_is_list in building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py:
                 if val_is_list:
-                    buf_appending.append(f"cargs.extend({val})")
+                    buf_appending.extend(lang.cargs_add_1d("cargs", val))
                 else:
-                    buf_appending.append(f"cargs.append({val})")
+                    buf_appending.extend(lang.cargs_add_0d("cargs", val))
         else:
-            x = [(f"*{val}" if val_is_list else val) for val, val_is_list in (building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py)]
-            buf_appending.extend([
-                "cargs.extend([",
-                *indent(expand(",\n".join(x))),
-                "])",
-            ])
+            x = lang.cargs_0d_or_1d_to_0d(
+                building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py
+            )
+            buf_appending.extend(lang.cargs_add_0d("cargs", x))
 
         if len(group_conditions_py) > 0:
-            func.body.append(f"if {' or '.join(group_conditions_py)}:")
-            func.body.extend(indent(buf_appending))
+            func.body.extend(
+                lang.if_else_block(
+                    condition=lang.conditions_join_or(group_conditions_py),
+                    truthy=buf_appending,
+                )
+            )
         else:
             func.body.extend(buf_appending)
 
 
 def _compile_outputs_class(
+    lang: LanguageProvider,
     struct: ir.Param[ir.Param.Struct],
-    interface_module: PyModule,
+    interface_module: GenericModule,
     lookup: LookupParam,
 ) -> None:
-    outputs_class = PyDataClass(
+    outputs_class: GenericNamedTuple = GenericNamedTuple(
         name=lookup.py_output_type[struct.base.id_],
         docstring=f"Output object returned when calling `{lookup.py_type[struct.base.id_]}(...)`.",
-        is_named_tuple=True,
     )
     outputs_class.fields.append(
-        PyArg(
+        GenericArg(
             name="root",
             type="OutputPathType",
             default=None,
@@ -246,13 +259,12 @@ def _compile_outputs_class(
                 continue
             optional = optional or lookup.param[token.ref_id].nullable
 
-        if not optional:
-            output_type = "OutputPathType"
-        else:
-            output_type = "OutputPathType | None"
+        output_type = lang.output_path_type()
+        if optional:
+            output_type = lang.type_symbol_as_optional(output_type)
 
         outputs_class.fields.append(
-            PyArg(
+            GenericArg(
                 name=output_symbol,
                 type=output_type,
                 default=None,
@@ -265,9 +277,9 @@ def _compile_outputs_class(
             if struct_has_outputs(sub_struct):
                 output_type = lookup.py_output_type[sub_struct.base.id_]
                 if sub_struct.list_:
-                    output_type = f"typing.List[{output_type}]"
+                    output_type = lang.type_symbol_as_list(output_type)
                 if sub_struct.nullable:
-                    output_type = f"{output_type} | None"
+                    output_type = lang.type_symbol_as_optional(output_type)
 
                 output_symbol = lookup.py_output_field_symbol[sub_struct.base.id_]
 
@@ -277,7 +289,7 @@ def _compile_outputs_class(
                     docs_append = "This is a list of outputs with the same length and order as the inputs."
 
                 outputs_class.fields.append(
-                    PyArg(
+                    GenericArg(
                         name=output_symbol,
                         type=output_type,
                         default=None,
@@ -292,13 +304,12 @@ def _compile_outputs_class(
                     if struct_has_outputs(sub_command)
                 ]
                 if len(alt_types) > 0:
-                    output_type = ", ".join(alt_types)
-                    output_type = f"typing.Union[{output_type}]"
+                    output_type = lang.type_symbols_as_union(alt_types)
 
                     if sub_struct.list_:
-                        output_type = f"typing.List[{output_type}]"
+                        output_type = lang.type_symbol_as_list(output_type)
                     if sub_struct.nullable:
-                        output_type = f"{output_type} | None"
+                        output_type = lang.type_symbol_as_optional(output_type)
 
                     output_symbol = lookup.py_output_field_symbol[sub_struct.base.id_]
 
@@ -313,7 +324,7 @@ def _compile_outputs_class(
 
                     input_types_human = " or ".join([enquote(t, "`") for t in alt_input_types])
                     outputs_class.fields.append(
-                        PyArg(
+                        GenericArg(
                             name=output_symbol,
                             type=output_type,
                             default=None,
@@ -326,16 +337,14 @@ def _compile_outputs_class(
 
 
 def _compile_outputs_building(
+    lang: LanguageProvider,
     struct: ir.Param[ir.Param.Struct],
-    func: PyFunc,
+    func: GenericFunc,
     lookup: LookupParam,
     access_via_self: bool = False,
 ) -> None:
     """Generate the outputs building code."""
-    func.body.append(f"ret = {lookup.py_output_type[struct.base.id_]}(")
-
-    # Set root output path
-    func.body.extend(indent(['root=execution.output_file("."),']))
+    members = {}
 
     def _py_get_val(
         output_param_reference: ir.OutputParamReference,
@@ -345,27 +354,24 @@ def _compile_outputs_building(
 
         substitute = symbol
         if access_via_self:
-            substitute = f"self.{substitute}"
+            substitute = lang.member_access(substitute)
 
         if param.list_:
             raise Exception(f"Output path template replacements cannot be lists. ({param.base.name})")
 
         if isinstance(param.body, ir.Param.String):
-            for suffix in output_param_reference.file_remove_suffixes:
-                substitute += f".removesuffix({as_py_literal(suffix)})"
-            return substitute
+            return lang.remove_suffixes(substitute, output_param_reference.file_remove_suffixes)
 
         if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-            return f"str({substitute})"
+            return lang.numeric_to_str(substitute)
 
         if isinstance(param.body, ir.Param.File):
-            re = f"pathlib.Path({substitute}).name"
-            for suffix in output_param_reference.file_remove_suffixes:
-                re += f".removesuffix({as_py_literal(suffix)})"
-            return re
+            return lang.remove_suffixes(
+                lang.path_expr_get_filename(substitute), output_param_reference.file_remove_suffixes
+            )
 
         if isinstance(param.body, ir.Param.Bool):
-            raise Exception(f"Unsupported input type " f"for output path template of '{param.base.name}'.")
+            raise Exception(f"Unsupported input type for output path template of '{param.base.name}'.")
         assert False
 
     for output in struct.base.outputs:
@@ -375,23 +381,23 @@ def _compile_outputs_building(
         conditions = []
         for token in output.tokens:
             if isinstance(token, str):
-                output_segments.append(as_py_literal(token))
+                output_segments.append(lang.as_literal(token))
                 continue
             output_segments.append(_py_get_val(token))
 
             ostruct = lookup.param[token.ref_id]
             param_symbol = lookup.py_symbol[ostruct.base.id_]
-            if (py_var_is_set_by_user := param_py_var_is_set_by_user(ostruct, param_symbol, False)) is not None:
+            if (py_var_is_set_by_user := lang.param_var_is_set_by_user(ostruct, param_symbol, False)) is not None:
                 conditions.append(py_var_is_set_by_user)
 
-        condition_py = ""
         if len(conditions) > 0:
-            condition_py = " and ".join(conditions)
-            condition_py = f" if ({condition_py}) else None"
-
-        func.body.extend(
-            indent([f"{output_symbol}=execution.output_file({' + '.join(output_segments)}){condition_py},"])
-        )
+            members[output_symbol] = lang.ternary(
+                condition=lang.conditions_join_and(conditions),
+                truthy=lang.resolve_output_file("execution", lang.concat_strings(output_segments)),
+                falsy=lang.null(),
+            )
+        else:
+            members[output_symbol] = lang.resolve_output_file("execution", lang.concat_strings(output_segments))
 
     # sub struct outputs
     for sub_struct in struct.body.iter_params():
@@ -406,53 +412,39 @@ def _compile_outputs_building(
         output_symbol = lookup.py_output_field_symbol[sub_struct.base.id_]
         output_symbol_resolved = lookup.py_symbol[sub_struct.base.id_]
         if access_via_self:
-            output_symbol_resolved = f"self.{output_symbol_resolved}"
+            output_symbol_resolved = lang.member_access(output_symbol_resolved)
 
-        if sub_struct.list_:
-            opt = ""
-            if sub_struct.nullable:
-                opt = f" if {output_symbol_resolved} else None"
-            # Need to check for attr because some alts might have outputs others not.
-            # todo: think about alternative solutions
-            func.body.extend(
-                indent([
-                    f"{output_symbol}="
-                    f'[i.outputs(execution) if hasattr(i, "outputs") else None for i in {output_symbol_resolved}]{opt},'
-                ])
-            )
-        else:
-            o = f"{output_symbol_resolved}.outputs(execution)"
-            if sub_struct.nullable:
-                o = f"{o} if {output_symbol_resolved} else None"
-            func.body.extend(indent([f"{output_symbol}={o},"]))
+        members[output_symbol] = lang.struct_collect_outputs(sub_struct, output_symbol_resolved)
 
-    func.body.extend([")"])
+    lang.generate_ret_object_creation(
+        buf=func.body,
+        execution_symbol="execution",
+        output_type=lookup.py_output_type[struct.base.id_],
+        members=members,
+    )
 
 
 def compile_interface(
+    lang: LanguageProvider,
     interface: ir.Interface,
     package_scope: Scope,
-    interface_module: PyModule,
+    interface_module: GenericModule,
 ) -> None:
     """Entry point to the Python backend."""
-    interface_module.imports.extend([
-        "import typing",
-        "import pathlib",
-        "from styxdefs import *",
-        "import dataclasses",
-    ])
+    interface_module.imports.extend(lang.wrapper_module_imports())
 
     metadata_symbol = generate_static_metadata(
+        lang=lang,
         module=interface_module,
         scope=package_scope,
         interface=interface,
     )
     interface_module.exports.append(metadata_symbol)
 
-    function_symbol = package_scope.add_or_dodge(python_snakify(interface.command.base.name))
+    function_symbol = package_scope.add_or_dodge(lang.ensure_var_case(interface.command.base.name))
     interface_module.exports.append(function_symbol)
 
-    function_scope = Scope(parent=Scope.python())
+    function_scope = Scope(lang).language_base_scope()
     function_scope.add_or_die("runner")
     function_scope.add_or_die("execution")
     function_scope.add_or_die("cargs")
@@ -460,6 +452,7 @@ def compile_interface(
 
     # Lookup tables
     lookup = LookupParam(
+        lang=lang,
         interface=interface,
         package_scope=package_scope,
         function_symbol=function_symbol,
@@ -467,6 +460,7 @@ def compile_interface(
     )
 
     _compile_struct(
+        lang=lang,
         struct=interface.command,
         interface_module=interface_module,
         lookup=lookup,

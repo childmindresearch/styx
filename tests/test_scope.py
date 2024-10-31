@@ -2,12 +2,13 @@
 
 import pytest
 
-from styx.backend.python.pycodegen.scope import Scope
+from styx.backend.generic.scope import Scope
+from styx.backend.python.languageprovider import PythonLanguageProvider
 
 
 def test_scope_add_or_die() -> None:
     """Test adding a symbol to a scope."""
-    scope = Scope()
+    scope = Scope(PythonLanguageProvider())
     scope.add_or_die("foo")
     assert "foo" in scope
     assert "bar" not in scope
@@ -18,7 +19,7 @@ def test_scope_add_or_die() -> None:
 
 def test_scope_add_or_dodge() -> None:
     """Test adding a symbol to a scope with dodging."""
-    scope = Scope()
+    scope = Scope(PythonLanguageProvider())
     scope.add_or_die("foo")
     assert "foo" in scope
     assert "foo_" not in scope
@@ -40,7 +41,7 @@ def test_scope_add_or_dodge() -> None:
 
 def test_scope_python() -> None:
     """Test the Python scope."""
-    scope = Scope.python()
+    scope = PythonLanguageProvider().language_scope()
     assert "def" in scope
     assert "int" in scope
     assert "typing" in scope
@@ -52,7 +53,7 @@ def test_scope_python() -> None:
 
 def test_scope_parent() -> None:
     """Test the parent scope."""
-    parent = Scope()
+    parent = Scope(PythonLanguageProvider())
     parent.add_or_die("foo")
     assert "foo" in parent
     assert "bar" not in parent
