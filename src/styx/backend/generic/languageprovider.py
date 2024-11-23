@@ -290,7 +290,13 @@ class LanguageProvider(ABC):
         """Construct command line args list."""
         return NotImplemented
 
-    def execution_run(self, execution_symbol: str, cargs_symbol: str) -> LineBuffer:
+    def execution_run(
+        self,
+        execution_symbol: str,
+        cargs_symbol: str,
+        stdout_output_symbol: str | None,
+        stderr_output_symbol: str | None,
+    ) -> LineBuffer:
         """Start execution."""
         return NotImplemented
 
@@ -323,4 +329,4 @@ class LanguageProvider(ABC):
     @classmethod
     def styxdefs_compat(cls) -> str:
         """Return what version of styxdefs generated wrappers will be compatible with."""
-        return "^0.3.0"
+        return "^0.4.0"

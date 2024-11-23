@@ -17,6 +17,8 @@ def _compile_struct(
     lookup: LookupParam,
     metadata_symbol: str,
     root_function: bool,
+    stdout_as_string_output: ir.StdOutErrAsStringOutput | None = None,
+    stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
 ) -> None:
     has_outputs = root_function or struct_has_outputs(struct)
 
@@ -27,7 +29,7 @@ def _compile_struct(
         func_cargs_building = GenericFunc(
             name=lookup.py_type[struct.base.id_],
             return_type=outputs_type,
-            return_descr=f"NamedTuple of outputs " f"(described in `{outputs_type}`).",
+            return_descr=f"NamedTuple of outputs (described in `{outputs_type}`).",
             docstring_body=docs_to_docstring(struct.base.docs),
         )
         pyargs = func_cargs_building.args
@@ -54,7 +56,7 @@ def _compile_struct(
                 name="outputs",
                 docstring_body="Collect output file paths.",
                 return_type=outputs_type,
-                return_descr=f"NamedTuple of outputs " f"(described in `{outputs_type}`).",
+                return_descr=f"NamedTuple of outputs (described in `{outputs_type}`).",
                 args=[
                     GenericArg(name="self", type=None, default=None, docstring="The sub-command object."),
                     GenericArg(
@@ -104,6 +106,8 @@ def _compile_struct(
             struct=struct,
             interface_module=interface_module,
             lookup=lookup,
+            stdout_as_string_output=stdout_as_string_output,
+            stderr_as_string_output=stderr_as_string_output,
         )
 
     if root_function:
@@ -129,8 +133,22 @@ def _compile_struct(
             func=func_cargs_building,
             lookup=lookup,
             access_via_self=False,
+            stderr_as_string_output=stderr_as_string_output,
+            stdout_as_string_output=stdout_as_string_output,
         )
-        func_cargs_building.body.extend([*lang.execution_run("execution", "cargs"), lang.return_statement("ret")])
+        func_cargs_building.body.extend([
+            *lang.execution_run(
+                execution_symbol="execution",
+                cargs_symbol="cargs",
+                stdout_output_symbol=lookup.py_output_field_symbol[stdout_as_string_output.id_]
+                if stdout_as_string_output
+                else None,
+                stderr_output_symbol=lookup.py_output_field_symbol[stderr_as_string_output.id_]
+                if stderr_as_string_output
+                else None,
+            ),
+            lang.return_statement("ret"),
+        ])
         interface_module.funcs_and_classes.append(func_cargs_building)
     else:
         if has_outputs:
@@ -235,6 +253,8 @@ def _compile_outputs_class(
     struct: ir.Param[ir.Param.Struct],
     interface_module: GenericModule,
     lookup: LookupParam,
+    stdout_as_string_output: ir.StdOutErrAsStringOutput | None = None,
+    stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
 ) -> None:
     outputs_class: GenericNamedTuple = GenericNamedTuple(
         name=lookup.py_output_type[struct.base.id_],
@@ -248,6 +268,18 @@ def _compile_outputs_class(
             docstring="Output root folder. This is the root folder for all outputs.",
         )
     )
+
+    for stdout_stderr_output in (stdout_as_string_output, stderr_as_string_output):
+        if stdout_stderr_output is None:
+            continue
+        outputs_class.fields.append(
+            GenericArg(
+                name=lookup.py_output_field_symbol[stdout_stderr_output.id_],
+                type=lang.type_string_list(),
+                default=None,
+                docstring=stdout_stderr_output.docs.description,
+            )
+        )
 
     for output in struct.base.outputs:
         output_symbol = lookup.py_output_field_symbol[output.id_]
@@ -342,6 +374,8 @@ def _compile_outputs_building(
     func: GenericFunc,
     lookup: LookupParam,
     access_via_self: bool = False,
+    stdout_as_string_output: ir.StdOutErrAsStringOutput | None = None,
+    stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
 ) -> None:
     """Generate the outputs building code."""
     members = {}
@@ -373,6 +407,13 @@ def _compile_outputs_building(
         if isinstance(param.body, ir.Param.Bool):
             raise Exception(f"Unsupported input type for output path template of '{param.base.name}'.")
         assert False
+
+    for stdout_stderr_output in (stdout_as_string_output, stderr_as_string_output):
+        if stdout_stderr_output is None:
+            continue
+        output_symbol = lookup.py_output_field_symbol[stdout_stderr_output.id_]
+
+        members[output_symbol] = lang.empty_str_list()
 
     for output in struct.base.outputs:
         output_symbol = lookup.py_output_field_symbol[output.id_]
@@ -466,4 +507,6 @@ def compile_interface(
         lookup=lookup,
         metadata_symbol=metadata_symbol,
         root_function=True,
+        stdout_as_string_output=interface.stdout_as_string_output,
+        stderr_as_string_output=interface.stderr_as_string_output,
     )

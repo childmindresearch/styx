@@ -169,6 +169,11 @@ class Param(Generic[T]):
         groups: list[ConditionalGroup] = dataclasses.field(default_factory=list)
         """List of conditional groups."""
 
+        group_join: str | None = None
+        """If not none, collapse all groups to a single string with this delimiter.
+        Args within groups should be joined without delimiter.
+        """
+
         docs: Documentation | None = None
         """Documentation for the struct."""
 
@@ -485,7 +490,10 @@ class Carg:
 
 @dataclass
 class ConditionalGroup:
-    """Represents a group of conditional command arguments."""
+    """Represents a group of command arguments.
+
+    Arguments will only be emitted if at least one parameter within is defined, or if there are no parameters.
+    """
 
     cargs: list[Carg] = dataclasses.field(default_factory=list)
     """List of command arguments."""
@@ -501,6 +509,18 @@ class ConditionalGroup:
 
 
 @dataclass
+class StdOutErrAsStringOutput:
+    id_: IdType
+    """Unique ID of the output. Unique including param IDs."""
+
+    name: str
+    """The name of the output."""
+
+    docs: Documentation = dataclasses.field(default_factory=Documentation)
+    """Documentation for the output."""
+
+
+@dataclass
 class Interface:
     """Represents an interface."""
 
@@ -512,3 +532,9 @@ class Interface:
 
     command: Param[Param.Struct]
     """The command structure for this interface."""
+
+    stdout_as_string_output: StdOutErrAsStringOutput | None = None
+    """Collect stdout as string output."""
+
+    stderr_as_string_output: StdOutErrAsStringOutput | None = None
+    """Collect stderr as string output."""

@@ -176,9 +176,9 @@ def _arg_elem_from_bt_elem(
     match input_type.primitive:
         case InputTypePrimitive.String:
             choices = d.get("value-choices")
-            assert choices is None or all([
-                isinstance(o, str) for o in choices
-            ]), "value-choices must be all string for string input"
+            assert choices is None or all([isinstance(o, str) for o in choices]), (
+                "value-choices must be all string for string input"
+            )
 
             return ir.Param(
                 base=dparam,
@@ -193,9 +193,9 @@ def _arg_elem_from_bt_elem(
 
         case InputTypePrimitive.Integer:
             choices = d.get("value-choices")
-            assert choices is None or all([
-                isinstance(o, int) for o in choices
-            ]), "value-choices must be all int for integer input"
+            assert choices is None or all([isinstance(o, int) for o in choices]), (
+                "value-choices must be all int for integer input"
+            )
             assert constraints.value_min is None or isinstance(constraints.value_min, int)
             assert constraints.value_max is None or isinstance(constraints.value_max, int)
 
@@ -449,6 +449,15 @@ def _collect_inputs(bt: dict, id_counter: IdCounter) -> tuple[list[ir.Conditiona
     return groups, ir_id_lookup
 
 
+def _collect_stdout_stderr_output(bt: dict, id_counter: IdCounter) -> ir.StdOutErrAsStringOutput:
+    assert "id" in bt, "StdOut / StdErr Output needs id"
+    return ir.StdOutErrAsStringOutput(
+        id_=id_counter.next(),
+        name=bt["id"],
+        docs=ir.Documentation(title=bt.get("name"), description=bt.get("description")),
+    )
+
+
 def from_boutiques(
     tool: dict,
     package_name: str,
@@ -462,6 +471,13 @@ def from_boutiques(
         docker = tool["container-image"].get("image")
 
     id_counter = IdCounter()
+
+    stdout_output: ir.StdOutErrAsStringOutput | None = None
+    stderr_output: ir.StdOutErrAsStringOutput | None = None
+    if "stdout-output" in tool:
+        stdout_output = _collect_stdout_stderr_output(tool["stdout-output"], id_counter)
+    if "stderr-output" in tool:
+        stderr_output = _collect_stdout_stderr_output(tool["stderr-output"], id_counter)
 
     dparam, dstruct = _struct_from_boutiques(tool, id_counter)
 
@@ -477,4 +493,6 @@ def from_boutiques(
             base=dparam,
             body=dstruct,
         ),
+        stderr_as_string_output=stderr_output,
+        stdout_as_string_output=stdout_output,
     )

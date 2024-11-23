@@ -58,7 +58,7 @@ def _param_compile_constraint_checks(
         else:
             # Case: X <= len(list[]) <= Y
             buf.extend([
-                f"if {val_opt}not ({list_count_min} <= " f"len({py_symbol}) <= {list_count_max}): ",
+                f"if {val_opt}not ({list_count_min} <= len({py_symbol}) <= {list_count_max}): ",
                 *indent(
                     _generate_raise_value_err(
                         f"Length of '{py_symbol}'",
@@ -100,8 +100,7 @@ def _param_compile_constraint_checks(
         assert min_value <= max_value
         if param.list_:
             buf.extend([
-                f"if {val_opt}not ({min_value} {op_min} min({py_symbol}) "
-                f"and max({py_symbol}) {op_max} {max_value}): ",
+                f"if {val_opt}not ({min_value} {op_min} min({py_symbol}) and max({py_symbol}) {op_max} {max_value}): ",
                 *indent(
                     _generate_raise_value_err(
                         f"All elements of '{py_symbol}'",

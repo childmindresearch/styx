@@ -19,6 +19,14 @@ class LookupParam:
         ) -> None:
             scope = Scope(parent=package_scope)
             scope.add_or_die("root")
+
+            for stdout_stderr_output in (interface.stdout_as_string_output, interface.stderr_as_string_output):
+                if stdout_stderr_output is None:
+                    continue
+                output_field_symbol = scope.add_or_dodge(lang.ensure_var_case(stdout_stderr_output.name))
+                assert stdout_stderr_output.id_ not in lookup_output_field_symbol
+                lookup_output_field_symbol[stdout_stderr_output.id_] = output_field_symbol
+
             for output in param.base.outputs:
                 output_field_symbol = scope.add_or_dodge(lang.ensure_var_case(output.name))
                 assert output.id_ not in lookup_output_field_symbol

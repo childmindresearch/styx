@@ -46,8 +46,16 @@ class PythonLanguageProvider(LanguageProvider):
     def execution_declare(self, execution_symbol: str, metadata_symbol: str) -> LineBuffer:
         return [f"{execution_symbol} = runner.start_execution({metadata_symbol})"]
 
-    def execution_run(self, execution_symbol: str, cargs_symbol: str) -> LineBuffer:
-        return [f"{execution_symbol}.run({cargs_symbol})"]
+    def execution_run(
+        self,
+        execution_symbol: str,
+        cargs_symbol: str,
+        stdout_output_symbol: str | None,
+        stderr_output_symbol: str | None,
+    ) -> LineBuffer:
+        so = "" if stdout_output_symbol is None else f", handle_stdout=lambda s: ret.{stdout_output_symbol}.append(s)"
+        se = "" if stderr_output_symbol is None else f", handle_stderr=lambda s: ret.{stderr_output_symbol}.append(s)"
+        return [f"{execution_symbol}.run({cargs_symbol}{so}{se})"]
 
     def legal_symbol(self, symbol: str) -> bool:
         return symbol.isidentifier()
