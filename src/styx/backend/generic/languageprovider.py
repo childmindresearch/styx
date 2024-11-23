@@ -329,4 +329,4 @@ class LanguageProvider(ABC):
     @classmethod
     def styxdefs_compat(cls) -> str:
         """Return what version of styxdefs generated wrappers will be compatible with."""
-        return "^0.4.0"
+        return "^0.4.1"
