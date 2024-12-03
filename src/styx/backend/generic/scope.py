@@ -54,7 +54,7 @@ class Scope:
         return symbol
 
     def _legal(self, symbol: str) -> bool:
-        return self._lang.legal_symbol(symbol)
+        return self._lang.symbol_legal(symbol)
 
     def language_base_scope(self) -> Scope:
         return self._lang.language_scope()

@@ -37,7 +37,7 @@ def compile_language(
         if interface.package.name not in packages:
             packages[interface.package.name] = _PackageData(
                 package=interface.package,
-                package_symbol=global_scope.add_or_dodge(lang.ensure_var_case(interface.package.name)),
+                package_symbol=global_scope.add_or_dodge(lang.symbol_var_case_from(interface.package.name)),
                 scope=Scope(parent=global_scope),
                 module=GenericModule(
                     docstr=docs_to_docstring(interface.package.docs),
@@ -46,7 +46,7 @@ def compile_language(
         package_data = packages[interface.package.name]
 
         # interface_module_symbol = global_scope.add_or_dodge(python_snakify(interface.command.param.name))
-        interface_module_symbol = lang.ensure_var_case(interface.command.base.name)
+        interface_module_symbol = lang.symbol_var_case_from(interface.command.base.name)
 
         interface_module: GenericModule = GenericModule()
         compile_interface(

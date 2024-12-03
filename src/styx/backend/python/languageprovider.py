@@ -1,7 +1,7 @@
 import pathlib
 import re
 
-from styx.backend.generic.languageprovider import _TYPE_PYLITERAL, LanguageProvider
+from styx.backend.generic.languageprovider import TYPE_PYLITERAL, LanguageProvider, StrMaybeList, ExprType
 from styx.backend.generic.linebuffer import LineBuffer, blank_after, blank_before, comment, concat, expand, indent
 from styx.backend.generic.model import GenericArg, GenericDataClass, GenericFunc, GenericModule, GenericNamedTuple
 from styx.backend.generic.scope import Scope
@@ -11,54 +11,63 @@ from styx.ir import core as ir
 
 
 class PythonLanguageProvider(LanguageProvider):
-    def cargs_0d_or_1d_to_0d(self, val_and_islist: list[tuple[str, bool]]) -> list[str]:
-        return [(f"*{val}" if val_is_list else val) for val, val_is_list in val_and_islist]
+    # ------------------------------ Types ------------------------------ #
 
-    def struct_collect_outputs(self, struct: ir.Param[ir.Param.Struct], struct_symbol: str) -> str:
-        if struct.list_:
-            opt = ""
-            if struct.nullable:
-                opt = f" if {struct_symbol} else None"
-            # Need to check for attr because some alts might have outputs others not.
-            # todo: think about alternative solutions
-            return f'[i.outputs(execution) if hasattr(i, "outputs") else None for i in {struct_symbol}]{opt}'
+    def type_str(self) -> str:
+        """String type."""
+        return "str"
 
-        o = f"{struct_symbol}.outputs(execution)"
-        if struct.nullable:
-            o = f"{o} if {struct_symbol} else None"
-        return o
+    def type_int(self) -> str:
+        """Integer type."""
+        return "int"
 
-    def numeric_to_str(self, numeric_expr: str) -> str:
-        return f"str({numeric_expr})"
+    def type_float(self) -> str:
+        """Float type."""
+        return "float"
 
-    def null(self) -> str:
-        return "None"
+    def type_bool(self) -> str:
+        """Bool type."""
+        return "bool"
 
-    def runner_symbol(self) -> str:
-        return "runner"
+    def type_input_path(self) -> str:
+        """Input path type."""
+        return "InputPathType"
 
-    def runner_declare(self, runner_symbol: str) -> LineBuffer:
-        return [f"{runner_symbol} = {runner_symbol} or get_global_runner()"]
+    def type_output_path(self) -> str:
+        """Type of output path."""
+        return "OutputPathType"
 
-    def execution_symbol(self) -> str:
-        return "execution"
+    def type_runner(self) -> str:
+        """Type of Runner."""
+        return "Runner"
 
-    def execution_declare(self, execution_symbol: str, metadata_symbol: str) -> LineBuffer:
-        return [f"{execution_symbol} = runner.start_execution({metadata_symbol})"]
+    def type_execution(self) -> str:
+        """Type of Execution."""
+        return "Execution"
 
-    def execution_run(
-        self,
-        execution_symbol: str,
-        cargs_symbol: str,
-        stdout_output_symbol: str | None,
-        stderr_output_symbol: str | None,
-    ) -> LineBuffer:
-        so = "" if stdout_output_symbol is None else f", handle_stdout=lambda s: ret.{stdout_output_symbol}.append(s)"
-        se = "" if stderr_output_symbol is None else f", handle_stderr=lambda s: ret.{stderr_output_symbol}.append(s)"
-        return [f"{execution_symbol}.run({cargs_symbol}{so}{se})"]
+    def type_literal_union(self, obj: list[TYPE_PYLITERAL]) -> str:
+        """Convert an object to a language literal union type."""
+        return f"typing.Literal[{', '.join(map(self.expr_literal, obj))}]"
 
-    def legal_symbol(self, symbol: str) -> bool:
-        return symbol.isidentifier()
+    def type_list(self, type_element: str) -> str:
+        """Convert a type symbol to a type of list of that type."""
+        return f"list[{type_element}]"
+
+    def type_optional(self, type_element: str) -> str:
+        """Convert a type symbol to an optional of that type."""
+        return f"{type_element} | None"
+
+    def type_union(self, type_elements: list[str]) -> str:
+        """Convert a collection of type symbol to a union type of them."""
+        return f"typing.Union[{', '.join(type_elements)}]"
+
+    def type_string_list(self) -> str:
+        return "list[str]"
+
+    # ------------------------------ Symbols ------------------------------ #
+
+    def symbol_legal(self, name: str) -> bool:
+        return name.isidentifier()
 
     def language_scope(self) -> Scope:
         import builtins
@@ -77,7 +86,7 @@ class PythonLanguageProvider(LanguageProvider):
 
         return scope
 
-    def ensure_symbol(self, name: str) -> str:
+    def symbol_from(self, name: str) -> str:
         alt_prefix: str = "v_"
         name = re.sub(r"[^a-zA-Z0-9_]", "_", name)
         # Prefix if name starts with a digit or underscore
@@ -85,14 +94,142 @@ class PythonLanguageProvider(LanguageProvider):
             name = f"{alt_prefix}{name}"
         return name
 
-    def ensure_constant_case(self, name: str) -> str:
-        return screaming_snake_case(self.ensure_symbol(name))
+    def symbol_constant_case_from(self, name: str) -> str:
+        return screaming_snake_case(self.symbol_from(name))
 
-    def ensure_class_case(self, name: str) -> str:
-        return pascal_case(self.ensure_symbol(name))
+    def symbol_class_case_from(self, name: str) -> str:
+        return pascal_case(self.symbol_from(name))
 
-    def ensure_var_case(self, name: str) -> str:
-        return snake_case(self.ensure_symbol(name))
+    def symbol_var_case_from(self, name: str) -> str:
+        return snake_case(self.symbol_from(name))
+
+    # ------------------------------ Expressions ------------------------------ #
+
+    def expr_bool(self, obj: bool) -> ExprType:
+        """Convert a bool to a language literal."""
+        return "True" if obj else "False"
+
+    def expr_int(self, obj: int) -> ExprType:
+        """Convert a bool to a language literal."""
+        return str(obj)
+
+    def expr_float(self, obj: float) -> ExprType:
+        """Convert a bool to a language literal."""
+        return str(obj)
+
+    def expr_str(self, obj: str) -> ExprType:
+        """Convert a bool to a language literal."""
+        return enquote(obj)
+
+    def expr_path(self, obj: pathlib.Path) -> ExprType:
+        """Convert a bool to a language literal."""
+        return enquote(str(obj))
+
+    def expr_list(self, obj: list[ExprType]) -> ExprType:
+        """Convert a bool to a language literal."""
+        return enbrace(", ".join(obj), "[")
+
+    def expr_dict(self, obj: dict[ExprType, ExprType]) -> ExprType:
+        """Convert a bool to a language literal."""
+        return enbrace(", ".join([f"{k}: {v}" for k, v in obj.items()]), "{")
+
+    def expr_numeric_to_str(self, numeric_expr: str) -> str:
+        return f"str({numeric_expr})"
+
+    def expr_null(self) -> str:
+        return "None"
+
+    def expr_remove_suffixes(self, str_expr: str, suffixes: list[str]) -> str:
+        substitute = str_expr
+        for suffix in suffixes:
+            substitute += f".removesuffix({self.expr_literal(suffix)})"
+        return substitute
+
+    def expr_path_get_filename(self, path_expr: str) -> str:
+        return f"pathlib.Path({path_expr}).name"
+
+    def expr_self(self) -> str:
+        return "self"
+
+    def expr_access_attr_via_self(self, attribute: str) -> str:
+        return f"self.{attribute}"
+
+    def expr_conditions_join_and(self, condition_exprs: list[str]) -> str:
+        return " and ".join(condition_exprs)
+
+    def expr_conditions_join_or(self, condition_exprs: list[str]) -> str:
+        return " or ".join(condition_exprs)
+
+    def expr_join_str_list(self, expr_str_list: str, join: str = "") -> str:
+        join = join.replace('"', '\\"')
+        return f'"{join}".join({expr_str_list})'
+
+    def expr_concat_strs(self, exprs: list[str]) -> str:
+        return " + ".join(exprs)
+
+    def expr_ternary(self, condition: str, truthy: str, falsy: str, enbrace_: bool = False) -> str:
+        if " " in condition:
+            condition = enbrace(condition, "(")
+        ret = f"{truthy} if {condition} else {falsy}"
+        if enbrace_:
+            return enbrace(ret, "(")
+        return ret
+
+    def expr_empty_str(self) -> str:
+        return '""'
+
+    def expr_empty_str_list(self) -> str:
+        return "[]"
+
+    # ------------------------------ Higher level code generation ------------------------------ #
+
+    def wrapper_module_imports(self) -> LineBuffer:
+        return [
+            "import typing",
+            "import pathlib",
+            "from styxdefs import *",
+            "import dataclasses",
+        ]
+
+    def cargs_0d_or_1d_to_0d(self, val_and_islist: list[StrMaybeList]) -> list[str]:
+        return [(f"*{val}" if val_is_list else val) for val, val_is_list in val_and_islist]
+
+    def struct_collect_outputs(self, struct: ir.Param[ir.Param.Struct], struct_symbol: str) -> str:
+        if struct.list_:
+            opt = ""
+            if struct.nullable:
+                opt = f" if {struct_symbol} else None"
+            # Need to check for attr because some alts might have outputs others not.
+            # todo: think about alternative solutions
+            return f'[i.outputs(execution) if hasattr(i, "outputs") else None for i in {struct_symbol}]{opt}'
+
+        o = f"{struct_symbol}.outputs(execution)"
+        if struct.nullable:
+            o = f"{o} if {struct_symbol} else None"
+        return o
+
+    def runner_symbol(self) -> str:
+        return "runner"
+
+    def runner_declare(self, runner_symbol: str) -> LineBuffer:
+        return [f"{runner_symbol} = {runner_symbol} or get_global_runner()"]
+
+    def symbol_execution(self) -> str:
+        return "execution"
+
+    def execution_declare(self, execution_symbol: str, metadata_symbol: str) -> LineBuffer:
+        return [f"{execution_symbol} = runner.start_execution({metadata_symbol})"]
+
+    def execution_run(
+        self,
+        execution_symbol: str,
+        cargs_symbol: str,
+        stdout_output_symbol: str | None,
+        stderr_output_symbol: str | None,
+    ) -> LineBuffer:
+        so = "" if stdout_output_symbol is None else f", handle_stdout=lambda s: ret.{stdout_output_symbol}.append(s)"
+        se = "" if stderr_output_symbol is None else f", handle_stderr=lambda s: ret.{stderr_output_symbol}.append(s)"
+        return [f"{execution_symbol}.run({cargs_symbol}{so}{se})"]
 
     def generate_arg_declaration(self, arg: GenericArg) -> str:
         annot_type = f": {arg.type}" if arg.type is not None else ""
@@ -241,42 +378,11 @@ class PythonLanguageProvider(LanguageProvider):
             *blank_before(exports, 2),
         ])
 
-    def as_literal(self, obj: _TYPE_PYLITERAL) -> str:
-        quote = '"'
-        if isinstance(obj, bool):
-            return "True" if obj else "False"
-        if isinstance(obj, (int, float)):
-            return str(obj)
-        if obj is None:
-            return "None"
-        if isinstance(obj, str):
-            return enquote(obj, quote)
-        if isinstance(obj, pathlib.Path):
-            return enquote(str(obj), quote)
-        if isinstance(obj, list):
-            return enbrace(", ".join([self.as_literal(o) for o in obj]), "[")
-        if isinstance(obj, (tuple, set)):
-            return enbrace(", ".join([self.as_literal(o) for o in obj]), "(")
-        if isinstance(obj, dict):
-            return enbrace(", ".join([f"{self.as_literal(k)}: {self.as_literal(v)}" for k, v in obj.items()]), "{")
-        raise ValueError(f"Unsupported type: {type(obj)}")
-
-    def as_literal_union_type(self, obj: list[_TYPE_PYLITERAL]) -> str:
-        return f"typing.Literal[{', '.join(map(self.as_literal, obj))}]"
-
-    def wrapper_module_imports(self) -> LineBuffer:
-        return [
-            "import typing",
-            "import pathlib",
-            "from styxdefs import *",
-            "import dataclasses",
-        ]
-
     def metadata_symbol(
         self,
         interface_base_name: str,
     ) -> str:
-        return self.ensure_constant_case(f"{interface_base_name}_METADATA")
+        return self.symbol_constant_case_from(f"{interface_base_name}_METADATA")
 
     def generate_metadata(
         self,
@@ -285,72 +391,17 @@ class PythonLanguageProvider(LanguageProvider):
     ) -> LineBuffer:
         return [
             f"{metadata_symbol} = Metadata(",
-            *indent([f"{k}={self.as_literal(v)}," for k, v in entries.items()]),
+            *indent([f"{k}={self.expr_literal(v)}," for k, v in entries.items()]),
             ")",
         ]
 
-    def type_symbol_as_list(self, symbol: str) -> str:
-        return f"list[{symbol}]"
-
-    def type_symbol_as_optional(self, symbol: str) -> str:
-        return f"{symbol} | None"
-
-    def type_symbols_as_union(self, symbol: list[str]) -> str:
-        return f"typing.Union[{', '.join(symbol)}]"
-
-    def param_type(self, param: ir.Param, lookup_struct_type: dict[ir.IdType, str]) -> str:
-        def _base() -> str:
-            if isinstance(param.body, ir.Param.String):
-                if param.choices:
-                    return self.as_literal_union_type(param.choices)  # type: ignore
-                return "str"
-            if isinstance(param.body, ir.Param.Int):
-                if param.choices:
-                    return self.as_literal_union_type(param.choices)  # type: ignore
-                return "int"
-            if isinstance(param.body, ir.Param.Float):
-                return "float"
-            if isinstance(param.body, ir.Param.File):
-                return "InputPathType"
-            if isinstance(param.body, ir.Param.Bool):
-                return "bool"
-            if isinstance(param.body, ir.Param.Struct):
-                return lookup_struct_type[param.base.id_]
-            if isinstance(param.body, ir.Param.StructUnion):
-                return self.type_symbols_as_union([lookup_struct_type[i.base.id_] for i in param.body.alts])
-            assert False
-
-        type_ = _base()
-        if param.list_:
-            type_ = self.type_symbol_as_list(type_)
-        if param.nullable:
-            type_ = self.type_symbol_as_optional(type_)
-
-        return type_
-
-    def output_path_type(self) -> str:
-        return "OutputPathType"
-
-    def runner_type(
-        self,
-    ) -> str:
-        return "Runner"
-
-    def execution_type(
-        self,
-    ) -> str:
-        return "Execution"
-
-    def type_string_list(self) -> str:
-        return "list[str]"
-
-    def param_var_to_str(self, param: ir.Param, symbol: str) -> tuple[str, bool]:
-        def _val() -> tuple[str, bool]:
+    def param_var_to_str(self, param: ir.Param, symbol: str) -> StrMaybeList:
+        def _val() -> StrMaybeList:
             if not param.list_:
                 if isinstance(param.body, ir.Param.String):
-                    return symbol, False
+                    return StrMaybeList(symbol, False)
                 if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-                    return f"str({symbol})", False
+                    return StrMaybeList(f"str({symbol})", False)
                 if isinstance(param.body, ir.Param.Bool):
                     as_list = (len(param.body.value_true) > 1) or (len(param.body.value_false) > 1)
                     if as_list:
@@ -361,29 +412,29 @@ class PythonLanguageProvider(LanguageProvider):
                         value_false = param.body.value_false[0] if len(param.body.value_false) > 0 else None
                     if len(param.body.value_true) > 0:
                         if len(param.body.value_false) > 0:
-                            return (
-                                f"({self.as_literal(value_true)} if {symbol} else {self.as_literal(value_true)})",
+                            return StrMaybeList(
+                                f"({self.expr_literal(value_true)} if {symbol} else {self.expr_literal(value_true)})",
                                 as_list,
                             )
-                        return self.as_literal(value_true), as_list
+                        return StrMaybeList(self.expr_literal(value_true), as_list)
                     assert len(param.body.value_false) > 0
-                    return self.as_literal(value_false), as_list
+                    return StrMaybeList(self.expr_literal(value_false), as_list)
                 if isinstance(param.body, ir.Param.File):
                     extra_args = ""
                     if param.body.resolve_parent:
                         extra_args += ", resolve_parent=True"
                     if param.body.mutable:
                         extra_args += ", mutable=True"
-                    return f"execution.input_file({symbol}{extra_args})", False
+                    return StrMaybeList(f"execution.input_file({symbol}{extra_args})", False)
                 if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                    return f"{symbol}.run(execution)", True
+                    return StrMaybeList(f"{symbol}.run(execution)", True)
                 assert False
 
             if param.list_.join is None:
                 if isinstance(param.body, ir.Param.String):
-                    return symbol, True
+                    return StrMaybeList(symbol, True)
                 if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-                    return f"map(str, {symbol})", True
+                    return StrMaybeList(f"map(str, {symbol})", True)
                 if isinstance(param.body, ir.Param.Bool):
                     assert False, "TODO: Not implemented yet"
                 if isinstance(param.body, ir.Param.File):
@@ -392,17 +443,17 @@ class PythonLanguageProvider(LanguageProvider):
                         extra_args += ", resolve_parent=True"
                     if param.body.mutable:
                         extra_args += ", mutable=True"
-                    return f"[execution.input_file(f{extra_args}) for f in {symbol}]", True
+                    return StrMaybeList(f"[execution.input_file(f{extra_args}) for f in {symbol}]", True)
                 if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                    return f"[a for c in [s.run(execution) for s in {symbol}] for a in c]", True
+                    return StrMaybeList(f"[a for c in [s.run(execution) for s in {symbol}] for a in c]", True)
                 assert False
 
             # arg.data.list_separator is not None
             sep_join = f"{enquote(param.list_.join)}.join"
             if isinstance(param.body, ir.Param.String):
-                return f"{sep_join}({symbol})", False
+                return StrMaybeList(f"{sep_join}({symbol})", False)
             if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-                return f"{sep_join}(map(str, {symbol}))", False
+                return StrMaybeList(f"{sep_join}(map(str, {symbol}))", False)
             if isinstance(param.body, ir.Param.Bool):
                 assert False, "TODO: Not implemented yet"
             if isinstance(param.body, ir.Param.File):
@@ -411,19 +462,12 @@ class PythonLanguageProvider(LanguageProvider):
                     extra_args += ", resolve_parent=True"
                 if param.body.mutable:
                     extra_args += ", mutable=True"
-                return f"{sep_join}([execution.input_file(f{extra_args}) for f in {symbol}])", False
+                return StrMaybeList(f"{sep_join}([execution.input_file(f{extra_args}) for f in {symbol}])", False)
             if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                return f"{sep_join}([a for c in [s.run(execution) for s in {symbol}] for a in c])", False
+                return StrMaybeList(f"{sep_join}([a for c in [s.run(execution) for s in {symbol}] for a in c])", False)
             assert False
 
         return _val()
-
-    def param_default_value(self, param: ir.Param) -> str | None:
-        if param.default_value is ir.Param.SetToNone:
-            return "None"
-        if param.default_value is None:
-            return None
-        return self.as_literal(param.default_value)  # type: ignore
 
     def param_var_is_set_by_user(self, param: ir.Param, symbol: str, enbrace_statement: bool = False) -> str | None:
         if param.nullable:
@@ -439,42 +483,6 @@ class PythonLanguageProvider(LanguageProvider):
                     return f"(not {symbol})"
                 return f"not {symbol}"
         return None
-
-    def remove_suffixes(self, str_expr: str, suffixes: list[str]) -> str:
-        substitute = str_expr
-        for suffix in suffixes:
-            substitute += f".removesuffix({self.as_literal(suffix)})"
-        return substitute
-
-    def path_expr_get_filename(self, path_expr: str) -> str:
-        return f"pathlib.Path({path_expr}).name"
-
-    def self_access(self, attribute: str) -> str:
-        return "self"
-
-    def member_access(self, attribute: str) -> str:
-        return f"self.{attribute}"
-
-    def conditions_join_and(self, condition_exprs: list[str]) -> str:
-        return " and ".join(condition_exprs)
-
-    def conditions_join_or(self, condition_exprs: list[str]) -> str:
-        return " or ".join(condition_exprs)
-
-    def join_string_list_expr(self, expr: str, join: str = "") -> str:
-        join = join.replace('"', '\\"')
-        return f'"{join}".join({expr})'
-
-    def concat_strings(self, exprs: list[str]) -> str:
-        return " + ".join(exprs)
-
-    def ternary(self, condition: str, truthy: str, falsy: str, enbrace_: bool = False) -> str:
-        if " " in condition:
-            condition = enbrace(condition, "(")
-        ret = f"{truthy} if {condition} else {falsy}"
-        if enbrace_:
-            return enbrace(ret, "(")
-        return ret
 
     def return_statement(self, value: str) -> str:
         return f"return {value}"
@@ -502,12 +510,6 @@ class PythonLanguageProvider(LanguageProvider):
                 "])",
             ]
         return [f"{cargs_symbol}.extend({val})"]
-
-    def empty_str(self) -> str:
-        return '""'
-
-    def empty_str_list(self) -> str:
-        return "[]"
 
     def if_else_block(self, condition: str, truthy: LineBuffer, falsy: LineBuffer | None = None) -> LineBuffer:
         buf = [

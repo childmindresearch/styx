@@ -23,25 +23,25 @@ class LookupParam:
             for stdout_stderr_output in (interface.stdout_as_string_output, interface.stderr_as_string_output):
                 if stdout_stderr_output is None:
                     continue
-                output_field_symbol = scope.add_or_dodge(lang.ensure_var_case(stdout_stderr_output.name))
+                output_field_symbol = scope.add_or_dodge(lang.symbol_var_case_from(stdout_stderr_output.name))
                 assert stdout_stderr_output.id_ not in lookup_output_field_symbol
                 lookup_output_field_symbol[stdout_stderr_output.id_] = output_field_symbol
 
             for output in param.base.outputs:
-                output_field_symbol = scope.add_or_dodge(lang.ensure_var_case(output.name))
+                output_field_symbol = scope.add_or_dodge(lang.symbol_var_case_from(output.name))
                 assert output.id_ not in lookup_output_field_symbol
                 lookup_output_field_symbol[output.id_] = output_field_symbol
 
             for sub_struct in param.body.iter_params():
                 if isinstance(sub_struct.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                    output_field_symbol = scope.add_or_dodge(lang.ensure_var_case(sub_struct.base.name))
+                    output_field_symbol = scope.add_or_dodge(lang.symbol_var_case_from(sub_struct.base.name))
                     assert sub_struct.base.id_ not in lookup_output_field_symbol
                     lookup_output_field_symbol[sub_struct.base.id_] = output_field_symbol
 
         def _collect_py_symbol(param: ir.Param[ir.Param.Struct], lookup_py_symbol: dict[ir.IdType, str]) -> None:
             scope = Scope(parent=function_scope)
             for elem in param.body.iter_params():
-                symbol = scope.add_or_dodge(lang.ensure_var_case(elem.base.name))
+                symbol = scope.add_or_dodge(lang.symbol_var_case_from(elem.base.name))
                 assert elem.base.id_ not in lookup_py_symbol
                 lookup_py_symbol[elem.base.id_] = symbol
 
@@ -56,7 +56,7 @@ class LookupParam:
         """Find function-parameter symbol by param ID. IParam.id_ -> Language symbol"""
         self.py_output_type: dict[ir.IdType, str] = {
             interface.command.base.id_: package_scope.add_or_dodge(
-                lang.ensure_class_case(f"{interface.command.base.name}_Outputs")
+                lang.symbol_class_case_from(f"{interface.command.base.name}_Outputs")
             )
         }
         """Find outputs class name by struct param ID. IStruct.id_ -> Language class name"""
@@ -78,11 +78,11 @@ class LookupParam:
             if isinstance(elem.body, ir.Param.Struct):
                 if elem.base.id_ not in self.py_struct_type:  # Struct unions may resolve these first
                     self.py_struct_type[elem.base.id_] = package_scope.add_or_dodge(
-                        lang.ensure_class_case(f"{interface.command.body.name}_{elem.body.name}")
+                        lang.symbol_class_case_from(f"{interface.command.body.name}_{elem.body.name}")
                     )
-                    self.py_type[elem.base.id_] = lang.param_type(elem, self.py_struct_type)
+                    self.py_type[elem.base.id_] = lang.type_param(elem, self.py_struct_type)
                 self.py_output_type[elem.base.id_] = package_scope.add_or_dodge(
-                    lang.ensure_class_case(f"{interface.command.body.name}_{elem.body.name}_Outputs")
+                    lang.symbol_class_case_from(f"{interface.command.body.name}_{elem.body.name}_Outputs")
                 )
                 _collect_py_symbol(
                     param=elem,
@@ -95,9 +95,9 @@ class LookupParam:
             elif isinstance(elem.body, ir.Param.StructUnion):
                 for alternative in elem.body.alts:
                     self.py_struct_type[alternative.base.id_] = package_scope.add_or_dodge(
-                        lang.ensure_class_case(f"{interface.command.base.name}_{alternative.base.name}")
+                        lang.symbol_class_case_from(f"{interface.command.base.name}_{alternative.base.name}")
                     )
-                    self.py_type[alternative.base.id_] = lang.param_type(alternative, self.py_struct_type)
-                self.py_type[elem.base.id_] = lang.param_type(elem, self.py_struct_type)
+                    self.py_type[alternative.base.id_] = lang.type_param(alternative, self.py_struct_type)
+                self.py_type[elem.base.id_] = lang.type_param(elem, self.py_struct_type)
             else:
-                self.py_type[elem.base.id_] = lang.param_type(elem, self.py_struct_type)
+                self.py_type[elem.base.id_] = lang.type_param(elem, self.py_struct_type)

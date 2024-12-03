@@ -1,9 +1,11 @@
+from typing import NamedTuple
+
 import styx.ir.core as ir
 from styx.backend.generic.documentation import docs_to_docstring
 from styx.backend.generic.gen.constraints import struct_compile_constraint_checks
 from styx.backend.generic.gen.lookup import LookupParam
 from styx.backend.generic.gen.metadata import generate_static_metadata
-from styx.backend.generic.languageprovider import LanguageProvider
+from styx.backend.generic.languageprovider import LanguageProvider, StrMaybeList
 from styx.backend.generic.linebuffer import LineBuffer
 from styx.backend.generic.model import GenericArg, GenericDataClass, GenericFunc, GenericModule, GenericNamedTuple
 from styx.backend.generic.scope import Scope
@@ -40,9 +42,17 @@ def _compile_struct(
             return_type=lang.type_string_list(),
             return_descr="Command line arguments",
             args=[
-                GenericArg(name="self", type=None, default=None, docstring="The sub-command object."),
                 GenericArg(
-                    name="execution", type=lang.execution_type(), default=None, docstring="The execution object."
+                    name=lang.expr_self(),
+                    type=None,
+                    default=None,
+                    docstring="The sub-command object.",
+                ),
+                GenericArg(
+                    name=lang.symbol_execution(),
+                    type=lang.type_execution(),
+                    default=None,
+                    docstring="The execution object.",
                 ),
             ],
         )
@@ -58,9 +68,9 @@ def _compile_struct(
                 return_type=outputs_type,
                 return_descr=f"NamedTuple of outputs (described in `{outputs_type}`).",
                 args=[
-                    GenericArg(name="self", type=None, default=None, docstring="The sub-command object."),
+                    GenericArg(name=lang.expr_self(), type=None, default=None, docstring="The sub-command object."),
                     GenericArg(
-                        name="execution", type=lang.execution_type(), default=None, docstring="The execution object."
+                        name=lang.symbol_execution(), type=lang.type_execution(), default=None, docstring="The execution object."
                     ),
                 ],
             )
@@ -122,8 +132,8 @@ def _compile_struct(
         pyargs.append(
             GenericArg(
                 name="runner",
-                type=lang.type_symbol_as_optional(lang.runner_type()),
-                default=lang.null(),
+                type=lang.type_optional(lang.type_runner()),
+                default=lang.expr_null(),
                 docstring="Command runner",
             )
         )
@@ -178,59 +188,56 @@ def _compile_cargs_building(
     for group in param.body.groups:
         group_conditions_py = []
 
-        building_cargs_py: list[tuple[str, bool]] = []
-        building_cargs_py_maybe_null: list[tuple[str, bool]] = []
+        building_cargs_py: list[StrMaybeList] = []
+        building_cargs_py_maybe_null: list[StrMaybeList] = []
         for carg in group.cargs:
-            building_carg_py: list[tuple[str, bool]] = []
-            building_carg_py_maybe_null: list[tuple[str, bool]] = []
+            building_carg_py: list[StrMaybeList] = []
+            building_carg_py_maybe_null: list[StrMaybeList] = []
             for token in carg.tokens:
                 if isinstance(token, str):
-                    building_carg_py.append((lang.as_literal(token), False))
-                    building_carg_py_maybe_null.append((lang.as_literal(token), False))
+                    building_carg_py.append(StrMaybeList(lang.expr_literal(token), False))
+                    building_carg_py_maybe_null.append(StrMaybeList(lang.expr_literal(token), False))
                     continue
                 elem_symbol = lookup.py_symbol[token.base.id_]
                 if access_via_self:
-                    elem_symbol = lang.member_access(elem_symbol)
+                    elem_symbol = lang.expr_access_attr_via_self(elem_symbol)
                 py_var_as_str, py_var_as_str_is_array = lang.param_var_to_str(token, elem_symbol)
-                building_carg_py.append((py_var_as_str, py_var_as_str_is_array))
+                building_carg_py.append(StrMaybeList(py_var_as_str, py_var_as_str_is_array))
                 if (py_var_is_set_by_user := lang.param_var_is_set_by_user(token, elem_symbol, False)) is not None:
                     group_conditions_py.append(py_var_is_set_by_user)
                     building_carg_py_maybe_null.append(
-                        (
-                            lang.ternary(py_var_is_set_by_user, py_var_as_str, lang.empty_str_list(), True),
+                        StrMaybeList(
+                            lang.expr_ternary(py_var_is_set_by_user, py_var_as_str, lang.expr_empty_str_list(), True),
                             py_var_as_str_is_array,
                         )
                         if py_var_as_str_is_array
-                        else (
-                            lang.ternary(py_var_is_set_by_user, py_var_as_str, lang.empty_str(), True),
+                        else StrMaybeList(
+                            lang.expr_ternary(py_var_is_set_by_user, py_var_as_str, lang.expr_empty_str(), True),
                             py_var_as_str_is_array,
                         )
                     )
                 else:
-                    building_carg_py_maybe_null.append((py_var_as_str, py_var_as_str_is_array))
+                    building_carg_py_maybe_null.append(StrMaybeList(py_var_as_str, py_var_as_str_is_array))
 
             if len(building_carg_py) == 1:
                 building_cargs_py.append(building_carg_py[0])
                 building_cargs_py_maybe_null.append(building_carg_py_maybe_null[0])
             else:
+                destructured = [s if not s_is_list else lang.expr_join_str_list(s) for s, s_is_list in building_carg_py]
+                building_cargs_py.append(StrMaybeList(lang.expr_concat_strs(destructured), False))
                 destructured = [
-                    s if not s_is_list else lang.join_string_list_expr(s) for s, s_is_list in building_carg_py
+                    s if not s_is_list else lang.expr_join_str_list(s) for s, s_is_list in building_carg_py_maybe_null
                 ]
-                building_cargs_py.append((lang.concat_strings(destructured), False))
-                destructured = [
-                    s if not s_is_list else lang.join_string_list_expr(s)
-                    for s, s_is_list in building_carg_py_maybe_null
-                ]
-                building_cargs_py_maybe_null.append((lang.concat_strings(destructured), False))
+                building_cargs_py_maybe_null.append(StrMaybeList(lang.expr_concat_strs(destructured), False))
 
         buf_appending: LineBuffer = []
 
         if len(building_cargs_py) == 1:
-            for val, val_is_list in building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py:
-                if val_is_list:
-                    buf_appending.extend(lang.cargs_add_1d("cargs", val))
+            for str_symbol in building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py:
+                if str_symbol.is_list:
+                    buf_appending.extend(lang.cargs_add_1d("cargs", str_symbol.symbol))
                 else:
-                    buf_appending.extend(lang.cargs_add_0d("cargs", val))
+                    buf_appending.extend(lang.cargs_add_0d("cargs", str_symbol.symbol))
         else:
             x = lang.cargs_0d_or_1d_to_0d(
                 building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py
@@ -240,7 +247,7 @@ def _compile_cargs_building(
         if len(group_conditions_py) > 0:
             func.body.extend(
                 lang.if_else_block(
-                    condition=lang.conditions_join_or(group_conditions_py),
+                    condition=lang.expr_conditions_join_or(group_conditions_py),
                     truthy=buf_appending,
                 )
             )
@@ -291,9 +298,9 @@ def _compile_outputs_class(
                 continue
             optional = optional or lookup.param[token.ref_id].nullable
 
-        output_type = lang.output_path_type()
+        output_type = lang.type_output_path()
         if optional:
-            output_type = lang.type_symbol_as_optional(output_type)
+            output_type = lang.type_optional(output_type)
 
         outputs_class.fields.append(
             GenericArg(
@@ -309,9 +316,9 @@ def _compile_outputs_class(
             if struct_has_outputs(sub_struct):
                 output_type = lookup.py_output_type[sub_struct.base.id_]
                 if sub_struct.list_:
-                    output_type = lang.type_symbol_as_list(output_type)
+                    output_type = lang.type_list(output_type)
                 if sub_struct.nullable:
-                    output_type = lang.type_symbol_as_optional(output_type)
+                    output_type = lang.type_optional(output_type)
 
                 output_symbol = lookup.py_output_field_symbol[sub_struct.base.id_]
 
@@ -336,12 +343,12 @@ def _compile_outputs_class(
                     if struct_has_outputs(sub_command)
                 ]
                 if len(alt_types) > 0:
-                    output_type = lang.type_symbols_as_union(alt_types)
+                    output_type = lang.type_union(alt_types)
 
                     if sub_struct.list_:
-                        output_type = lang.type_symbol_as_list(output_type)
+                        output_type = lang.type_list(output_type)
                     if sub_struct.nullable:
-                        output_type = lang.type_symbol_as_optional(output_type)
+                        output_type = lang.type_optional(output_type)
 
                     output_symbol = lookup.py_output_field_symbol[sub_struct.base.id_]
 
@@ -388,20 +395,20 @@ def _compile_outputs_building(
 
         substitute = symbol
         if access_via_self:
-            substitute = lang.member_access(substitute)
+            substitute = lang.expr_access_attr_via_self(substitute)
 
         if param.list_:
             raise Exception(f"Output path template replacements cannot be lists. ({param.base.name})")
 
         if isinstance(param.body, ir.Param.String):
-            return lang.remove_suffixes(substitute, output_param_reference.file_remove_suffixes)
+            return lang.expr_remove_suffixes(substitute, output_param_reference.file_remove_suffixes)
 
         if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-            return lang.numeric_to_str(substitute)
+            return lang.expr_numeric_to_str(substitute)
 
         if isinstance(param.body, ir.Param.File):
-            return lang.remove_suffixes(
-                lang.path_expr_get_filename(substitute), output_param_reference.file_remove_suffixes
+            return lang.expr_remove_suffixes(
+                lang.expr_path_get_filename(substitute), output_param_reference.file_remove_suffixes
             )
 
         if isinstance(param.body, ir.Param.Bool):
@@ -413,7 +420,7 @@ def _compile_outputs_building(
             continue
         output_symbol = lookup.py_output_field_symbol[stdout_stderr_output.id_]
 
-        members[output_symbol] = lang.empty_str_list()
+        members[output_symbol] = lang.expr_empty_str_list()
 
     for output in struct.base.outputs:
         output_symbol = lookup.py_output_field_symbol[output.id_]
@@ -422,7 +429,7 @@ def _compile_outputs_building(
         conditions = []
         for token in output.tokens:
             if isinstance(token, str):
-                output_segments.append(lang.as_literal(token))
+                output_segments.append(lang.expr_literal(token))
                 continue
             output_segments.append(_py_get_val(token))
 
@@ -432,13 +439,13 @@ def _compile_outputs_building(
                 conditions.append(py_var_is_set_by_user)
 
         if len(conditions) > 0:
-            members[output_symbol] = lang.ternary(
-                condition=lang.conditions_join_and(conditions),
-                truthy=lang.resolve_output_file("execution", lang.concat_strings(output_segments)),
-                falsy=lang.null(),
+            members[output_symbol] = lang.expr_ternary(
+                condition=lang.expr_conditions_join_and(conditions),
+                truthy=lang.resolve_output_file("execution", lang.expr_concat_strs(output_segments)),
+                falsy=lang.expr_null(),
             )
         else:
-            members[output_symbol] = lang.resolve_output_file("execution", lang.concat_strings(output_segments))
+            members[output_symbol] = lang.resolve_output_file("execution", lang.expr_concat_strs(output_segments))
 
     # sub struct outputs
     for sub_struct in struct.body.iter_params():
@@ -453,7 +460,7 @@ def _compile_outputs_building(
         output_symbol = lookup.py_output_field_symbol[sub_struct.base.id_]
         output_symbol_resolved = lookup.py_symbol[sub_struct.base.id_]
         if access_via_self:
-            output_symbol_resolved = lang.member_access(output_symbol_resolved)
+            output_symbol_resolved = lang.expr_access_attr_via_self(output_symbol_resolved)
 
         members[output_symbol] = lang.struct_collect_outputs(sub_struct, output_symbol_resolved)
 
@@ -482,7 +489,7 @@ def compile_interface(
     )
     interface_module.exports.append(metadata_symbol)
 
-    function_symbol = package_scope.add_or_dodge(lang.ensure_var_case(interface.command.base.name))
+    function_symbol = package_scope.add_or_dodge(lang.symbol_var_case_from(interface.command.base.name))
     interface_module.exports.append(function_symbol)
 
     function_scope = Scope(lang).language_base_scope()
