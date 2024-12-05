@@ -1,7 +1,7 @@
 import pathlib
 import typing
 from abc import ABC, abstractmethod
-from typing import Mapping, Sequence, TypeAlias, Type
+from typing import Mapping, Sequence, TypeAlias
 
 import styx.ir.core as ir
 from styx.backend.generic.linebuffer import LineBuffer
@@ -19,10 +19,10 @@ ExprType = str
 TypeType = str
 
 
-class StrMaybeList(typing.NamedTuple):
-    """Symbol referring to either a string or a list of strings"""
+class MStr(typing.NamedTuple):
+    """Expression referring to either a string or a list of strings."""
 
-    symbol: ExprType
+    expr: ExprType
     is_list: bool
 
 
@@ -188,32 +188,32 @@ class LanguageProvider(ABC):
 
     @abstractmethod
     def expr_int(self, obj: int) -> ExprType:
-        """Convert a bool to a language literal."""
+        """Convert a int to a language literal."""
         ...
 
     @abstractmethod
     def expr_float(self, obj: float) -> ExprType:
-        """Convert a bool to a language literal."""
+        """Convert a float to a language literal."""
         ...
 
     @abstractmethod
     def expr_str(self, obj: str) -> ExprType:
-        """Convert a bool to a language literal."""
+        """Convert a str to a language literal."""
         ...
 
     @abstractmethod
     def expr_path(self, obj: pathlib.Path) -> ExprType:
-        """Convert a bool to a language literal."""
+        """Convert a path to a language literal."""
         ...
 
     @abstractmethod
     def expr_list(self, obj: list[ExprType]) -> ExprType:
-        """Convert a bool to a language literal."""
+        """Convert a list to a language literal."""
         ...
 
     @abstractmethod
     def expr_dict(self, obj: dict[ExprType, ExprType]) -> ExprType:
-        """Convert a bool to a language literal."""
+        """Convert a dict to a language literal."""
         ...
 
     def expr_literal(self, obj: TYPE_PYLITERAL) -> ExprType:
@@ -291,12 +291,7 @@ class LanguageProvider(ABC):
         ...
 
     @abstractmethod
-    def expr_join_str_list(self, expr_str_list: ExprType, join: str = "") -> ExprType:
-        """Join/collapse a string list_expression."""
-        ...
-
-    @abstractmethod
-    def expr_concat_strs(self, exprs: list[ExprType]) -> ExprType:
+    def expr_concat_strs(self, exprs: list[ExprType], join: str = "") -> ExprType:
         """Concatenate string expressions."""
         ...
 
@@ -379,6 +374,7 @@ class LanguageProvider(ABC):
         """Symbol the metadata constant should get."""
         ...
 
+    @abstractmethod
     def generate_metadata(
         self,
         metadata_symbol: str,
@@ -398,19 +394,27 @@ class LanguageProvider(ABC):
         ...
 
     @abstractmethod
-    def cargs_add_0d(self, cargs_symbol: str, val: str | list[str]) -> LineBuffer:
-        """Add one entry that is a string expression or multiple string expressions."""
+    def mstr_cargs_add(self, cargs_symbol: str, mstr: MStr | list[MStr]) -> LineBuffer:
+        """Extend cargs by mstr."""
         ...
 
     @abstractmethod
-    def cargs_add_1d(self, cargs_symbol: str, val: str | list[str]) -> LineBuffer:
-        """Add one entry that is a string-list expression or multiple string-list expressions."""
+    def mstr_collapse(self, mstr: MStr, join: str = "") -> MStr:
+        """Join a mstr if it is referring to a list."""
         ...
 
     @abstractmethod
-    def cargs_0d_or_1d_to_0d(self, val_and_islist: list[StrMaybeList]) -> list[str]:
-        """Convert a list of 0d or 1d carg expressions to a list of 0d."""
+    def mstr_concat(self, mstrs: list[MStr], inner_join: str = "", outer_join: str = "") -> MStr:
+        """Concatenate all mstrings down to a mstr(*, False).
+
+        inner_join controls how the inner mstrs collapse,
+        outer_join how the resulting mstr is joined.
+        """
         ...
+
+    def mstr_empty_literal_like(self, mstr: MStr) -> ExprType:
+        """Empty string or string list expression depending on mstr.is_list."""
+        return self.expr_empty_str_list() if mstr.is_list else self.expr_empty_str()
 
     @abstractmethod
     def runner_symbol(self) -> ExprType:
@@ -479,7 +483,7 @@ class LanguageProvider(ABC):
         self,
         param: ir.Param,
         symbol: str,
-    ) -> StrMaybeList:
+    ) -> MStr:
         """Language var to str.
 
         Return a language expression that converts the variable to a string or string array

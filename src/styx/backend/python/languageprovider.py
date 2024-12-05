@@ -1,7 +1,7 @@
 import pathlib
 import re
 
-from styx.backend.generic.languageprovider import TYPE_PYLITERAL, LanguageProvider, StrMaybeList, ExprType
+from styx.backend.generic.languageprovider import TYPE_PYLITERAL, ExprType, LanguageProvider, MStr
 from styx.backend.generic.linebuffer import LineBuffer, blank_after, blank_before, comment, concat, expand, indent
 from styx.backend.generic.model import GenericArg, GenericDataClass, GenericFunc, GenericModule, GenericNamedTuple
 from styx.backend.generic.scope import Scope
@@ -119,11 +119,11 @@ class PythonLanguageProvider(LanguageProvider):
 
     def expr_str(self, obj: str) -> ExprType:
         """Convert a bool to a language literal."""
-        return enquote(obj)
+        return enquote(obj)  # todo string escape?
 
     def expr_path(self, obj: pathlib.Path) -> ExprType:
         """Convert a bool to a language literal."""
-        return enquote(str(obj))
+        return enquote(str(obj))  # todo string escape?
 
     def expr_list(self, obj: list[ExprType]) -> ExprType:
         """Convert a bool to a language literal."""
@@ -160,11 +160,9 @@ class PythonLanguageProvider(LanguageProvider):
     def expr_conditions_join_or(self, condition_exprs: list[str]) -> str:
         return " or ".join(condition_exprs)
 
-    def expr_join_str_list(self, expr_str_list: str, join: str = "") -> str:
-        join = join.replace('"', '\\"')
-        return f'"{join}".join({expr_str_list})'
-
-    def expr_concat_strs(self, exprs: list[str]) -> str:
+    def expr_concat_strs(self, exprs: list[str], join: str = "") -> str:
+        if join:
+            return f"{self.expr_str(join)}.join([{', '.join(exprs)}])"
         return " + ".join(exprs)
 
     def expr_ternary(self, condition: str, truthy: str, falsy: str, enbrace_: bool = False) -> str:
@@ -190,9 +188,6 @@ class PythonLanguageProvider(LanguageProvider):
             "from styxdefs import *",
             "import dataclasses",
         ]
-
-    def cargs_0d_or_1d_to_0d(self, val_and_islist: list[StrMaybeList]) -> list[str]:
-        return [(f"*{val}" if val_is_list else val) for val, val_is_list in val_and_islist]
 
     def struct_collect_outputs(self, struct: ir.Param[ir.Param.Struct], struct_symbol: str) -> str:
         if struct.list_:
@@ -395,13 +390,13 @@ class PythonLanguageProvider(LanguageProvider):
             ")",
         ]
 
-    def param_var_to_str(self, param: ir.Param, symbol: str) -> StrMaybeList:
-        def _val() -> StrMaybeList:
+    def param_var_to_str(self, param: ir.Param, symbol: str) -> MStr:
+        def _val() -> MStr:
             if not param.list_:
                 if isinstance(param.body, ir.Param.String):
-                    return StrMaybeList(symbol, False)
+                    return MStr(symbol, False)
                 if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-                    return StrMaybeList(f"str({symbol})", False)
+                    return MStr(f"str({symbol})", False)
                 if isinstance(param.body, ir.Param.Bool):
                     as_list = (len(param.body.value_true) > 1) or (len(param.body.value_false) > 1)
                     if as_list:
@@ -412,29 +407,29 @@ class PythonLanguageProvider(LanguageProvider):
                         value_false = param.body.value_false[0] if len(param.body.value_false) > 0 else None
                     if len(param.body.value_true) > 0:
                         if len(param.body.value_false) > 0:
-                            return StrMaybeList(
+                            return MStr(
                                 f"({self.expr_literal(value_true)} if {symbol} else {self.expr_literal(value_true)})",
                                 as_list,
                             )
-                        return StrMaybeList(self.expr_literal(value_true), as_list)
+                        return MStr(self.expr_literal(value_true), as_list)
                     assert len(param.body.value_false) > 0
-                    return StrMaybeList(self.expr_literal(value_false), as_list)
+                    return MStr(self.expr_literal(value_false), as_list)
                 if isinstance(param.body, ir.Param.File):
                     extra_args = ""
                     if param.body.resolve_parent:
                         extra_args += ", resolve_parent=True"
                     if param.body.mutable:
                         extra_args += ", mutable=True"
-                    return StrMaybeList(f"execution.input_file({symbol}{extra_args})", False)
+                    return MStr(f"execution.input_file({symbol}{extra_args})", False)
                 if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                    return StrMaybeList(f"{symbol}.run(execution)", True)
+                    return MStr(f"{symbol}.run(execution)", True)
                 assert False
 
             if param.list_.join is None:
                 if isinstance(param.body, ir.Param.String):
-                    return StrMaybeList(symbol, True)
+                    return MStr(symbol, True)
                 if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-                    return StrMaybeList(f"map(str, {symbol})", True)
+                    return MStr(f"map(str, {symbol})", True)
                 if isinstance(param.body, ir.Param.Bool):
                     assert False, "TODO: Not implemented yet"
                 if isinstance(param.body, ir.Param.File):
@@ -443,17 +438,17 @@ class PythonLanguageProvider(LanguageProvider):
                         extra_args += ", resolve_parent=True"
                     if param.body.mutable:
                         extra_args += ", mutable=True"
-                    return StrMaybeList(f"[execution.input_file(f{extra_args}) for f in {symbol}]", True)
+                    return MStr(f"[execution.input_file(f{extra_args}) for f in {symbol}]", True)
                 if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                    return StrMaybeList(f"[a for c in [s.run(execution) for s in {symbol}] for a in c]", True)
+                    return MStr(f"[a for c in [s.run(execution) for s in {symbol}] for a in c]", True)
                 assert False
 
             # arg.data.list_separator is not None
             sep_join = f"{enquote(param.list_.join)}.join"
             if isinstance(param.body, ir.Param.String):
-                return StrMaybeList(f"{sep_join}({symbol})", False)
+                return MStr(f"{sep_join}({symbol})", False)
             if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-                return StrMaybeList(f"{sep_join}(map(str, {symbol}))", False)
+                return MStr(f"{sep_join}(map(str, {symbol}))", False)
             if isinstance(param.body, ir.Param.Bool):
                 assert False, "TODO: Not implemented yet"
             if isinstance(param.body, ir.Param.File):
@@ -462,9 +457,9 @@ class PythonLanguageProvider(LanguageProvider):
                     extra_args += ", resolve_parent=True"
                 if param.body.mutable:
                     extra_args += ", mutable=True"
-                return StrMaybeList(f"{sep_join}([execution.input_file(f{extra_args}) for f in {symbol}])", False)
+                return MStr(f"{sep_join}([execution.input_file(f{extra_args}) for f in {symbol}])", False)
             if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                return StrMaybeList(f"{sep_join}([a for c in [s.run(execution) for s in {symbol}] for a in c])", False)
+                return MStr(f"{sep_join}([a for c in [s.run(execution) for s in {symbol}] for a in c])", False)
             assert False
 
         return _val()
@@ -493,23 +488,24 @@ class PythonLanguageProvider(LanguageProvider):
     def cargs_declare(self, cargs_symbol: str) -> LineBuffer:
         return [f"{cargs_symbol} = []"]
 
-    def cargs_add_0d(self, cargs_symbol: str, val: str | list[str]) -> LineBuffer:
-        if isinstance(val, list):
-            return [
-                "cargs.extend([",
-                *indent(expand(",\n".join(val))),
-                "])",
-            ]
-        return [f"{cargs_symbol}.append({val})"]
+    def mstr_collapse(self, mstr: MStr, join: str = "") -> MStr:
+        return MStr(f'"{join}".join({mstr.expr})' if mstr.is_list else mstr.expr, False)
 
-    def cargs_add_1d(self, cargs_symbol: str, val: str | list[str]) -> LineBuffer:
-        if isinstance(val, list):
+    def mstr_concat(self, mstrs: list[MStr], inner_join: str = "", outer_join: str = "") -> MStr:
+        inner = list(self.mstr_collapse(mstr, inner_join) for mstr in mstrs)
+        return MStr(self.expr_concat_strs(list(m.expr for m in inner), outer_join), False)
+
+    def mstr_cargs_add(self, cargs_symbol: str, mstr: MStr | list[MStr]) -> LineBuffer:
+        if isinstance(mstr, list):
+            elements: list[str] = [(f"*{val}" if val_is_list else val) for val, val_is_list in mstr]
             return [
                 "cargs.extend([",
-                *indent(expand(",\n".join(f"*{v}" for v in val))),
+                *indent(expand(",\n".join(elements))),
                 "])",
             ]
-        return [f"{cargs_symbol}.extend({val})"]
+        if mstr.is_list:
+            return [f"{cargs_symbol}.extend({mstr.expr})"]
+        return [f"{cargs_symbol}.append({mstr.expr})"]
 
     def if_else_block(self, condition: str, truthy: LineBuffer, falsy: LineBuffer | None = None) -> LineBuffer:
         buf = [

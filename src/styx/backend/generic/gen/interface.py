@@ -1,11 +1,9 @@
-from typing import NamedTuple
-
 import styx.ir.core as ir
 from styx.backend.generic.documentation import docs_to_docstring
 from styx.backend.generic.gen.constraints import struct_compile_constraint_checks
 from styx.backend.generic.gen.lookup import LookupParam
 from styx.backend.generic.gen.metadata import generate_static_metadata
-from styx.backend.generic.languageprovider import LanguageProvider, StrMaybeList
+from styx.backend.generic.languageprovider import LanguageProvider, MStr
 from styx.backend.generic.linebuffer import LineBuffer
 from styx.backend.generic.model import GenericArg, GenericDataClass, GenericFunc, GenericModule, GenericNamedTuple
 from styx.backend.generic.scope import Scope
@@ -70,7 +68,10 @@ def _compile_struct(
                 args=[
                     GenericArg(name=lang.expr_self(), type=None, default=None, docstring="The sub-command object."),
                     GenericArg(
-                        name=lang.symbol_execution(), type=lang.type_execution(), default=None, docstring="The execution object."
+                        name=lang.symbol_execution(),
+                        type=lang.type_execution(),
+                        default=None,
+                        docstring="The execution object.",
                     ),
                 ],
             )
@@ -188,61 +189,55 @@ def _compile_cargs_building(
     for group in param.body.groups:
         group_conditions_py = []
 
-        building_cargs_py: list[StrMaybeList] = []
-        building_cargs_py_maybe_null: list[StrMaybeList] = []
+        # We're collecting two structurally equal to versions of cargs string expressions,
+        # one that assumes all parameters are set and one that checks all of them.
+        # This way later we can use one or the other depending on the surrounding context.
+        cargs_exprs: list[MStr] = []  # string expressions for building cargs
+        cargs_exprs_maybe_null: list[MStr] = []  # string expressions for building cargs if parameters may be null
+
         for carg in group.cargs:
-            building_carg_py: list[StrMaybeList] = []
-            building_carg_py_maybe_null: list[StrMaybeList] = []
+            carg_exprs: list[MStr] = []  # string expressions for building a single carg
+            carg_exprs_maybe_null: list[MStr] = []
+
+            # Build single carg
             for token in carg.tokens:
                 if isinstance(token, str):
-                    building_carg_py.append(StrMaybeList(lang.expr_literal(token), False))
-                    building_carg_py_maybe_null.append(StrMaybeList(lang.expr_literal(token), False))
+                    carg_exprs.append(MStr(lang.expr_literal(token), False))
+                    carg_exprs_maybe_null.append(MStr(lang.expr_literal(token), False))
                     continue
                 elem_symbol = lookup.py_symbol[token.base.id_]
                 if access_via_self:
                     elem_symbol = lang.expr_access_attr_via_self(elem_symbol)
-                py_var_as_str, py_var_as_str_is_array = lang.param_var_to_str(token, elem_symbol)
-                building_carg_py.append(StrMaybeList(py_var_as_str, py_var_as_str_is_array))
-                if (py_var_is_set_by_user := lang.param_var_is_set_by_user(token, elem_symbol, False)) is not None:
-                    group_conditions_py.append(py_var_is_set_by_user)
-                    building_carg_py_maybe_null.append(
-                        StrMaybeList(
-                            lang.expr_ternary(py_var_is_set_by_user, py_var_as_str, lang.expr_empty_str_list(), True),
-                            py_var_as_str_is_array,
-                        )
-                        if py_var_as_str_is_array
-                        else StrMaybeList(
-                            lang.expr_ternary(py_var_is_set_by_user, py_var_as_str, lang.expr_empty_str(), True),
-                            py_var_as_str_is_array,
+                param_as_str_expr = lang.param_var_to_str(token, elem_symbol)
+                carg_exprs.append(param_as_str_expr)
+                if (param_is_set_expr := lang.param_var_is_set_by_user(token, elem_symbol, False)) is not None:
+                    group_conditions_py.append(param_is_set_expr)
+                    _empty_expr = lang.mstr_empty_literal_like(param_as_str_expr)
+                    carg_exprs_maybe_null.append(
+                        MStr(
+                            lang.expr_ternary(param_is_set_expr, param_as_str_expr.expr, _empty_expr, True),
+                            param_as_str_expr.is_list,
                         )
                     )
                 else:
-                    building_carg_py_maybe_null.append(StrMaybeList(py_var_as_str, py_var_as_str_is_array))
+                    carg_exprs_maybe_null.append(param_as_str_expr)
 
-            if len(building_carg_py) == 1:
-                building_cargs_py.append(building_carg_py[0])
-                building_cargs_py_maybe_null.append(building_carg_py_maybe_null[0])
+            # collapse and add single carg to cargs expressions
+            if len(carg_exprs) == 1:
+                cargs_exprs.append(carg_exprs[0])
+                cargs_exprs_maybe_null.append(carg_exprs_maybe_null[0])
             else:
-                destructured = [s if not s_is_list else lang.expr_join_str_list(s) for s, s_is_list in building_carg_py]
-                building_cargs_py.append(StrMaybeList(lang.expr_concat_strs(destructured), False))
-                destructured = [
-                    s if not s_is_list else lang.expr_join_str_list(s) for s, s_is_list in building_carg_py_maybe_null
-                ]
-                building_cargs_py_maybe_null.append(StrMaybeList(lang.expr_concat_strs(destructured), False))
+                cargs_exprs.append(lang.mstr_concat(carg_exprs))
+                cargs_exprs_maybe_null.append(lang.mstr_concat(carg_exprs_maybe_null))
 
+        # Append to cargs buffer
         buf_appending: LineBuffer = []
-
-        if len(building_cargs_py) == 1:
-            for str_symbol in building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py:
-                if str_symbol.is_list:
-                    buf_appending.extend(lang.cargs_add_1d("cargs", str_symbol.symbol))
-                else:
-                    buf_appending.extend(lang.cargs_add_0d("cargs", str_symbol.symbol))
+        if len(cargs_exprs) == 1:
+            for str_symbol in cargs_exprs_maybe_null if len(group_conditions_py) > 1 else cargs_exprs:
+                buf_appending.extend(lang.mstr_cargs_add("cargs", str_symbol))
         else:
-            x = lang.cargs_0d_or_1d_to_0d(
-                building_cargs_py_maybe_null if len(group_conditions_py) > 1 else building_cargs_py
-            )
-            buf_appending.extend(lang.cargs_add_0d("cargs", x))
+            x = cargs_exprs_maybe_null if len(group_conditions_py) > 1 else cargs_exprs
+            buf_appending.extend(lang.mstr_cargs_add("cargs", x))
 
         if len(group_conditions_py) > 0:
             func.body.extend(

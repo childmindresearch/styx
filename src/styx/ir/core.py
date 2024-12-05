@@ -169,8 +169,8 @@ class Param(Generic[T]):
         groups: list[ConditionalGroup] = dataclasses.field(default_factory=list)
         """List of conditional groups."""
 
-        group_join: str | None = None
-        """If not none, collapse all groups to a single string with this delimiter.
+        join: str | None = None
+        """If not None, collapse all groups to a single string with this delimiter.
         Args within groups should be joined without delimiter.
         """
 
@@ -477,6 +477,10 @@ class Carg:
     tokens: list[Param | str] = dataclasses.field(default_factory=list)
     """List of parameters or string tokens."""
 
+    join: str | None = None
+    """If not None, collapse all defined tokens to a single string with this delimiter.
+    """
+
     def iter_params(self) -> Generator[Param, Any, None]:
         """Iterate over all parameters in the command argument.
 
@@ -497,6 +501,11 @@ class ConditionalGroup:
 
     cargs: list[Carg] = dataclasses.field(default_factory=list)
     """List of command arguments."""
+
+    join: str | None = None
+    """If not None, collapse all args to a single string with this delimiter.
+    Args within groups should be joined without delimiter.
+    """
 
     def iter_params(self) -> Generator[Param, Any, None]:
         """Iterate over all parameters in the conditional group.
