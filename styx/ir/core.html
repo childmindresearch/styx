@@ -244,7 +244,7 @@
                                             <a class="variable" href="#Param.Struct.groups">groups</a>
                                     </li>
                                     <li>
-                                            <a class="variable" href="#Param.Struct.group_join">group_join</a>
+                                            <a class="variable" href="#Param.Struct.join">join</a>
                                     </li>
                                     <li>
                                             <a class="variable" href="#Param.Struct.docs">docs</a>
@@ -322,6 +322,9 @@
                                 <a class="variable" href="#Carg.tokens">tokens</a>
                         </li>
                         <li>
+                                <a class="variable" href="#Carg.join">join</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Carg.iter_params">iter_params</a>
                         </li>
                 </ul>
@@ -335,6 +338,9 @@
                         </li>
                         <li>
                                 <a class="variable" href="#ConditionalGroup.cargs">cargs</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ConditionalGroup.join">join</a>
                         </li>
                         <li>
                                 <a class="function" href="#ConditionalGroup.iter_params">iter_params</a>
@@ -576,8 +582,8 @@
 </span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="n">groups</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ConditionalGroup</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of conditional groups.&quot;&quot;&quot;</span>
 </span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="n">group_join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;If not none, collapse all groups to a single string with this delimiter.</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;If not None, collapse all groups to a single string with this delimiter.</span>
 </span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        Args within groups should be joined without delimiter.</span>
 </span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>
@@ -884,67 +890,76 @@
 </span><span id="L-477"><a href="#L-477"><span class="linenos">477</span></a>    <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Param</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="L-478"><a href="#L-478"><span class="linenos">478</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;List of parameters or string tokens.&quot;&quot;&quot;</span>
 </span><span id="L-479"><a href="#L-479"><span class="linenos">479</span></a>
-</span><span id="L-480"><a href="#L-480"><span class="linenos">480</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-</span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the command argument.</span>
-</span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a>
-</span><span id="L-483"><a href="#L-483"><span class="linenos">483</span></a><span class="sd">        Yields:</span>
-</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a><span class="sd">            Each parameter in the command argument.</span>
-</span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a>        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
-</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">Param</span><span class="p">):</span>
-</span><span id="L-488"><a href="#L-488"><span class="linenos">488</span></a>                <span class="k">yield</span> <span class="n">token</span>
-</span><span id="L-489"><a href="#L-489"><span class="linenos">489</span></a>
-</span><span id="L-490"><a href="#L-490"><span class="linenos">490</span></a>
-</span><span id="L-491"><a href="#L-491"><span class="linenos">491</span></a><span class="nd">@dataclass</span>
-</span><span id="L-492"><a href="#L-492"><span class="linenos">492</span></a><span class="k">class</span> <span class="nc">ConditionalGroup</span><span class="p">:</span>
-</span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a group of command arguments.</span>
+</span><span id="L-480"><a href="#L-480"><span class="linenos">480</span></a>    <span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If not None, collapse all defined tokens to a single string with this delimiter.</span>
+</span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-483"><a href="#L-483"><span class="linenos">483</span></a>
+</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the command argument.</span>
+</span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a>
+</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a><span class="sd">        Yields:</span>
+</span><span id="L-488"><a href="#L-488"><span class="linenos">488</span></a><span class="sd">            Each parameter in the command argument.</span>
+</span><span id="L-489"><a href="#L-489"><span class="linenos">489</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-490"><a href="#L-490"><span class="linenos">490</span></a>        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
+</span><span id="L-491"><a href="#L-491"><span class="linenos">491</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">Param</span><span class="p">):</span>
+</span><span id="L-492"><a href="#L-492"><span class="linenos">492</span></a>                <span class="k">yield</span> <span class="n">token</span>
+</span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a>
 </span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>
-</span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a><span class="sd">    Arguments will only be emitted if at least one parameter within is defined, or if there are no parameters.</span>
-</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a>
-</span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a>    <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Carg</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;List of command arguments.&quot;&quot;&quot;</span>
-</span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a>
-</span><span id="L-501"><a href="#L-501"><span class="linenos">501</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-</span><span id="L-502"><a href="#L-502"><span class="linenos">502</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the conditional group.</span>
-</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a>
-</span><span id="L-504"><a href="#L-504"><span class="linenos">504</span></a><span class="sd">        Yields:</span>
-</span><span id="L-505"><a href="#L-505"><span class="linenos">505</span></a><span class="sd">            Each parameter in the conditional group.</span>
-</span><span id="L-506"><a href="#L-506"><span class="linenos">506</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-507"><a href="#L-507"><span class="linenos">507</span></a>        <span class="k">for</span> <span class="n">carg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cargs</span><span class="p">:</span>
-</span><span id="L-508"><a href="#L-508"><span class="linenos">508</span></a>            <span class="k">yield from</span> <span class="n">carg</span><span class="o">.</span><span class="n">iter_params</span><span class="p">()</span>
+</span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a><span class="nd">@dataclass</span>
+</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a><span class="k">class</span> <span class="nc">ConditionalGroup</span><span class="p">:</span>
+</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a group of command arguments.</span>
+</span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a>
+</span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a><span class="sd">    Arguments will only be emitted if at least one parameter within is defined, or if there are no parameters.</span>
+</span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-501"><a href="#L-501"><span class="linenos">501</span></a>
+</span><span id="L-502"><a href="#L-502"><span class="linenos">502</span></a>    <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Carg</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;List of command arguments.&quot;&quot;&quot;</span>
+</span><span id="L-504"><a href="#L-504"><span class="linenos">504</span></a>
+</span><span id="L-505"><a href="#L-505"><span class="linenos">505</span></a>    <span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-506"><a href="#L-506"><span class="linenos">506</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If not None, collapse all args to a single string with this delimiter.</span>
+</span><span id="L-507"><a href="#L-507"><span class="linenos">507</span></a><span class="sd">    Args within groups should be joined without delimiter.</span>
+</span><span id="L-508"><a href="#L-508"><span class="linenos">508</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-509"><a href="#L-509"><span class="linenos">509</span></a>
-</span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a>
-</span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a><span class="nd">@dataclass</span>
-</span><span id="L-512"><a href="#L-512"><span class="linenos">512</span></a><span class="k">class</span> <span class="nc">StdOutErrAsStringOutput</span><span class="p">:</span>
-</span><span id="L-513"><a href="#L-513"><span class="linenos">513</span></a>    <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
-</span><span id="L-514"><a href="#L-514"><span class="linenos">514</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique ID of the output. Unique including param IDs.&quot;&quot;&quot;</span>
-</span><span id="L-515"><a href="#L-515"><span class="linenos">515</span></a>
-</span><span id="L-516"><a href="#L-516"><span class="linenos">516</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-517"><a href="#L-517"><span class="linenos">517</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the output.&quot;&quot;&quot;</span>
+</span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the conditional group.</span>
+</span><span id="L-512"><a href="#L-512"><span class="linenos">512</span></a>
+</span><span id="L-513"><a href="#L-513"><span class="linenos">513</span></a><span class="sd">        Yields:</span>
+</span><span id="L-514"><a href="#L-514"><span class="linenos">514</span></a><span class="sd">            Each parameter in the conditional group.</span>
+</span><span id="L-515"><a href="#L-515"><span class="linenos">515</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-516"><a href="#L-516"><span class="linenos">516</span></a>        <span class="k">for</span> <span class="n">carg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cargs</span><span class="p">:</span>
+</span><span id="L-517"><a href="#L-517"><span class="linenos">517</span></a>            <span class="k">yield from</span> <span class="n">carg</span><span class="o">.</span><span class="n">iter_params</span><span class="p">()</span>
 </span><span id="L-518"><a href="#L-518"><span class="linenos">518</span></a>
-</span><span id="L-519"><a href="#L-519"><span class="linenos">519</span></a>    <span class="n">docs</span><span class="p">:</span> <span class="n">Documentation</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">Documentation</span><span class="p">)</span>
-</span><span id="L-520"><a href="#L-520"><span class="linenos">520</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Documentation for the output.&quot;&quot;&quot;</span>
-</span><span id="L-521"><a href="#L-521"><span class="linenos">521</span></a>
-</span><span id="L-522"><a href="#L-522"><span class="linenos">522</span></a>
-</span><span id="L-523"><a href="#L-523"><span class="linenos">523</span></a><span class="nd">@dataclass</span>
-</span><span id="L-524"><a href="#L-524"><span class="linenos">524</span></a><span class="k">class</span> <span class="nc">Interface</span><span class="p">:</span>
-</span><span id="L-525"><a href="#L-525"><span class="linenos">525</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an interface.&quot;&quot;&quot;</span>
-</span><span id="L-526"><a href="#L-526"><span class="linenos">526</span></a>
-</span><span id="L-527"><a href="#L-527"><span class="linenos">527</span></a>    <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-528"><a href="#L-528"><span class="linenos">528</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique identifier for the interface.&quot;&quot;&quot;</span>
-</span><span id="L-529"><a href="#L-529"><span class="linenos">529</span></a>
-</span><span id="L-530"><a href="#L-530"><span class="linenos">530</span></a>    <span class="n">package</span><span class="p">:</span> <span class="n">Package</span>
-</span><span id="L-531"><a href="#L-531"><span class="linenos">531</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The package associated with this interface.&quot;&quot;&quot;</span>
-</span><span id="L-532"><a href="#L-532"><span class="linenos">532</span></a>
-</span><span id="L-533"><a href="#L-533"><span class="linenos">533</span></a>    <span class="n">command</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]</span>
-</span><span id="L-534"><a href="#L-534"><span class="linenos">534</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The command structure for this interface.&quot;&quot;&quot;</span>
+</span><span id="L-519"><a href="#L-519"><span class="linenos">519</span></a>
+</span><span id="L-520"><a href="#L-520"><span class="linenos">520</span></a><span class="nd">@dataclass</span>
+</span><span id="L-521"><a href="#L-521"><span class="linenos">521</span></a><span class="k">class</span> <span class="nc">StdOutErrAsStringOutput</span><span class="p">:</span>
+</span><span id="L-522"><a href="#L-522"><span class="linenos">522</span></a>    <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
+</span><span id="L-523"><a href="#L-523"><span class="linenos">523</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique ID of the output. Unique including param IDs.&quot;&quot;&quot;</span>
+</span><span id="L-524"><a href="#L-524"><span class="linenos">524</span></a>
+</span><span id="L-525"><a href="#L-525"><span class="linenos">525</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-526"><a href="#L-526"><span class="linenos">526</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the output.&quot;&quot;&quot;</span>
+</span><span id="L-527"><a href="#L-527"><span class="linenos">527</span></a>
+</span><span id="L-528"><a href="#L-528"><span class="linenos">528</span></a>    <span class="n">docs</span><span class="p">:</span> <span class="n">Documentation</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">Documentation</span><span class="p">)</span>
+</span><span id="L-529"><a href="#L-529"><span class="linenos">529</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Documentation for the output.&quot;&quot;&quot;</span>
+</span><span id="L-530"><a href="#L-530"><span class="linenos">530</span></a>
+</span><span id="L-531"><a href="#L-531"><span class="linenos">531</span></a>
+</span><span id="L-532"><a href="#L-532"><span class="linenos">532</span></a><span class="nd">@dataclass</span>
+</span><span id="L-533"><a href="#L-533"><span class="linenos">533</span></a><span class="k">class</span> <span class="nc">Interface</span><span class="p">:</span>
+</span><span id="L-534"><a href="#L-534"><span class="linenos">534</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an interface.&quot;&quot;&quot;</span>
 </span><span id="L-535"><a href="#L-535"><span class="linenos">535</span></a>
-</span><span id="L-536"><a href="#L-536"><span class="linenos">536</span></a>    <span class="n">stdout_as_string_output</span><span class="p">:</span> <span class="n">StdOutErrAsStringOutput</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-537"><a href="#L-537"><span class="linenos">537</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect stdout as string output.&quot;&quot;&quot;</span>
+</span><span id="L-536"><a href="#L-536"><span class="linenos">536</span></a>    <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-537"><a href="#L-537"><span class="linenos">537</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique identifier for the interface.&quot;&quot;&quot;</span>
 </span><span id="L-538"><a href="#L-538"><span class="linenos">538</span></a>
-</span><span id="L-539"><a href="#L-539"><span class="linenos">539</span></a>    <span class="n">stderr_as_string_output</span><span class="p">:</span> <span class="n">StdOutErrAsStringOutput</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-540"><a href="#L-540"><span class="linenos">540</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect stderr as string output.&quot;&quot;&quot;</span>
+</span><span id="L-539"><a href="#L-539"><span class="linenos">539</span></a>    <span class="n">package</span><span class="p">:</span> <span class="n">Package</span>
+</span><span id="L-540"><a href="#L-540"><span class="linenos">540</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The package associated with this interface.&quot;&quot;&quot;</span>
+</span><span id="L-541"><a href="#L-541"><span class="linenos">541</span></a>
+</span><span id="L-542"><a href="#L-542"><span class="linenos">542</span></a>    <span class="n">command</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]</span>
+</span><span id="L-543"><a href="#L-543"><span class="linenos">543</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The command structure for this interface.&quot;&quot;&quot;</span>
+</span><span id="L-544"><a href="#L-544"><span class="linenos">544</span></a>
+</span><span id="L-545"><a href="#L-545"><span class="linenos">545</span></a>    <span class="n">stdout_as_string_output</span><span class="p">:</span> <span class="n">StdOutErrAsStringOutput</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-546"><a href="#L-546"><span class="linenos">546</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect stdout as string output.&quot;&quot;&quot;</span>
+</span><span id="L-547"><a href="#L-547"><span class="linenos">547</span></a>
+</span><span id="L-548"><a href="#L-548"><span class="linenos">548</span></a>    <span class="n">stderr_as_string_output</span><span class="p">:</span> <span class="n">StdOutErrAsStringOutput</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-549"><a href="#L-549"><span class="linenos">549</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect stderr as string output.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1447,8 +1462,8 @@
 </span><span id="Param-170"><a href="#Param-170"><span class="linenos">170</span></a>        <span class="n">groups</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ConditionalGroup</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="Param-171"><a href="#Param-171"><span class="linenos">171</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of conditional groups.&quot;&quot;&quot;</span>
 </span><span id="Param-172"><a href="#Param-172"><span class="linenos">172</span></a>
-</span><span id="Param-173"><a href="#Param-173"><span class="linenos">173</span></a>        <span class="n">group_join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Param-174"><a href="#Param-174"><span class="linenos">174</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;If not none, collapse all groups to a single string with this delimiter.</span>
+</span><span id="Param-173"><a href="#Param-173"><span class="linenos">173</span></a>        <span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Param-174"><a href="#Param-174"><span class="linenos">174</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;If not None, collapse all groups to a single string with this delimiter.</span>
 </span><span id="Param-175"><a href="#Param-175"><span class="linenos">175</span></a><span class="sd">        Args within groups should be joined without delimiter.</span>
 </span><span id="Param-176"><a href="#Param-176"><span class="linenos">176</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Param-177"><a href="#Param-177"><span class="linenos">177</span></a>
@@ -2353,8 +2368,8 @@
 </span><span id="Param.Struct-170"><a href="#Param.Struct-170"><span class="linenos">170</span></a>        <span class="n">groups</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ConditionalGroup</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="Param.Struct-171"><a href="#Param.Struct-171"><span class="linenos">171</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of conditional groups.&quot;&quot;&quot;</span>
 </span><span id="Param.Struct-172"><a href="#Param.Struct-172"><span class="linenos">172</span></a>
-</span><span id="Param.Struct-173"><a href="#Param.Struct-173"><span class="linenos">173</span></a>        <span class="n">group_join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Param.Struct-174"><a href="#Param.Struct-174"><span class="linenos">174</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;If not none, collapse all groups to a single string with this delimiter.</span>
+</span><span id="Param.Struct-173"><a href="#Param.Struct-173"><span class="linenos">173</span></a>        <span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Param.Struct-174"><a href="#Param.Struct-174"><span class="linenos">174</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;If not None, collapse all groups to a single string with this delimiter.</span>
 </span><span id="Param.Struct-175"><a href="#Param.Struct-175"><span class="linenos">175</span></a><span class="sd">        Args within groups should be joined without delimiter.</span>
 </span><span id="Param.Struct-176"><a href="#Param.Struct-176"><span class="linenos">176</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Param.Struct-177"><a href="#Param.Struct-177"><span class="linenos">177</span></a>
@@ -2379,7 +2394,7 @@
                             <div id="Param.Struct.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Param.Struct</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">groups</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#ConditionalGroup">ConditionalGroup</a></span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">group_join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">docs</span><span class="p">:</span> <span class="n"><a href="#Documentation">Documentation</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Param.Struct</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">groups</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#ConditionalGroup">ConditionalGroup</a></span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">docs</span><span class="p">:</span> <span class="n"><a href="#Documentation">Documentation</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -2415,16 +2430,16 @@
 
 
                             </div>
-                            <div id="Param.Struct.group_join" class="classattr">
+                            <div id="Param.Struct.join" class="classattr">
                                 <div class="attr variable">
-            <span class="name">group_join</span><span class="annotation">: str | None</span>        =
+            <span class="name">join</span><span class="annotation">: str | None</span>        =
 <span class="default_value">None</span>
 
         
     </div>
-    <a class="headerlink" href="#Param.Struct.group_join"></a>
+    <a class="headerlink" href="#Param.Struct.join"></a>
     
-            <div class="docstring"><p>If not none, collapse all groups to a single string with this delimiter.
+            <div class="docstring"><p>If not None, collapse all groups to a single string with this delimiter.
 Args within groups should be joined without delimiter.</p>
 </div>
 
@@ -2863,15 +2878,19 @@ Args within groups should be joined without delimiter.</p>
 </span><span id="Carg-478"><a href="#Carg-478"><span class="linenos">478</span></a>    <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Param</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="Carg-479"><a href="#Carg-479"><span class="linenos">479</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;List of parameters or string tokens.&quot;&quot;&quot;</span>
 </span><span id="Carg-480"><a href="#Carg-480"><span class="linenos">480</span></a>
-</span><span id="Carg-481"><a href="#Carg-481"><span class="linenos">481</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-</span><span id="Carg-482"><a href="#Carg-482"><span class="linenos">482</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the command argument.</span>
-</span><span id="Carg-483"><a href="#Carg-483"><span class="linenos">483</span></a>
-</span><span id="Carg-484"><a href="#Carg-484"><span class="linenos">484</span></a><span class="sd">        Yields:</span>
-</span><span id="Carg-485"><a href="#Carg-485"><span class="linenos">485</span></a><span class="sd">            Each parameter in the command argument.</span>
-</span><span id="Carg-486"><a href="#Carg-486"><span class="linenos">486</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Carg-487"><a href="#Carg-487"><span class="linenos">487</span></a>        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
-</span><span id="Carg-488"><a href="#Carg-488"><span class="linenos">488</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">Param</span><span class="p">):</span>
-</span><span id="Carg-489"><a href="#Carg-489"><span class="linenos">489</span></a>                <span class="k">yield</span> <span class="n">token</span>
+</span><span id="Carg-481"><a href="#Carg-481"><span class="linenos">481</span></a>    <span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Carg-482"><a href="#Carg-482"><span class="linenos">482</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If not None, collapse all defined tokens to a single string with this delimiter.</span>
+</span><span id="Carg-483"><a href="#Carg-483"><span class="linenos">483</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="Carg-484"><a href="#Carg-484"><span class="linenos">484</span></a>
+</span><span id="Carg-485"><a href="#Carg-485"><span class="linenos">485</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="Carg-486"><a href="#Carg-486"><span class="linenos">486</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the command argument.</span>
+</span><span id="Carg-487"><a href="#Carg-487"><span class="linenos">487</span></a>
+</span><span id="Carg-488"><a href="#Carg-488"><span class="linenos">488</span></a><span class="sd">        Yields:</span>
+</span><span id="Carg-489"><a href="#Carg-489"><span class="linenos">489</span></a><span class="sd">            Each parameter in the command argument.</span>
+</span><span id="Carg-490"><a href="#Carg-490"><span class="linenos">490</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Carg-491"><a href="#Carg-491"><span class="linenos">491</span></a>        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
+</span><span id="Carg-492"><a href="#Carg-492"><span class="linenos">492</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">Param</span><span class="p">):</span>
+</span><span id="Carg-493"><a href="#Carg-493"><span class="linenos">493</span></a>                <span class="k">yield</span> <span class="n">token</span>
 </span></pre></div>
 
 
@@ -2882,7 +2901,7 @@ Args within groups should be joined without delimiter.</p>
                             <div id="Carg.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Carg</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#Param">Param</a></span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span></span>)</span>
+        <span class="name">Carg</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#Param">Param</a></span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -2904,6 +2923,20 @@ Args within groups should be joined without delimiter.</p>
 
 
                             </div>
+                            <div id="Carg.join" class="classattr">
+                                <div class="attr variable">
+            <span class="name">join</span><span class="annotation">: str | None</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Carg.join"></a>
+    
+            <div class="docstring"><p>If not None, collapse all defined tokens to a single string with this delimiter.</p>
+</div>
+
+
+                            </div>
                             <div id="Carg.iter_params" class="classattr">
                                         <input id="Carg.iter_params-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -2915,15 +2948,15 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#Carg.iter_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Carg.iter_params-481"><a href="#Carg.iter_params-481"><span class="linenos">481</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-</span><span id="Carg.iter_params-482"><a href="#Carg.iter_params-482"><span class="linenos">482</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the command argument.</span>
-</span><span id="Carg.iter_params-483"><a href="#Carg.iter_params-483"><span class="linenos">483</span></a>
-</span><span id="Carg.iter_params-484"><a href="#Carg.iter_params-484"><span class="linenos">484</span></a><span class="sd">        Yields:</span>
-</span><span id="Carg.iter_params-485"><a href="#Carg.iter_params-485"><span class="linenos">485</span></a><span class="sd">            Each parameter in the command argument.</span>
-</span><span id="Carg.iter_params-486"><a href="#Carg.iter_params-486"><span class="linenos">486</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Carg.iter_params-487"><a href="#Carg.iter_params-487"><span class="linenos">487</span></a>        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
-</span><span id="Carg.iter_params-488"><a href="#Carg.iter_params-488"><span class="linenos">488</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">Param</span><span class="p">):</span>
-</span><span id="Carg.iter_params-489"><a href="#Carg.iter_params-489"><span class="linenos">489</span></a>                <span class="k">yield</span> <span class="n">token</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Carg.iter_params-485"><a href="#Carg.iter_params-485"><span class="linenos">485</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="Carg.iter_params-486"><a href="#Carg.iter_params-486"><span class="linenos">486</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the command argument.</span>
+</span><span id="Carg.iter_params-487"><a href="#Carg.iter_params-487"><span class="linenos">487</span></a>
+</span><span id="Carg.iter_params-488"><a href="#Carg.iter_params-488"><span class="linenos">488</span></a><span class="sd">        Yields:</span>
+</span><span id="Carg.iter_params-489"><a href="#Carg.iter_params-489"><span class="linenos">489</span></a><span class="sd">            Each parameter in the command argument.</span>
+</span><span id="Carg.iter_params-490"><a href="#Carg.iter_params-490"><span class="linenos">490</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Carg.iter_params-491"><a href="#Carg.iter_params-491"><span class="linenos">491</span></a>        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
+</span><span id="Carg.iter_params-492"><a href="#Carg.iter_params-492"><span class="linenos">492</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">Param</span><span class="p">):</span>
+</span><span id="Carg.iter_params-493"><a href="#Carg.iter_params-493"><span class="linenos">493</span></a>                <span class="k">yield</span> <span class="n">token</span>
 </span></pre></div>
 
 
@@ -2951,24 +2984,29 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#ConditionalGroup"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ConditionalGroup-492"><a href="#ConditionalGroup-492"><span class="linenos">492</span></a><span class="nd">@dataclass</span>
-</span><span id="ConditionalGroup-493"><a href="#ConditionalGroup-493"><span class="linenos">493</span></a><span class="k">class</span> <span class="nc">ConditionalGroup</span><span class="p">:</span>
-</span><span id="ConditionalGroup-494"><a href="#ConditionalGroup-494"><span class="linenos">494</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a group of command arguments.</span>
-</span><span id="ConditionalGroup-495"><a href="#ConditionalGroup-495"><span class="linenos">495</span></a>
-</span><span id="ConditionalGroup-496"><a href="#ConditionalGroup-496"><span class="linenos">496</span></a><span class="sd">    Arguments will only be emitted if at least one parameter within is defined, or if there are no parameters.</span>
-</span><span id="ConditionalGroup-497"><a href="#ConditionalGroup-497"><span class="linenos">497</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="ConditionalGroup-498"><a href="#ConditionalGroup-498"><span class="linenos">498</span></a>
-</span><span id="ConditionalGroup-499"><a href="#ConditionalGroup-499"><span class="linenos">499</span></a>    <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Carg</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="ConditionalGroup-500"><a href="#ConditionalGroup-500"><span class="linenos">500</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;List of command arguments.&quot;&quot;&quot;</span>
-</span><span id="ConditionalGroup-501"><a href="#ConditionalGroup-501"><span class="linenos">501</span></a>
-</span><span id="ConditionalGroup-502"><a href="#ConditionalGroup-502"><span class="linenos">502</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-</span><span id="ConditionalGroup-503"><a href="#ConditionalGroup-503"><span class="linenos">503</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the conditional group.</span>
-</span><span id="ConditionalGroup-504"><a href="#ConditionalGroup-504"><span class="linenos">504</span></a>
-</span><span id="ConditionalGroup-505"><a href="#ConditionalGroup-505"><span class="linenos">505</span></a><span class="sd">        Yields:</span>
-</span><span id="ConditionalGroup-506"><a href="#ConditionalGroup-506"><span class="linenos">506</span></a><span class="sd">            Each parameter in the conditional group.</span>
-</span><span id="ConditionalGroup-507"><a href="#ConditionalGroup-507"><span class="linenos">507</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ConditionalGroup-508"><a href="#ConditionalGroup-508"><span class="linenos">508</span></a>        <span class="k">for</span> <span class="n">carg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cargs</span><span class="p">:</span>
-</span><span id="ConditionalGroup-509"><a href="#ConditionalGroup-509"><span class="linenos">509</span></a>            <span class="k">yield from</span> <span class="n">carg</span><span class="o">.</span><span class="n">iter_params</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ConditionalGroup-496"><a href="#ConditionalGroup-496"><span class="linenos">496</span></a><span class="nd">@dataclass</span>
+</span><span id="ConditionalGroup-497"><a href="#ConditionalGroup-497"><span class="linenos">497</span></a><span class="k">class</span> <span class="nc">ConditionalGroup</span><span class="p">:</span>
+</span><span id="ConditionalGroup-498"><a href="#ConditionalGroup-498"><span class="linenos">498</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a group of command arguments.</span>
+</span><span id="ConditionalGroup-499"><a href="#ConditionalGroup-499"><span class="linenos">499</span></a>
+</span><span id="ConditionalGroup-500"><a href="#ConditionalGroup-500"><span class="linenos">500</span></a><span class="sd">    Arguments will only be emitted if at least one parameter within is defined, or if there are no parameters.</span>
+</span><span id="ConditionalGroup-501"><a href="#ConditionalGroup-501"><span class="linenos">501</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="ConditionalGroup-502"><a href="#ConditionalGroup-502"><span class="linenos">502</span></a>
+</span><span id="ConditionalGroup-503"><a href="#ConditionalGroup-503"><span class="linenos">503</span></a>    <span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Carg</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="ConditionalGroup-504"><a href="#ConditionalGroup-504"><span class="linenos">504</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;List of command arguments.&quot;&quot;&quot;</span>
+</span><span id="ConditionalGroup-505"><a href="#ConditionalGroup-505"><span class="linenos">505</span></a>
+</span><span id="ConditionalGroup-506"><a href="#ConditionalGroup-506"><span class="linenos">506</span></a>    <span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="ConditionalGroup-507"><a href="#ConditionalGroup-507"><span class="linenos">507</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If not None, collapse all args to a single string with this delimiter.</span>
+</span><span id="ConditionalGroup-508"><a href="#ConditionalGroup-508"><span class="linenos">508</span></a><span class="sd">    Args within groups should be joined without delimiter.</span>
+</span><span id="ConditionalGroup-509"><a href="#ConditionalGroup-509"><span class="linenos">509</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="ConditionalGroup-510"><a href="#ConditionalGroup-510"><span class="linenos">510</span></a>
+</span><span id="ConditionalGroup-511"><a href="#ConditionalGroup-511"><span class="linenos">511</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="ConditionalGroup-512"><a href="#ConditionalGroup-512"><span class="linenos">512</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the conditional group.</span>
+</span><span id="ConditionalGroup-513"><a href="#ConditionalGroup-513"><span class="linenos">513</span></a>
+</span><span id="ConditionalGroup-514"><a href="#ConditionalGroup-514"><span class="linenos">514</span></a><span class="sd">        Yields:</span>
+</span><span id="ConditionalGroup-515"><a href="#ConditionalGroup-515"><span class="linenos">515</span></a><span class="sd">            Each parameter in the conditional group.</span>
+</span><span id="ConditionalGroup-516"><a href="#ConditionalGroup-516"><span class="linenos">516</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ConditionalGroup-517"><a href="#ConditionalGroup-517"><span class="linenos">517</span></a>        <span class="k">for</span> <span class="n">carg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cargs</span><span class="p">:</span>
+</span><span id="ConditionalGroup-518"><a href="#ConditionalGroup-518"><span class="linenos">518</span></a>            <span class="k">yield from</span> <span class="n">carg</span><span class="o">.</span><span class="n">iter_params</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -2981,7 +3019,7 @@ Args within groups should be joined without delimiter.</p>
                             <div id="ConditionalGroup.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ConditionalGroup</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#Carg">Carg</a></span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span></span>)</span>
+        <span class="name">ConditionalGroup</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">cargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="#Carg">Carg</a></span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>, </span><span class="param"><span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -3003,6 +3041,21 @@ Args within groups should be joined without delimiter.</p>
 
 
                             </div>
+                            <div id="ConditionalGroup.join" class="classattr">
+                                <div class="attr variable">
+            <span class="name">join</span><span class="annotation">: str | None</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ConditionalGroup.join"></a>
+    
+            <div class="docstring"><p>If not None, collapse all args to a single string with this delimiter.
+Args within groups should be joined without delimiter.</p>
+</div>
+
+
+                            </div>
                             <div id="ConditionalGroup.iter_params" class="classattr">
                                         <input id="ConditionalGroup.iter_params-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -3014,14 +3067,14 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#ConditionalGroup.iter_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ConditionalGroup.iter_params-502"><a href="#ConditionalGroup.iter_params-502"><span class="linenos">502</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-</span><span id="ConditionalGroup.iter_params-503"><a href="#ConditionalGroup.iter_params-503"><span class="linenos">503</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the conditional group.</span>
-</span><span id="ConditionalGroup.iter_params-504"><a href="#ConditionalGroup.iter_params-504"><span class="linenos">504</span></a>
-</span><span id="ConditionalGroup.iter_params-505"><a href="#ConditionalGroup.iter_params-505"><span class="linenos">505</span></a><span class="sd">        Yields:</span>
-</span><span id="ConditionalGroup.iter_params-506"><a href="#ConditionalGroup.iter_params-506"><span class="linenos">506</span></a><span class="sd">            Each parameter in the conditional group.</span>
-</span><span id="ConditionalGroup.iter_params-507"><a href="#ConditionalGroup.iter_params-507"><span class="linenos">507</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ConditionalGroup.iter_params-508"><a href="#ConditionalGroup.iter_params-508"><span class="linenos">508</span></a>        <span class="k">for</span> <span class="n">carg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cargs</span><span class="p">:</span>
-</span><span id="ConditionalGroup.iter_params-509"><a href="#ConditionalGroup.iter_params-509"><span class="linenos">509</span></a>            <span class="k">yield from</span> <span class="n">carg</span><span class="o">.</span><span class="n">iter_params</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ConditionalGroup.iter_params-511"><a href="#ConditionalGroup.iter_params-511"><span class="linenos">511</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="ConditionalGroup.iter_params-512"><a href="#ConditionalGroup.iter_params-512"><span class="linenos">512</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the conditional group.</span>
+</span><span id="ConditionalGroup.iter_params-513"><a href="#ConditionalGroup.iter_params-513"><span class="linenos">513</span></a>
+</span><span id="ConditionalGroup.iter_params-514"><a href="#ConditionalGroup.iter_params-514"><span class="linenos">514</span></a><span class="sd">        Yields:</span>
+</span><span id="ConditionalGroup.iter_params-515"><a href="#ConditionalGroup.iter_params-515"><span class="linenos">515</span></a><span class="sd">            Each parameter in the conditional group.</span>
+</span><span id="ConditionalGroup.iter_params-516"><a href="#ConditionalGroup.iter_params-516"><span class="linenos">516</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ConditionalGroup.iter_params-517"><a href="#ConditionalGroup.iter_params-517"><span class="linenos">517</span></a>        <span class="k">for</span> <span class="n">carg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cargs</span><span class="p">:</span>
+</span><span id="ConditionalGroup.iter_params-518"><a href="#ConditionalGroup.iter_params-518"><span class="linenos">518</span></a>            <span class="k">yield from</span> <span class="n">carg</span><span class="o">.</span><span class="n">iter_params</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -3049,16 +3102,16 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#StdOutErrAsStringOutput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StdOutErrAsStringOutput-512"><a href="#StdOutErrAsStringOutput-512"><span class="linenos">512</span></a><span class="nd">@dataclass</span>
-</span><span id="StdOutErrAsStringOutput-513"><a href="#StdOutErrAsStringOutput-513"><span class="linenos">513</span></a><span class="k">class</span> <span class="nc">StdOutErrAsStringOutput</span><span class="p">:</span>
-</span><span id="StdOutErrAsStringOutput-514"><a href="#StdOutErrAsStringOutput-514"><span class="linenos">514</span></a>    <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
-</span><span id="StdOutErrAsStringOutput-515"><a href="#StdOutErrAsStringOutput-515"><span class="linenos">515</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique ID of the output. Unique including param IDs.&quot;&quot;&quot;</span>
-</span><span id="StdOutErrAsStringOutput-516"><a href="#StdOutErrAsStringOutput-516"><span class="linenos">516</span></a>
-</span><span id="StdOutErrAsStringOutput-517"><a href="#StdOutErrAsStringOutput-517"><span class="linenos">517</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="StdOutErrAsStringOutput-518"><a href="#StdOutErrAsStringOutput-518"><span class="linenos">518</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the output.&quot;&quot;&quot;</span>
-</span><span id="StdOutErrAsStringOutput-519"><a href="#StdOutErrAsStringOutput-519"><span class="linenos">519</span></a>
-</span><span id="StdOutErrAsStringOutput-520"><a href="#StdOutErrAsStringOutput-520"><span class="linenos">520</span></a>    <span class="n">docs</span><span class="p">:</span> <span class="n">Documentation</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">Documentation</span><span class="p">)</span>
-</span><span id="StdOutErrAsStringOutput-521"><a href="#StdOutErrAsStringOutput-521"><span class="linenos">521</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Documentation for the output.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StdOutErrAsStringOutput-521"><a href="#StdOutErrAsStringOutput-521"><span class="linenos">521</span></a><span class="nd">@dataclass</span>
+</span><span id="StdOutErrAsStringOutput-522"><a href="#StdOutErrAsStringOutput-522"><span class="linenos">522</span></a><span class="k">class</span> <span class="nc">StdOutErrAsStringOutput</span><span class="p">:</span>
+</span><span id="StdOutErrAsStringOutput-523"><a href="#StdOutErrAsStringOutput-523"><span class="linenos">523</span></a>    <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
+</span><span id="StdOutErrAsStringOutput-524"><a href="#StdOutErrAsStringOutput-524"><span class="linenos">524</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique ID of the output. Unique including param IDs.&quot;&quot;&quot;</span>
+</span><span id="StdOutErrAsStringOutput-525"><a href="#StdOutErrAsStringOutput-525"><span class="linenos">525</span></a>
+</span><span id="StdOutErrAsStringOutput-526"><a href="#StdOutErrAsStringOutput-526"><span class="linenos">526</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="StdOutErrAsStringOutput-527"><a href="#StdOutErrAsStringOutput-527"><span class="linenos">527</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the output.&quot;&quot;&quot;</span>
+</span><span id="StdOutErrAsStringOutput-528"><a href="#StdOutErrAsStringOutput-528"><span class="linenos">528</span></a>
+</span><span id="StdOutErrAsStringOutput-529"><a href="#StdOutErrAsStringOutput-529"><span class="linenos">529</span></a>    <span class="n">docs</span><span class="p">:</span> <span class="n">Documentation</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">Documentation</span><span class="p">)</span>
+</span><span id="StdOutErrAsStringOutput-530"><a href="#StdOutErrAsStringOutput-530"><span class="linenos">530</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Documentation for the output.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -3128,24 +3181,24 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#Interface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Interface-524"><a href="#Interface-524"><span class="linenos">524</span></a><span class="nd">@dataclass</span>
-</span><span id="Interface-525"><a href="#Interface-525"><span class="linenos">525</span></a><span class="k">class</span> <span class="nc">Interface</span><span class="p">:</span>
-</span><span id="Interface-526"><a href="#Interface-526"><span class="linenos">526</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an interface.&quot;&quot;&quot;</span>
-</span><span id="Interface-527"><a href="#Interface-527"><span class="linenos">527</span></a>
-</span><span id="Interface-528"><a href="#Interface-528"><span class="linenos">528</span></a>    <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="Interface-529"><a href="#Interface-529"><span class="linenos">529</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique identifier for the interface.&quot;&quot;&quot;</span>
-</span><span id="Interface-530"><a href="#Interface-530"><span class="linenos">530</span></a>
-</span><span id="Interface-531"><a href="#Interface-531"><span class="linenos">531</span></a>    <span class="n">package</span><span class="p">:</span> <span class="n">Package</span>
-</span><span id="Interface-532"><a href="#Interface-532"><span class="linenos">532</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The package associated with this interface.&quot;&quot;&quot;</span>
-</span><span id="Interface-533"><a href="#Interface-533"><span class="linenos">533</span></a>
-</span><span id="Interface-534"><a href="#Interface-534"><span class="linenos">534</span></a>    <span class="n">command</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]</span>
-</span><span id="Interface-535"><a href="#Interface-535"><span class="linenos">535</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The command structure for this interface.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Interface-533"><a href="#Interface-533"><span class="linenos">533</span></a><span class="nd">@dataclass</span>
+</span><span id="Interface-534"><a href="#Interface-534"><span class="linenos">534</span></a><span class="k">class</span> <span class="nc">Interface</span><span class="p">:</span>
+</span><span id="Interface-535"><a href="#Interface-535"><span class="linenos">535</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an interface.&quot;&quot;&quot;</span>
 </span><span id="Interface-536"><a href="#Interface-536"><span class="linenos">536</span></a>
-</span><span id="Interface-537"><a href="#Interface-537"><span class="linenos">537</span></a>    <span class="n">stdout_as_string_output</span><span class="p">:</span> <span class="n">StdOutErrAsStringOutput</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Interface-538"><a href="#Interface-538"><span class="linenos">538</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect stdout as string output.&quot;&quot;&quot;</span>
+</span><span id="Interface-537"><a href="#Interface-537"><span class="linenos">537</span></a>    <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="Interface-538"><a href="#Interface-538"><span class="linenos">538</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique identifier for the interface.&quot;&quot;&quot;</span>
 </span><span id="Interface-539"><a href="#Interface-539"><span class="linenos">539</span></a>
-</span><span id="Interface-540"><a href="#Interface-540"><span class="linenos">540</span></a>    <span class="n">stderr_as_string_output</span><span class="p">:</span> <span class="n">StdOutErrAsStringOutput</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Interface-541"><a href="#Interface-541"><span class="linenos">541</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect stderr as string output.&quot;&quot;&quot;</span>
+</span><span id="Interface-540"><a href="#Interface-540"><span class="linenos">540</span></a>    <span class="n">package</span><span class="p">:</span> <span class="n">Package</span>
+</span><span id="Interface-541"><a href="#Interface-541"><span class="linenos">541</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The package associated with this interface.&quot;&quot;&quot;</span>
+</span><span id="Interface-542"><a href="#Interface-542"><span class="linenos">542</span></a>
+</span><span id="Interface-543"><a href="#Interface-543"><span class="linenos">543</span></a>    <span class="n">command</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]</span>
+</span><span id="Interface-544"><a href="#Interface-544"><span class="linenos">544</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The command structure for this interface.&quot;&quot;&quot;</span>
+</span><span id="Interface-545"><a href="#Interface-545"><span class="linenos">545</span></a>
+</span><span id="Interface-546"><a href="#Interface-546"><span class="linenos">546</span></a>    <span class="n">stdout_as_string_output</span><span class="p">:</span> <span class="n">StdOutErrAsStringOutput</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Interface-547"><a href="#Interface-547"><span class="linenos">547</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect stdout as string output.&quot;&quot;&quot;</span>
+</span><span id="Interface-548"><a href="#Interface-548"><span class="linenos">548</span></a>
+</span><span id="Interface-549"><a href="#Interface-549"><span class="linenos">549</span></a>    <span class="n">stderr_as_string_output</span><span class="p">:</span> <span class="n">StdOutErrAsStringOutput</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Interface-550"><a href="#Interface-550"><span class="linenos">550</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect stderr as string output.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
