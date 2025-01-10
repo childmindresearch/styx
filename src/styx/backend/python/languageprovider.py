@@ -390,7 +390,7 @@ class PythonLanguageProvider(LanguageProvider):
             ")",
         ]
 
-    def param_var_to_str(self, param: ir.Param, symbol: str) -> MStr:
+    def param_var_to_mstr(self, param: ir.Param, symbol: str) -> MStr:
         def _val() -> MStr:
             if not param.list_:
                 if isinstance(param.body, ir.Param.String):

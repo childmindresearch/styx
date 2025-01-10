@@ -479,16 +479,12 @@ class LanguageProvider(ABC):
         return self.expr_literal(param.default_value)  # type: ignore
 
     @abstractmethod
-    def param_var_to_str(
+    def param_var_to_mstr(
         self,
         param: ir.Param,
         symbol: str,
     ) -> MStr:
-        """Language var to str.
-
-        Return a language expression that converts the variable to a string or string array
-        and a boolean that indicates if the expression value is an array.
-        """
+        """Language var to MStr."""
         ...
 
     @abstractmethod

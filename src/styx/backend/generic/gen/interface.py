@@ -208,19 +208,19 @@ def _compile_cargs_building(
                 elem_symbol = lookup.py_symbol[token.base.id_]
                 if access_via_self:
                     elem_symbol = lang.expr_access_attr_via_self(elem_symbol)
-                param_as_str_expr = lang.param_var_to_str(token, elem_symbol)
-                carg_exprs.append(param_as_str_expr)
+                param_as_mstr = lang.param_var_to_mstr(token, elem_symbol)
+                carg_exprs.append(param_as_mstr)
                 if (param_is_set_expr := lang.param_var_is_set_by_user(token, elem_symbol, False)) is not None:
                     group_conditions_py.append(param_is_set_expr)
-                    _empty_expr = lang.mstr_empty_literal_like(param_as_str_expr)
+                    _empty_expr = lang.mstr_empty_literal_like(param_as_mstr)
                     carg_exprs_maybe_null.append(
                         MStr(
-                            lang.expr_ternary(param_is_set_expr, param_as_str_expr.expr, _empty_expr, True),
-                            param_as_str_expr.is_list,
+                            lang.expr_ternary(param_is_set_expr, param_as_mstr.expr, _empty_expr, True),
+                            param_as_mstr.is_list,
                         )
                     )
                 else:
-                    carg_exprs_maybe_null.append(param_as_str_expr)
+                    carg_exprs_maybe_null.append(param_as_mstr)
 
             # collapse and add single carg to cargs expressions
             if len(carg_exprs) == 1:
