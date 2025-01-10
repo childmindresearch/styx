@@ -68,6 +68,17 @@ def _pretty_print(obj: Any, ind: int = 0) -> str:  # noqa: ANN401
                     ),
                     ")",
                 ])
+            if hasattr(obj, "__dict__"):
+                return f"\n{_indentation(ind)}".join([
+                    f"{obj.__class__.__name__}(",
+                    *_expand(
+                        ",\n".join([
+                            f" {field_name}={_pretty_print(field_value, 1)}"
+                            for field_name, field_value in obj.__dict__.items()
+                        ])
+                    ),
+                    ")",
+                ])
             else:
                 return str(obj)
 
