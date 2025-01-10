@@ -2,9 +2,9 @@
 
 import pytest
 
-import tests.utils.dummy_runner
-from tests.utils.compile_boutiques import boutiques2python
-from tests.utils.dynmodule import (
+import tests.legacy.utils.dummy_runner
+from tests.legacy.utils.compile_boutiques import boutiques2python
+from tests.legacy.utils.dynmodule import (
     BT_TYPE_NUMBER,
     boutiques_dummy,
     dynamic_module,
@@ -30,7 +30,7 @@ def test_below_range_minimum_inclusive() -> None:
     compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = tests.utils.dummy_runner.DummyRunner()
+    dummy_runner = tests.legacy.utils.dummy_runner.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=4)
 
@@ -54,7 +54,7 @@ def test_above_range_maximum_inclusive() -> None:
     compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = tests.utils.dummy_runner.DummyRunner()
+    dummy_runner = tests.legacy.utils.dummy_runner.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=6)
 
@@ -79,7 +79,7 @@ def test_above_range_maximum_exclusive() -> None:
     compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = tests.utils.dummy_runner.DummyRunner()
+    dummy_runner = tests.legacy.utils.dummy_runner.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=5)
 
@@ -104,7 +104,7 @@ def test_below_range_minimum_exclusive() -> None:
     compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = tests.utils.dummy_runner.DummyRunner()
+    dummy_runner = tests.legacy.utils.dummy_runner.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=5)
 
@@ -129,7 +129,7 @@ def test_outside_range() -> None:
     compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = tests.utils.dummy_runner.DummyRunner()
+    dummy_runner = tests.legacy.utils.dummy_runner.DummyRunner()
     with pytest.raises(ValueError):
         test_module.dummy(runner=dummy_runner, x=11)
 

@@ -1,8 +1,8 @@
 """Input argument default value tests."""
 
-import tests.utils.dummy_runner
-from tests.utils.compile_boutiques import boutiques2python
-from tests.utils.dynmodule import (
+import tests.legacy.utils.dummy_runner
+from tests.legacy.utils.compile_boutiques import boutiques2python
+from tests.legacy.utils.dynmodule import (
     BT_TYPE_STRING,
     boutiques_dummy,
     dynamic_module,
@@ -27,7 +27,7 @@ def test_default_string_arg() -> None:
     compiled_module = boutiques2python(model)
 
     test_module = dynamic_module(compiled_module, "test_module")
-    dummy_runner = tests.utils.dummy_runner.DummyRunner()
+    dummy_runner = tests.legacy.utils.dummy_runner.DummyRunner()
     test_module.dummy(runner=dummy_runner)
 
     assert dummy_runner.last_cargs is not None
