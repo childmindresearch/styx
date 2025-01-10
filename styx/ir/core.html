@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 15.0.0"/>
+    <meta name="generator" content="pdoc 15.0.1"/>
     <title>styx.ir.core API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -411,15 +411,15 @@
 
                         <label class="view-source-button" for="mod-core-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span> <span class="nn">dataclasses</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="nd">@dataclass</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="k">class</span> <span class="nc">Documentation</span><span class="p">:</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Documentation</span><span class="p">:</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents documentation for various elements.&quot;&quot;&quot;</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -439,7 +439,7 @@
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="nd">@dataclass</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="k">class</span> <span class="nc">Package</span><span class="p">:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Package</span><span class="p">:</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Metadata for software package containing command.&quot;&quot;&quot;</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
@@ -459,7 +459,7 @@
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="nd">@dataclass</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="k">class</span> <span class="nc">OutputParamReference</span><span class="p">:</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="k">class</span><span class="w"> </span><span class="nc">OutputParamReference</span><span class="p">:</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a reference to an output parameter.&quot;&quot;&quot;</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>    <span class="n">ref_id</span><span class="p">:</span> <span class="n">IdType</span>
@@ -470,7 +470,7 @@
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="nd">@dataclass</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="k">class</span> <span class="nc">Output</span><span class="p">:</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Output</span><span class="p">:</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an output.&quot;&quot;&quot;</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
@@ -489,11 +489,11 @@
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="k">class</span> <span class="nc">Param</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Param</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic class to represent various types of parameters.&quot;&quot;&quot;</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Base class for all parameters.&quot;&quot;&quot;</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
@@ -509,7 +509,7 @@
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Documentation for the parameter.&quot;&quot;&quot;</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="k">class</span> <span class="nc">List</span><span class="p">:</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">List</span><span class="p">:</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents list parameters.&quot;&quot;&quot;</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="n">count_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -521,13 +521,13 @@
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Join string for list items.&quot;&quot;&quot;</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="k">class</span> <span class="nc">SetToNone</span><span class="p">:</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">SetToNone</span><span class="p">:</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents a parameter that can be set to None.&quot;&quot;&quot;</span>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>        <span class="k">pass</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="k">class</span> <span class="nc">Bool</span><span class="p">:</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Bool</span><span class="p">:</span>
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents boolean parameters.&quot;&quot;&quot;</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>        <span class="n">value_true</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -537,7 +537,7 @@
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of strings representing false value.&quot;&quot;&quot;</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="k">class</span> <span class="nc">Int</span><span class="p">:</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Int</span><span class="p">:</span>
 </span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents integer parameters.&quot;&quot;&quot;</span>
 </span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>
 </span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="n">min_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -547,7 +547,7 @@
 </span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Maximum allowed value.&quot;&quot;&quot;</span>
 </span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
 </span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="k">class</span> <span class="nc">Float</span><span class="p">:</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Float</span><span class="p">:</span>
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents float parameters.&quot;&quot;&quot;</span>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>
 </span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>        <span class="n">min_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -557,13 +557,13 @@
 </span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Maximum allowed value.&quot;&quot;&quot;</span>
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="k">class</span> <span class="nc">String</span><span class="p">:</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">String</span><span class="p">:</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents string parameters.&quot;&quot;&quot;</span>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>        <span class="k">pass</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="k">class</span> <span class="nc">File</span><span class="p">:</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">File</span><span class="p">:</span>
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents file parameters.&quot;&quot;&quot;</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="n">resolve_parent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -573,7 +573,7 @@
 </span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;This file may be mutated.&quot;&quot;&quot;</span>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="k">class</span> <span class="nc">Struct</span><span class="p">:</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Struct</span><span class="p">:</span>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents struct parameters.&quot;&quot;&quot;</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -590,7 +590,7 @@
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>        <span class="n">docs</span><span class="p">:</span> <span class="n">Documentation</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Documentation for the struct.&quot;&quot;&quot;</span>
 </span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>        <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="w">            </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the struct.</span>
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">            Yields:</span>
@@ -599,7 +599,7 @@
 </span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
 </span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>                <span class="k">yield from</span> <span class="n">group</span><span class="o">.</span><span class="n">iter_params</span><span class="p">()</span>
 </span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="k">def</span> <span class="nf">iter_params_recursively</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">iter_params_recursively</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate through all child-params recursively.&quot;&quot;&quot;</span>
 </span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_self</span><span class="p">:</span>
 </span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>            <span class="k">yield</span> <span class="bp">self</span>
@@ -611,13 +611,13 @@
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>                <span class="k">yield from</span> <span class="n">e</span><span class="o">.</span><span class="n">iter_params_recursively</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>
 </span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>    <span class="k">class</span> <span class="nc">StructUnion</span><span class="p">:</span>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">StructUnion</span><span class="p">:</span>
 </span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents a union of struct parameters.&quot;&quot;&quot;</span>
 </span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>
 </span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>        <span class="n">alts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of alternative struct parameters.&quot;&quot;&quot;</span>
 </span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>        <span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="p">,</span>
 </span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>        <span class="n">body</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span>
@@ -658,12 +658,12 @@
 </span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_check_default_value</span><span class="p">()</span>
 </span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">()</span>
 </span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>    <span class="k">def</span> <span class="nf">_check_base</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_base</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if base is an instance of Param.Base.&quot;&quot;&quot;</span>
 </span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Base</span><span class="p">):</span>
 </span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;base must be an instance of Param.Base&quot;</span><span class="p">)</span>
 </span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>    <span class="k">def</span> <span class="nf">_check_body_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_body_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if body is an instance of one of the allowed types.&quot;&quot;&quot;</span>
 </span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
 </span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="p">(</span><span class="n">Param</span><span class="o">.</span><span class="n">Bool</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">File</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">StructUnion</span><span class="p">)</span>
@@ -673,17 +673,17 @@
 </span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>                <span class="s2">&quot;Param.Bool, Param.Int, Param.Float, Param.String, Param.File, Param.Struct or Param.StructUnion&quot;</span>
 </span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>            <span class="p">)</span>
 </span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>
-</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>    <span class="k">def</span> <span class="nf">_check_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if list_ is None or an instance of Param.List.&quot;&quot;&quot;</span>
 </span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">List</span><span class="p">):</span>
 </span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;list_ must be None or an instance of Param.List&quot;</span><span class="p">)</span>
 </span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>
-</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>    <span class="k">def</span> <span class="nf">_check_nullable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_nullable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if nullable is a boolean.&quot;&quot;&quot;</span>
 </span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nullable</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
 </span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;nullable must be a boolean&quot;</span><span class="p">)</span>
 </span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>    <span class="k">def</span> <span class="nf">_check_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if choices is None or a list of the correct type.&quot;&quot;&quot;</span>
 </span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -692,7 +692,7 @@
 </span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>            <span class="k">if</span> <span class="n">expected_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">choice</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">choice</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="p">):</span>
 </span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All choices must be of type </span><span class="si">{</span><span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="vm">__name__</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">expected_type</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>    <span class="k">def</span> <span class="nf">_check_default_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_default_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if default_value is of the correct type.&quot;&quot;&quot;</span>
 </span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>            <span class="k">return</span>
@@ -715,7 +715,7 @@
 </span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_value</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">):</span>
 </span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;default_value must be of type </span><span class="si">{</span><span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="vm">__name__</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">expected_type</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a>
-</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a>    <span class="k">def</span> <span class="nf">_check_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if all constraints are satisfied.&quot;&quot;&quot;</span>
 </span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="p">(</span><span class="n">Param</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Float</span><span class="p">)):</span>
 </span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">min_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">max_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -748,7 +748,7 @@
 </span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a>                        <span class="sa">f</span><span class="s2">&quot;default_value list length cannot be greater than count_max (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="o">.</span><span class="n">count_max</span><span class="si">}</span><span class="s2">)&quot;</span>
 </span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a>                    <span class="p">)</span>
 </span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a>
-</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a>    <span class="k">def</span> <span class="nf">_get_expected_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_expected_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the expected type based on the body type.&quot;&quot;&quot;</span>
 </span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Bool</span><span class="p">):</span>
 </span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a>            <span class="k">return</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,)</span>
@@ -763,7 +763,7 @@
 </span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unknown body type&quot;</span><span class="p">)</span>
 </span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>
-</span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string representation of the Param instance.&quot;&quot;&quot;</span>
 </span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a>        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a>            <span class="sa">f</span><span class="s2">&quot;Param(id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">id_</span><span class="si">!r}</span><span class="s2">, name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -785,7 +785,7 @@
 </span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a><span class="c1"># Unfortunately TypeGuards dont work as methods with implicit self</span>
 </span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>
 </span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>
-</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a><span class="k">def</span> <span class="nf">is_bool</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Bool</span><span class="p">]]:</span>
+</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_bool</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Bool</span><span class="p">]]:</span>
 </span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a boolean type.</span>
 </span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>
 </span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a><span class="sd">    Args:</span>
@@ -799,7 +799,7 @@
 </span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Bool</span><span class="p">)</span>
 </span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>
 </span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a>
-</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a><span class="k">def</span> <span class="nf">is_int</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Int</span><span class="p">]]:</span>
+</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_int</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Int</span><span class="p">]]:</span>
 </span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is an integer type.</span>
 </span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>
 </span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a><span class="sd">    Args:</span>
@@ -813,7 +813,7 @@
 </span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Int</span><span class="p">)</span>
 </span><span id="L-401"><a href="#L-401"><span class="linenos">401</span></a>
 </span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>
-</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a><span class="k">def</span> <span class="nf">is_float</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Float</span><span class="p">]]:</span>
+</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_float</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Float</span><span class="p">]]:</span>
 </span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a float type.</span>
 </span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a>
 </span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a><span class="sd">    Args:</span>
@@ -827,7 +827,7 @@
 </span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Float</span><span class="p">)</span>
 </span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>
 </span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>
-</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a><span class="k">def</span> <span class="nf">is_string</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">String</span><span class="p">]]:</span>
+</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_string</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">String</span><span class="p">]]:</span>
 </span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a string type.</span>
 </span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>
 </span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a><span class="sd">    Args:</span>
@@ -841,7 +841,7 @@
 </span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">String</span><span class="p">)</span>
 </span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>
 </span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>
-</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a><span class="k">def</span> <span class="nf">is_file</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">File</span><span class="p">]]:</span>
+</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_file</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">File</span><span class="p">]]:</span>
 </span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a file type.</span>
 </span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>
 </span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a><span class="sd">    Args:</span>
@@ -855,7 +855,7 @@
 </span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">File</span><span class="p">)</span>
 </span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>
 </span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a>
-</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a><span class="k">def</span> <span class="nf">is_struct</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]]:</span>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_struct</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]]:</span>
 </span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a struct type.</span>
 </span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>
 </span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a><span class="sd">    Args:</span>
@@ -869,7 +869,7 @@
 </span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">)</span>
 </span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>
 </span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a>
-</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a><span class="k">def</span> <span class="nf">is_struct_union</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">StructUnion</span><span class="p">]]:</span>
+</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_struct_union</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">StructUnion</span><span class="p">]]:</span>
 </span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a struct union type.</span>
 </span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>
 </span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a><span class="sd">    Args:</span>
@@ -884,7 +884,7 @@
 </span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>
 </span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a>
 </span><span id="L-473"><a href="#L-473"><span class="linenos">473</span></a><span class="nd">@dataclass</span>
-</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a><span class="k">class</span> <span class="nc">Carg</span><span class="p">:</span>
+</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Carg</span><span class="p">:</span>
 </span><span id="L-475"><a href="#L-475"><span class="linenos">475</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents command arguments.&quot;&quot;&quot;</span>
 </span><span id="L-476"><a href="#L-476"><span class="linenos">476</span></a>
 </span><span id="L-477"><a href="#L-477"><span class="linenos">477</span></a>    <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Param</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -894,7 +894,7 @@
 </span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If not None, collapse all defined tokens to a single string with this delimiter.</span>
 </span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-483"><a href="#L-483"><span class="linenos">483</span></a>
-</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the command argument.</span>
 </span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a>
 </span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a><span class="sd">        Yields:</span>
@@ -906,7 +906,7 @@
 </span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a>
 </span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>
 </span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a><span class="nd">@dataclass</span>
-</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a><span class="k">class</span> <span class="nc">ConditionalGroup</span><span class="p">:</span>
+</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ConditionalGroup</span><span class="p">:</span>
 </span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a group of command arguments.</span>
 </span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a>
 </span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a><span class="sd">    Arguments will only be emitted if at least one parameter within is defined, or if there are no parameters.</span>
@@ -920,7 +920,7 @@
 </span><span id="L-507"><a href="#L-507"><span class="linenos">507</span></a><span class="sd">    Args within groups should be joined without delimiter.</span>
 </span><span id="L-508"><a href="#L-508"><span class="linenos">508</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-509"><a href="#L-509"><span class="linenos">509</span></a>
-</span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the conditional group.</span>
 </span><span id="L-512"><a href="#L-512"><span class="linenos">512</span></a>
 </span><span id="L-513"><a href="#L-513"><span class="linenos">513</span></a><span class="sd">        Yields:</span>
@@ -931,7 +931,7 @@
 </span><span id="L-518"><a href="#L-518"><span class="linenos">518</span></a>
 </span><span id="L-519"><a href="#L-519"><span class="linenos">519</span></a>
 </span><span id="L-520"><a href="#L-520"><span class="linenos">520</span></a><span class="nd">@dataclass</span>
-</span><span id="L-521"><a href="#L-521"><span class="linenos">521</span></a><span class="k">class</span> <span class="nc">StdOutErrAsStringOutput</span><span class="p">:</span>
+</span><span id="L-521"><a href="#L-521"><span class="linenos">521</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StdOutErrAsStringOutput</span><span class="p">:</span>
 </span><span id="L-522"><a href="#L-522"><span class="linenos">522</span></a>    <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
 </span><span id="L-523"><a href="#L-523"><span class="linenos">523</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique ID of the output. Unique including param IDs.&quot;&quot;&quot;</span>
 </span><span id="L-524"><a href="#L-524"><span class="linenos">524</span></a>
@@ -943,7 +943,7 @@
 </span><span id="L-530"><a href="#L-530"><span class="linenos">530</span></a>
 </span><span id="L-531"><a href="#L-531"><span class="linenos">531</span></a>
 </span><span id="L-532"><a href="#L-532"><span class="linenos">532</span></a><span class="nd">@dataclass</span>
-</span><span id="L-533"><a href="#L-533"><span class="linenos">533</span></a><span class="k">class</span> <span class="nc">Interface</span><span class="p">:</span>
+</span><span id="L-533"><a href="#L-533"><span class="linenos">533</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Interface</span><span class="p">:</span>
 </span><span id="L-534"><a href="#L-534"><span class="linenos">534</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an interface.&quot;&quot;&quot;</span>
 </span><span id="L-535"><a href="#L-535"><span class="linenos">535</span></a>
 </span><span id="L-536"><a href="#L-536"><span class="linenos">536</span></a>    <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span>
@@ -977,7 +977,7 @@
     </div>
     <a class="headerlink" href="#Documentation"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Documentation-9"><a href="#Documentation-9"><span class="linenos"> 9</span></a><span class="nd">@dataclass</span>
-</span><span id="Documentation-10"><a href="#Documentation-10"><span class="linenos">10</span></a><span class="k">class</span> <span class="nc">Documentation</span><span class="p">:</span>
+</span><span id="Documentation-10"><a href="#Documentation-10"><span class="linenos">10</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Documentation</span><span class="p">:</span>
 </span><span id="Documentation-11"><a href="#Documentation-11"><span class="linenos">11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents documentation for various elements.&quot;&quot;&quot;</span>
 </span><span id="Documentation-12"><a href="#Documentation-12"><span class="linenos">12</span></a>
 </span><span id="Documentation-13"><a href="#Documentation-13"><span class="linenos">13</span></a>    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1094,7 +1094,7 @@
     </div>
     <a class="headerlink" href="#Package"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Package-29"><a href="#Package-29"><span class="linenos">29</span></a><span class="nd">@dataclass</span>
-</span><span id="Package-30"><a href="#Package-30"><span class="linenos">30</span></a><span class="k">class</span> <span class="nc">Package</span><span class="p">:</span>
+</span><span id="Package-30"><a href="#Package-30"><span class="linenos">30</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Package</span><span class="p">:</span>
 </span><span id="Package-31"><a href="#Package-31"><span class="linenos">31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Metadata for software package containing command.&quot;&quot;&quot;</span>
 </span><span id="Package-32"><a href="#Package-32"><span class="linenos">32</span></a>
 </span><span id="Package-33"><a href="#Package-33"><span class="linenos">33</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
@@ -1205,7 +1205,7 @@
     </div>
     <a class="headerlink" href="#OutputParamReference"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="OutputParamReference-49"><a href="#OutputParamReference-49"><span class="linenos">49</span></a><span class="nd">@dataclass</span>
-</span><span id="OutputParamReference-50"><a href="#OutputParamReference-50"><span class="linenos">50</span></a><span class="k">class</span> <span class="nc">OutputParamReference</span><span class="p">:</span>
+</span><span id="OutputParamReference-50"><a href="#OutputParamReference-50"><span class="linenos">50</span></a><span class="k">class</span><span class="w"> </span><span class="nc">OutputParamReference</span><span class="p">:</span>
 </span><span id="OutputParamReference-51"><a href="#OutputParamReference-51"><span class="linenos">51</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a reference to an output parameter.&quot;&quot;&quot;</span>
 </span><span id="OutputParamReference-52"><a href="#OutputParamReference-52"><span class="linenos">52</span></a>
 </span><span id="OutputParamReference-53"><a href="#OutputParamReference-53"><span class="linenos">53</span></a>    <span class="n">ref_id</span><span class="p">:</span> <span class="n">IdType</span>
@@ -1272,7 +1272,7 @@
     </div>
     <a class="headerlink" href="#Output"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Output-60"><a href="#Output-60"><span class="linenos">60</span></a><span class="nd">@dataclass</span>
-</span><span id="Output-61"><a href="#Output-61"><span class="linenos">61</span></a><span class="k">class</span> <span class="nc">Output</span><span class="p">:</span>
+</span><span id="Output-61"><a href="#Output-61"><span class="linenos">61</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Output</span><span class="p">:</span>
 </span><span id="Output-62"><a href="#Output-62"><span class="linenos">62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an output.&quot;&quot;&quot;</span>
 </span><span id="Output-63"><a href="#Output-63"><span class="linenos">63</span></a>
 </span><span id="Output-64"><a href="#Output-64"><span class="linenos">64</span></a>    <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
@@ -1369,11 +1369,11 @@
 
     </div>
     <a class="headerlink" href="#Param"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Param-80"><a href="#Param-80"><span class="linenos"> 80</span></a><span class="k">class</span> <span class="nc">Param</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Param-80"><a href="#Param-80"><span class="linenos"> 80</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Param</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
 </span><span id="Param-81"><a href="#Param-81"><span class="linenos"> 81</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic class to represent various types of parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-82"><a href="#Param-82"><span class="linenos"> 82</span></a>
 </span><span id="Param-83"><a href="#Param-83"><span class="linenos"> 83</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param-84"><a href="#Param-84"><span class="linenos"> 84</span></a>    <span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
+</span><span id="Param-84"><a href="#Param-84"><span class="linenos"> 84</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
 </span><span id="Param-85"><a href="#Param-85"><span class="linenos"> 85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Base class for all parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-86"><a href="#Param-86"><span class="linenos"> 86</span></a>
 </span><span id="Param-87"><a href="#Param-87"><span class="linenos"> 87</span></a>        <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
@@ -1389,7 +1389,7 @@
 </span><span id="Param-97"><a href="#Param-97"><span class="linenos"> 97</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Documentation for the parameter.&quot;&quot;&quot;</span>
 </span><span id="Param-98"><a href="#Param-98"><span class="linenos"> 98</span></a>
 </span><span id="Param-99"><a href="#Param-99"><span class="linenos"> 99</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param-100"><a href="#Param-100"><span class="linenos">100</span></a>    <span class="k">class</span> <span class="nc">List</span><span class="p">:</span>
+</span><span id="Param-100"><a href="#Param-100"><span class="linenos">100</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">List</span><span class="p">:</span>
 </span><span id="Param-101"><a href="#Param-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents list parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-102"><a href="#Param-102"><span class="linenos">102</span></a>
 </span><span id="Param-103"><a href="#Param-103"><span class="linenos">103</span></a>        <span class="n">count_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1401,13 +1401,13 @@
 </span><span id="Param-109"><a href="#Param-109"><span class="linenos">109</span></a>        <span class="n">join</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="Param-110"><a href="#Param-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Join string for list items.&quot;&quot;&quot;</span>
 </span><span id="Param-111"><a href="#Param-111"><span class="linenos">111</span></a>
-</span><span id="Param-112"><a href="#Param-112"><span class="linenos">112</span></a>    <span class="k">class</span> <span class="nc">SetToNone</span><span class="p">:</span>
+</span><span id="Param-112"><a href="#Param-112"><span class="linenos">112</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">SetToNone</span><span class="p">:</span>
 </span><span id="Param-113"><a href="#Param-113"><span class="linenos">113</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents a parameter that can be set to None.&quot;&quot;&quot;</span>
 </span><span id="Param-114"><a href="#Param-114"><span class="linenos">114</span></a>
 </span><span id="Param-115"><a href="#Param-115"><span class="linenos">115</span></a>        <span class="k">pass</span>
 </span><span id="Param-116"><a href="#Param-116"><span class="linenos">116</span></a>
 </span><span id="Param-117"><a href="#Param-117"><span class="linenos">117</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param-118"><a href="#Param-118"><span class="linenos">118</span></a>    <span class="k">class</span> <span class="nc">Bool</span><span class="p">:</span>
+</span><span id="Param-118"><a href="#Param-118"><span class="linenos">118</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Bool</span><span class="p">:</span>
 </span><span id="Param-119"><a href="#Param-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents boolean parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-120"><a href="#Param-120"><span class="linenos">120</span></a>
 </span><span id="Param-121"><a href="#Param-121"><span class="linenos">121</span></a>        <span class="n">value_true</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -1417,7 +1417,7 @@
 </span><span id="Param-125"><a href="#Param-125"><span class="linenos">125</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of strings representing false value.&quot;&quot;&quot;</span>
 </span><span id="Param-126"><a href="#Param-126"><span class="linenos">126</span></a>
 </span><span id="Param-127"><a href="#Param-127"><span class="linenos">127</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param-128"><a href="#Param-128"><span class="linenos">128</span></a>    <span class="k">class</span> <span class="nc">Int</span><span class="p">:</span>
+</span><span id="Param-128"><a href="#Param-128"><span class="linenos">128</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Int</span><span class="p">:</span>
 </span><span id="Param-129"><a href="#Param-129"><span class="linenos">129</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents integer parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-130"><a href="#Param-130"><span class="linenos">130</span></a>
 </span><span id="Param-131"><a href="#Param-131"><span class="linenos">131</span></a>        <span class="n">min_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1427,7 +1427,7 @@
 </span><span id="Param-135"><a href="#Param-135"><span class="linenos">135</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Maximum allowed value.&quot;&quot;&quot;</span>
 </span><span id="Param-136"><a href="#Param-136"><span class="linenos">136</span></a>
 </span><span id="Param-137"><a href="#Param-137"><span class="linenos">137</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param-138"><a href="#Param-138"><span class="linenos">138</span></a>    <span class="k">class</span> <span class="nc">Float</span><span class="p">:</span>
+</span><span id="Param-138"><a href="#Param-138"><span class="linenos">138</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Float</span><span class="p">:</span>
 </span><span id="Param-139"><a href="#Param-139"><span class="linenos">139</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents float parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-140"><a href="#Param-140"><span class="linenos">140</span></a>
 </span><span id="Param-141"><a href="#Param-141"><span class="linenos">141</span></a>        <span class="n">min_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1437,13 +1437,13 @@
 </span><span id="Param-145"><a href="#Param-145"><span class="linenos">145</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Maximum allowed value.&quot;&quot;&quot;</span>
 </span><span id="Param-146"><a href="#Param-146"><span class="linenos">146</span></a>
 </span><span id="Param-147"><a href="#Param-147"><span class="linenos">147</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param-148"><a href="#Param-148"><span class="linenos">148</span></a>    <span class="k">class</span> <span class="nc">String</span><span class="p">:</span>
+</span><span id="Param-148"><a href="#Param-148"><span class="linenos">148</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">String</span><span class="p">:</span>
 </span><span id="Param-149"><a href="#Param-149"><span class="linenos">149</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents string parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-150"><a href="#Param-150"><span class="linenos">150</span></a>
 </span><span id="Param-151"><a href="#Param-151"><span class="linenos">151</span></a>        <span class="k">pass</span>
 </span><span id="Param-152"><a href="#Param-152"><span class="linenos">152</span></a>
 </span><span id="Param-153"><a href="#Param-153"><span class="linenos">153</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param-154"><a href="#Param-154"><span class="linenos">154</span></a>    <span class="k">class</span> <span class="nc">File</span><span class="p">:</span>
+</span><span id="Param-154"><a href="#Param-154"><span class="linenos">154</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">File</span><span class="p">:</span>
 </span><span id="Param-155"><a href="#Param-155"><span class="linenos">155</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents file parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-156"><a href="#Param-156"><span class="linenos">156</span></a>
 </span><span id="Param-157"><a href="#Param-157"><span class="linenos">157</span></a>        <span class="n">resolve_parent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1453,7 +1453,7 @@
 </span><span id="Param-161"><a href="#Param-161"><span class="linenos">161</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;This file may be mutated.&quot;&quot;&quot;</span>
 </span><span id="Param-162"><a href="#Param-162"><span class="linenos">162</span></a>
 </span><span id="Param-163"><a href="#Param-163"><span class="linenos">163</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param-164"><a href="#Param-164"><span class="linenos">164</span></a>    <span class="k">class</span> <span class="nc">Struct</span><span class="p">:</span>
+</span><span id="Param-164"><a href="#Param-164"><span class="linenos">164</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Struct</span><span class="p">:</span>
 </span><span id="Param-165"><a href="#Param-165"><span class="linenos">165</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents struct parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-166"><a href="#Param-166"><span class="linenos">166</span></a>
 </span><span id="Param-167"><a href="#Param-167"><span class="linenos">167</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1470,7 +1470,7 @@
 </span><span id="Param-178"><a href="#Param-178"><span class="linenos">178</span></a>        <span class="n">docs</span><span class="p">:</span> <span class="n">Documentation</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="Param-179"><a href="#Param-179"><span class="linenos">179</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Documentation for the struct.&quot;&quot;&quot;</span>
 </span><span id="Param-180"><a href="#Param-180"><span class="linenos">180</span></a>
-</span><span id="Param-181"><a href="#Param-181"><span class="linenos">181</span></a>        <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="Param-181"><a href="#Param-181"><span class="linenos">181</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="Param-182"><a href="#Param-182"><span class="linenos">182</span></a><span class="w">            </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the struct.</span>
 </span><span id="Param-183"><a href="#Param-183"><span class="linenos">183</span></a>
 </span><span id="Param-184"><a href="#Param-184"><span class="linenos">184</span></a><span class="sd">            Yields:</span>
@@ -1479,7 +1479,7 @@
 </span><span id="Param-187"><a href="#Param-187"><span class="linenos">187</span></a>            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
 </span><span id="Param-188"><a href="#Param-188"><span class="linenos">188</span></a>                <span class="k">yield from</span> <span class="n">group</span><span class="o">.</span><span class="n">iter_params</span><span class="p">()</span>
 </span><span id="Param-189"><a href="#Param-189"><span class="linenos">189</span></a>
-</span><span id="Param-190"><a href="#Param-190"><span class="linenos">190</span></a>    <span class="k">def</span> <span class="nf">iter_params_recursively</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="Param-190"><a href="#Param-190"><span class="linenos">190</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">iter_params_recursively</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="Param-191"><a href="#Param-191"><span class="linenos">191</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate through all child-params recursively.&quot;&quot;&quot;</span>
 </span><span id="Param-192"><a href="#Param-192"><span class="linenos">192</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_self</span><span class="p">:</span>
 </span><span id="Param-193"><a href="#Param-193"><span class="linenos">193</span></a>            <span class="k">yield</span> <span class="bp">self</span>
@@ -1491,13 +1491,13 @@
 </span><span id="Param-199"><a href="#Param-199"><span class="linenos">199</span></a>                <span class="k">yield from</span> <span class="n">e</span><span class="o">.</span><span class="n">iter_params_recursively</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="Param-200"><a href="#Param-200"><span class="linenos">200</span></a>
 </span><span id="Param-201"><a href="#Param-201"><span class="linenos">201</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param-202"><a href="#Param-202"><span class="linenos">202</span></a>    <span class="k">class</span> <span class="nc">StructUnion</span><span class="p">:</span>
+</span><span id="Param-202"><a href="#Param-202"><span class="linenos">202</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">StructUnion</span><span class="p">:</span>
 </span><span id="Param-203"><a href="#Param-203"><span class="linenos">203</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents a union of struct parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-204"><a href="#Param-204"><span class="linenos">204</span></a>
 </span><span id="Param-205"><a href="#Param-205"><span class="linenos">205</span></a>        <span class="n">alts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="Param-206"><a href="#Param-206"><span class="linenos">206</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of alternative struct parameters.&quot;&quot;&quot;</span>
 </span><span id="Param-207"><a href="#Param-207"><span class="linenos">207</span></a>
-</span><span id="Param-208"><a href="#Param-208"><span class="linenos">208</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="Param-208"><a href="#Param-208"><span class="linenos">208</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="Param-209"><a href="#Param-209"><span class="linenos">209</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="Param-210"><a href="#Param-210"><span class="linenos">210</span></a>        <span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="p">,</span>
 </span><span id="Param-211"><a href="#Param-211"><span class="linenos">211</span></a>        <span class="n">body</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span>
@@ -1538,12 +1538,12 @@
 </span><span id="Param-246"><a href="#Param-246"><span class="linenos">246</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_check_default_value</span><span class="p">()</span>
 </span><span id="Param-247"><a href="#Param-247"><span class="linenos">247</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">()</span>
 </span><span id="Param-248"><a href="#Param-248"><span class="linenos">248</span></a>
-</span><span id="Param-249"><a href="#Param-249"><span class="linenos">249</span></a>    <span class="k">def</span> <span class="nf">_check_base</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Param-249"><a href="#Param-249"><span class="linenos">249</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_base</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-250"><a href="#Param-250"><span class="linenos">250</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if base is an instance of Param.Base.&quot;&quot;&quot;</span>
 </span><span id="Param-251"><a href="#Param-251"><span class="linenos">251</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Base</span><span class="p">):</span>
 </span><span id="Param-252"><a href="#Param-252"><span class="linenos">252</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;base must be an instance of Param.Base&quot;</span><span class="p">)</span>
 </span><span id="Param-253"><a href="#Param-253"><span class="linenos">253</span></a>
-</span><span id="Param-254"><a href="#Param-254"><span class="linenos">254</span></a>    <span class="k">def</span> <span class="nf">_check_body_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Param-254"><a href="#Param-254"><span class="linenos">254</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_body_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-255"><a href="#Param-255"><span class="linenos">255</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if body is an instance of one of the allowed types.&quot;&quot;&quot;</span>
 </span><span id="Param-256"><a href="#Param-256"><span class="linenos">256</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
 </span><span id="Param-257"><a href="#Param-257"><span class="linenos">257</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="p">(</span><span class="n">Param</span><span class="o">.</span><span class="n">Bool</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">File</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">StructUnion</span><span class="p">)</span>
@@ -1553,17 +1553,17 @@
 </span><span id="Param-261"><a href="#Param-261"><span class="linenos">261</span></a>                <span class="s2">&quot;Param.Bool, Param.Int, Param.Float, Param.String, Param.File, Param.Struct or Param.StructUnion&quot;</span>
 </span><span id="Param-262"><a href="#Param-262"><span class="linenos">262</span></a>            <span class="p">)</span>
 </span><span id="Param-263"><a href="#Param-263"><span class="linenos">263</span></a>
-</span><span id="Param-264"><a href="#Param-264"><span class="linenos">264</span></a>    <span class="k">def</span> <span class="nf">_check_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Param-264"><a href="#Param-264"><span class="linenos">264</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-265"><a href="#Param-265"><span class="linenos">265</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if list_ is None or an instance of Param.List.&quot;&quot;&quot;</span>
 </span><span id="Param-266"><a href="#Param-266"><span class="linenos">266</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">List</span><span class="p">):</span>
 </span><span id="Param-267"><a href="#Param-267"><span class="linenos">267</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;list_ must be None or an instance of Param.List&quot;</span><span class="p">)</span>
 </span><span id="Param-268"><a href="#Param-268"><span class="linenos">268</span></a>
-</span><span id="Param-269"><a href="#Param-269"><span class="linenos">269</span></a>    <span class="k">def</span> <span class="nf">_check_nullable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Param-269"><a href="#Param-269"><span class="linenos">269</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_nullable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-270"><a href="#Param-270"><span class="linenos">270</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if nullable is a boolean.&quot;&quot;&quot;</span>
 </span><span id="Param-271"><a href="#Param-271"><span class="linenos">271</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nullable</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
 </span><span id="Param-272"><a href="#Param-272"><span class="linenos">272</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;nullable must be a boolean&quot;</span><span class="p">)</span>
 </span><span id="Param-273"><a href="#Param-273"><span class="linenos">273</span></a>
-</span><span id="Param-274"><a href="#Param-274"><span class="linenos">274</span></a>    <span class="k">def</span> <span class="nf">_check_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Param-274"><a href="#Param-274"><span class="linenos">274</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-275"><a href="#Param-275"><span class="linenos">275</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if choices is None or a list of the correct type.&quot;&quot;&quot;</span>
 </span><span id="Param-276"><a href="#Param-276"><span class="linenos">276</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-277"><a href="#Param-277"><span class="linenos">277</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -1572,7 +1572,7 @@
 </span><span id="Param-280"><a href="#Param-280"><span class="linenos">280</span></a>            <span class="k">if</span> <span class="n">expected_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">choice</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">choice</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="p">):</span>
 </span><span id="Param-281"><a href="#Param-281"><span class="linenos">281</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All choices must be of type </span><span class="si">{</span><span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="vm">__name__</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">expected_type</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="Param-282"><a href="#Param-282"><span class="linenos">282</span></a>
-</span><span id="Param-283"><a href="#Param-283"><span class="linenos">283</span></a>    <span class="k">def</span> <span class="nf">_check_default_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Param-283"><a href="#Param-283"><span class="linenos">283</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_default_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-284"><a href="#Param-284"><span class="linenos">284</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if default_value is of the correct type.&quot;&quot;&quot;</span>
 </span><span id="Param-285"><a href="#Param-285"><span class="linenos">285</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-286"><a href="#Param-286"><span class="linenos">286</span></a>            <span class="k">return</span>
@@ -1595,7 +1595,7 @@
 </span><span id="Param-303"><a href="#Param-303"><span class="linenos">303</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_value</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">):</span>
 </span><span id="Param-304"><a href="#Param-304"><span class="linenos">304</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;default_value must be of type </span><span class="si">{</span><span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="vm">__name__</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">expected_type</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="Param-305"><a href="#Param-305"><span class="linenos">305</span></a>
-</span><span id="Param-306"><a href="#Param-306"><span class="linenos">306</span></a>    <span class="k">def</span> <span class="nf">_check_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Param-306"><a href="#Param-306"><span class="linenos">306</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-307"><a href="#Param-307"><span class="linenos">307</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if all constraints are satisfied.&quot;&quot;&quot;</span>
 </span><span id="Param-308"><a href="#Param-308"><span class="linenos">308</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="p">(</span><span class="n">Param</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Float</span><span class="p">)):</span>
 </span><span id="Param-309"><a href="#Param-309"><span class="linenos">309</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">min_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">max_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1628,7 +1628,7 @@
 </span><span id="Param-336"><a href="#Param-336"><span class="linenos">336</span></a>                        <span class="sa">f</span><span class="s2">&quot;default_value list length cannot be greater than count_max (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="o">.</span><span class="n">count_max</span><span class="si">}</span><span class="s2">)&quot;</span>
 </span><span id="Param-337"><a href="#Param-337"><span class="linenos">337</span></a>                    <span class="p">)</span>
 </span><span id="Param-338"><a href="#Param-338"><span class="linenos">338</span></a>
-</span><span id="Param-339"><a href="#Param-339"><span class="linenos">339</span></a>    <span class="k">def</span> <span class="nf">_get_expected_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Param-339"><a href="#Param-339"><span class="linenos">339</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_expected_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Param-340"><a href="#Param-340"><span class="linenos">340</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the expected type based on the body type.&quot;&quot;&quot;</span>
 </span><span id="Param-341"><a href="#Param-341"><span class="linenos">341</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">Param</span><span class="o">.</span><span class="n">Bool</span><span class="p">):</span>
 </span><span id="Param-342"><a href="#Param-342"><span class="linenos">342</span></a>            <span class="k">return</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,)</span>
@@ -1643,7 +1643,7 @@
 </span><span id="Param-351"><a href="#Param-351"><span class="linenos">351</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="Param-352"><a href="#Param-352"><span class="linenos">352</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unknown body type&quot;</span><span class="p">)</span>
 </span><span id="Param-353"><a href="#Param-353"><span class="linenos">353</span></a>
-</span><span id="Param-354"><a href="#Param-354"><span class="linenos">354</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Param-354"><a href="#Param-354"><span class="linenos">354</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="Param-355"><a href="#Param-355"><span class="linenos">355</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string representation of the Param instance.&quot;&quot;&quot;</span>
 </span><span id="Param-356"><a href="#Param-356"><span class="linenos">356</span></a>        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="Param-357"><a href="#Param-357"><span class="linenos">357</span></a>            <span class="sa">f</span><span class="s2">&quot;Param(id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">id_</span><span class="si">!r}</span><span class="s2">, name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -1677,7 +1677,7 @@
 
     </div>
     <a class="headerlink" href="#Param.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Param.__init__-208"><a href="#Param.__init__-208"><span class="linenos">208</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Param.__init__-208"><a href="#Param.__init__-208"><span class="linenos">208</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="Param.__init__-209"><a href="#Param.__init__-209"><span class="linenos">209</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="Param.__init__-210"><a href="#Param.__init__-210"><span class="linenos">210</span></a>        <span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="p">,</span>
 </span><span id="Param.__init__-211"><a href="#Param.__init__-211"><span class="linenos">211</span></a>        <span class="n">body</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span>
@@ -1754,7 +1754,7 @@
 
     </div>
     <a class="headerlink" href="#Param.iter_params_recursively"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Param.iter_params_recursively-190"><a href="#Param.iter_params_recursively-190"><span class="linenos">190</span></a>    <span class="k">def</span> <span class="nf">iter_params_recursively</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Param.iter_params_recursively-190"><a href="#Param.iter_params_recursively-190"><span class="linenos">190</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">iter_params_recursively</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="Param.iter_params_recursively-191"><a href="#Param.iter_params_recursively-191"><span class="linenos">191</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate through all child-params recursively.&quot;&quot;&quot;</span>
 </span><span id="Param.iter_params_recursively-192"><a href="#Param.iter_params_recursively-192"><span class="linenos">192</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_self</span><span class="p">:</span>
 </span><span id="Param.iter_params_recursively-193"><a href="#Param.iter_params_recursively-193"><span class="linenos">193</span></a>            <span class="k">yield</span> <span class="bp">self</span>
@@ -1852,7 +1852,7 @@
     </div>
     <a class="headerlink" href="#Param.Base"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Param.Base-83"><a href="#Param.Base-83"><span class="linenos">83</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param.Base-84"><a href="#Param.Base-84"><span class="linenos">84</span></a>    <span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
+</span><span id="Param.Base-84"><a href="#Param.Base-84"><span class="linenos">84</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
 </span><span id="Param.Base-85"><a href="#Param.Base-85"><span class="linenos">85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Base class for all parameters.&quot;&quot;&quot;</span>
 </span><span id="Param.Base-86"><a href="#Param.Base-86"><span class="linenos">86</span></a>
 </span><span id="Param.Base-87"><a href="#Param.Base-87"><span class="linenos">87</span></a>        <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
@@ -1951,7 +1951,7 @@
     </div>
     <a class="headerlink" href="#Param.List"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Param.List-99"><a href="#Param.List-99"><span class="linenos"> 99</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param.List-100"><a href="#Param.List-100"><span class="linenos">100</span></a>    <span class="k">class</span> <span class="nc">List</span><span class="p">:</span>
+</span><span id="Param.List-100"><a href="#Param.List-100"><span class="linenos">100</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">List</span><span class="p">:</span>
 </span><span id="Param.List-101"><a href="#Param.List-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents list parameters.&quot;&quot;&quot;</span>
 </span><span id="Param.List-102"><a href="#Param.List-102"><span class="linenos">102</span></a>
 </span><span id="Param.List-103"><a href="#Param.List-103"><span class="linenos">103</span></a>        <span class="n">count_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2035,7 +2035,7 @@
 
     </div>
     <a class="headerlink" href="#Param.SetToNone"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Param.SetToNone-112"><a href="#Param.SetToNone-112"><span class="linenos">112</span></a>    <span class="k">class</span> <span class="nc">SetToNone</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Param.SetToNone-112"><a href="#Param.SetToNone-112"><span class="linenos">112</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">SetToNone</span><span class="p">:</span>
 </span><span id="Param.SetToNone-113"><a href="#Param.SetToNone-113"><span class="linenos">113</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents a parameter that can be set to None.&quot;&quot;&quot;</span>
 </span><span id="Param.SetToNone-114"><a href="#Param.SetToNone-114"><span class="linenos">114</span></a>
 </span><span id="Param.SetToNone-115"><a href="#Param.SetToNone-115"><span class="linenos">115</span></a>        <span class="k">pass</span>
@@ -2060,7 +2060,7 @@
     </div>
     <a class="headerlink" href="#Param.Bool"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Param.Bool-117"><a href="#Param.Bool-117"><span class="linenos">117</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param.Bool-118"><a href="#Param.Bool-118"><span class="linenos">118</span></a>    <span class="k">class</span> <span class="nc">Bool</span><span class="p">:</span>
+</span><span id="Param.Bool-118"><a href="#Param.Bool-118"><span class="linenos">118</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Bool</span><span class="p">:</span>
 </span><span id="Param.Bool-119"><a href="#Param.Bool-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents boolean parameters.&quot;&quot;&quot;</span>
 </span><span id="Param.Bool-120"><a href="#Param.Bool-120"><span class="linenos">120</span></a>
 </span><span id="Param.Bool-121"><a href="#Param.Bool-121"><span class="linenos">121</span></a>        <span class="n">value_true</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -2127,7 +2127,7 @@
     </div>
     <a class="headerlink" href="#Param.Int"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Param.Int-127"><a href="#Param.Int-127"><span class="linenos">127</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param.Int-128"><a href="#Param.Int-128"><span class="linenos">128</span></a>    <span class="k">class</span> <span class="nc">Int</span><span class="p">:</span>
+</span><span id="Param.Int-128"><a href="#Param.Int-128"><span class="linenos">128</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Int</span><span class="p">:</span>
 </span><span id="Param.Int-129"><a href="#Param.Int-129"><span class="linenos">129</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents integer parameters.&quot;&quot;&quot;</span>
 </span><span id="Param.Int-130"><a href="#Param.Int-130"><span class="linenos">130</span></a>
 </span><span id="Param.Int-131"><a href="#Param.Int-131"><span class="linenos">131</span></a>        <span class="n">min_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2196,7 +2196,7 @@
     </div>
     <a class="headerlink" href="#Param.Float"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Param.Float-137"><a href="#Param.Float-137"><span class="linenos">137</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param.Float-138"><a href="#Param.Float-138"><span class="linenos">138</span></a>    <span class="k">class</span> <span class="nc">Float</span><span class="p">:</span>
+</span><span id="Param.Float-138"><a href="#Param.Float-138"><span class="linenos">138</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Float</span><span class="p">:</span>
 </span><span id="Param.Float-139"><a href="#Param.Float-139"><span class="linenos">139</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents float parameters.&quot;&quot;&quot;</span>
 </span><span id="Param.Float-140"><a href="#Param.Float-140"><span class="linenos">140</span></a>
 </span><span id="Param.Float-141"><a href="#Param.Float-141"><span class="linenos">141</span></a>        <span class="n">min_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2265,7 +2265,7 @@
     </div>
     <a class="headerlink" href="#Param.String"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Param.String-147"><a href="#Param.String-147"><span class="linenos">147</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param.String-148"><a href="#Param.String-148"><span class="linenos">148</span></a>    <span class="k">class</span> <span class="nc">String</span><span class="p">:</span>
+</span><span id="Param.String-148"><a href="#Param.String-148"><span class="linenos">148</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">String</span><span class="p">:</span>
 </span><span id="Param.String-149"><a href="#Param.String-149"><span class="linenos">149</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents string parameters.&quot;&quot;&quot;</span>
 </span><span id="Param.String-150"><a href="#Param.String-150"><span class="linenos">150</span></a>
 </span><span id="Param.String-151"><a href="#Param.String-151"><span class="linenos">151</span></a>        <span class="k">pass</span>
@@ -2290,7 +2290,7 @@
     </div>
     <a class="headerlink" href="#Param.File"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Param.File-153"><a href="#Param.File-153"><span class="linenos">153</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param.File-154"><a href="#Param.File-154"><span class="linenos">154</span></a>    <span class="k">class</span> <span class="nc">File</span><span class="p">:</span>
+</span><span id="Param.File-154"><a href="#Param.File-154"><span class="linenos">154</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">File</span><span class="p">:</span>
 </span><span id="Param.File-155"><a href="#Param.File-155"><span class="linenos">155</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents file parameters.&quot;&quot;&quot;</span>
 </span><span id="Param.File-156"><a href="#Param.File-156"><span class="linenos">156</span></a>
 </span><span id="Param.File-157"><a href="#Param.File-157"><span class="linenos">157</span></a>        <span class="n">resolve_parent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2359,7 +2359,7 @@
     </div>
     <a class="headerlink" href="#Param.Struct"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Param.Struct-163"><a href="#Param.Struct-163"><span class="linenos">163</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param.Struct-164"><a href="#Param.Struct-164"><span class="linenos">164</span></a>    <span class="k">class</span> <span class="nc">Struct</span><span class="p">:</span>
+</span><span id="Param.Struct-164"><a href="#Param.Struct-164"><span class="linenos">164</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">Struct</span><span class="p">:</span>
 </span><span id="Param.Struct-165"><a href="#Param.Struct-165"><span class="linenos">165</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents struct parameters.&quot;&quot;&quot;</span>
 </span><span id="Param.Struct-166"><a href="#Param.Struct-166"><span class="linenos">166</span></a>
 </span><span id="Param.Struct-167"><a href="#Param.Struct-167"><span class="linenos">167</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2376,7 +2376,7 @@
 </span><span id="Param.Struct-178"><a href="#Param.Struct-178"><span class="linenos">178</span></a>        <span class="n">docs</span><span class="p">:</span> <span class="n">Documentation</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="Param.Struct-179"><a href="#Param.Struct-179"><span class="linenos">179</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Documentation for the struct.&quot;&quot;&quot;</span>
 </span><span id="Param.Struct-180"><a href="#Param.Struct-180"><span class="linenos">180</span></a>
-</span><span id="Param.Struct-181"><a href="#Param.Struct-181"><span class="linenos">181</span></a>        <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="Param.Struct-181"><a href="#Param.Struct-181"><span class="linenos">181</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="Param.Struct-182"><a href="#Param.Struct-182"><span class="linenos">182</span></a><span class="w">            </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the struct.</span>
 </span><span id="Param.Struct-183"><a href="#Param.Struct-183"><span class="linenos">183</span></a>
 </span><span id="Param.Struct-184"><a href="#Param.Struct-184"><span class="linenos">184</span></a><span class="sd">            Yields:</span>
@@ -2470,7 +2470,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#Param.Struct.iter_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Param.Struct.iter_params-181"><a href="#Param.Struct.iter_params-181"><span class="linenos">181</span></a>        <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Param.Struct.iter_params-181"><a href="#Param.Struct.iter_params-181"><span class="linenos">181</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="Param.Struct.iter_params-182"><a href="#Param.Struct.iter_params-182"><span class="linenos">182</span></a><span class="w">            </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the struct.</span>
 </span><span id="Param.Struct.iter_params-183"><a href="#Param.Struct.iter_params-183"><span class="linenos">183</span></a>
 </span><span id="Param.Struct.iter_params-184"><a href="#Param.Struct.iter_params-184"><span class="linenos">184</span></a><span class="sd">            Yields:</span>
@@ -2506,7 +2506,7 @@ Args within groups should be joined without delimiter.</p>
     </div>
     <a class="headerlink" href="#Param.StructUnion"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Param.StructUnion-201"><a href="#Param.StructUnion-201"><span class="linenos">201</span></a>    <span class="nd">@dataclass</span>
-</span><span id="Param.StructUnion-202"><a href="#Param.StructUnion-202"><span class="linenos">202</span></a>    <span class="k">class</span> <span class="nc">StructUnion</span><span class="p">:</span>
+</span><span id="Param.StructUnion-202"><a href="#Param.StructUnion-202"><span class="linenos">202</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">StructUnion</span><span class="p">:</span>
 </span><span id="Param.StructUnion-203"><a href="#Param.StructUnion-203"><span class="linenos">203</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents a union of struct parameters.&quot;&quot;&quot;</span>
 </span><span id="Param.StructUnion-204"><a href="#Param.StructUnion-204"><span class="linenos">204</span></a>
 </span><span id="Param.StructUnion-205"><a href="#Param.StructUnion-205"><span class="linenos">205</span></a>        <span class="n">alts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -2555,7 +2555,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#is_bool"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_bool-376"><a href="#is_bool-376"><span class="linenos">376</span></a><span class="k">def</span> <span class="nf">is_bool</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Bool</span><span class="p">]]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_bool-376"><a href="#is_bool-376"><span class="linenos">376</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_bool</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Bool</span><span class="p">]]:</span>
 </span><span id="is_bool-377"><a href="#is_bool-377"><span class="linenos">377</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a boolean type.</span>
 </span><span id="is_bool-378"><a href="#is_bool-378"><span class="linenos">378</span></a>
 </span><span id="is_bool-379"><a href="#is_bool-379"><span class="linenos">379</span></a><span class="sd">    Args:</span>
@@ -2600,7 +2600,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#is_int"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_int-390"><a href="#is_int-390"><span class="linenos">390</span></a><span class="k">def</span> <span class="nf">is_int</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Int</span><span class="p">]]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_int-390"><a href="#is_int-390"><span class="linenos">390</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_int</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Int</span><span class="p">]]:</span>
 </span><span id="is_int-391"><a href="#is_int-391"><span class="linenos">391</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is an integer type.</span>
 </span><span id="is_int-392"><a href="#is_int-392"><span class="linenos">392</span></a>
 </span><span id="is_int-393"><a href="#is_int-393"><span class="linenos">393</span></a><span class="sd">    Args:</span>
@@ -2645,7 +2645,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#is_float"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_float-404"><a href="#is_float-404"><span class="linenos">404</span></a><span class="k">def</span> <span class="nf">is_float</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Float</span><span class="p">]]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_float-404"><a href="#is_float-404"><span class="linenos">404</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_float</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Float</span><span class="p">]]:</span>
 </span><span id="is_float-405"><a href="#is_float-405"><span class="linenos">405</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a float type.</span>
 </span><span id="is_float-406"><a href="#is_float-406"><span class="linenos">406</span></a>
 </span><span id="is_float-407"><a href="#is_float-407"><span class="linenos">407</span></a><span class="sd">    Args:</span>
@@ -2690,7 +2690,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#is_string"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_string-418"><a href="#is_string-418"><span class="linenos">418</span></a><span class="k">def</span> <span class="nf">is_string</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">String</span><span class="p">]]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_string-418"><a href="#is_string-418"><span class="linenos">418</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_string</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">String</span><span class="p">]]:</span>
 </span><span id="is_string-419"><a href="#is_string-419"><span class="linenos">419</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a string type.</span>
 </span><span id="is_string-420"><a href="#is_string-420"><span class="linenos">420</span></a>
 </span><span id="is_string-421"><a href="#is_string-421"><span class="linenos">421</span></a><span class="sd">    Args:</span>
@@ -2735,7 +2735,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#is_file"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_file-432"><a href="#is_file-432"><span class="linenos">432</span></a><span class="k">def</span> <span class="nf">is_file</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">File</span><span class="p">]]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_file-432"><a href="#is_file-432"><span class="linenos">432</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_file</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">File</span><span class="p">]]:</span>
 </span><span id="is_file-433"><a href="#is_file-433"><span class="linenos">433</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a file type.</span>
 </span><span id="is_file-434"><a href="#is_file-434"><span class="linenos">434</span></a>
 </span><span id="is_file-435"><a href="#is_file-435"><span class="linenos">435</span></a><span class="sd">    Args:</span>
@@ -2780,7 +2780,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#is_struct"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_struct-446"><a href="#is_struct-446"><span class="linenos">446</span></a><span class="k">def</span> <span class="nf">is_struct</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_struct-446"><a href="#is_struct-446"><span class="linenos">446</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_struct</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">Struct</span><span class="p">]]:</span>
 </span><span id="is_struct-447"><a href="#is_struct-447"><span class="linenos">447</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a struct type.</span>
 </span><span id="is_struct-448"><a href="#is_struct-448"><span class="linenos">448</span></a>
 </span><span id="is_struct-449"><a href="#is_struct-449"><span class="linenos">449</span></a><span class="sd">    Args:</span>
@@ -2825,7 +2825,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#is_struct_union"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_struct_union-460"><a href="#is_struct_union-460"><span class="linenos">460</span></a><span class="k">def</span> <span class="nf">is_struct_union</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">StructUnion</span><span class="p">]]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_struct_union-460"><a href="#is_struct_union-460"><span class="linenos">460</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_struct_union</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Param</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Param</span><span class="p">[</span><span class="n">Param</span><span class="o">.</span><span class="n">StructUnion</span><span class="p">]]:</span>
 </span><span id="is_struct_union-461"><a href="#is_struct_union-461"><span class="linenos">461</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the parameter is a struct union type.</span>
 </span><span id="is_struct_union-462"><a href="#is_struct_union-462"><span class="linenos">462</span></a>
 </span><span id="is_struct_union-463"><a href="#is_struct_union-463"><span class="linenos">463</span></a><span class="sd">    Args:</span>
@@ -2872,7 +2872,7 @@ Args within groups should be joined without delimiter.</p>
     </div>
     <a class="headerlink" href="#Carg"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Carg-474"><a href="#Carg-474"><span class="linenos">474</span></a><span class="nd">@dataclass</span>
-</span><span id="Carg-475"><a href="#Carg-475"><span class="linenos">475</span></a><span class="k">class</span> <span class="nc">Carg</span><span class="p">:</span>
+</span><span id="Carg-475"><a href="#Carg-475"><span class="linenos">475</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Carg</span><span class="p">:</span>
 </span><span id="Carg-476"><a href="#Carg-476"><span class="linenos">476</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents command arguments.&quot;&quot;&quot;</span>
 </span><span id="Carg-477"><a href="#Carg-477"><span class="linenos">477</span></a>
 </span><span id="Carg-478"><a href="#Carg-478"><span class="linenos">478</span></a>    <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Param</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -2882,7 +2882,7 @@ Args within groups should be joined without delimiter.</p>
 </span><span id="Carg-482"><a href="#Carg-482"><span class="linenos">482</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If not None, collapse all defined tokens to a single string with this delimiter.</span>
 </span><span id="Carg-483"><a href="#Carg-483"><span class="linenos">483</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Carg-484"><a href="#Carg-484"><span class="linenos">484</span></a>
-</span><span id="Carg-485"><a href="#Carg-485"><span class="linenos">485</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="Carg-485"><a href="#Carg-485"><span class="linenos">485</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="Carg-486"><a href="#Carg-486"><span class="linenos">486</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the command argument.</span>
 </span><span id="Carg-487"><a href="#Carg-487"><span class="linenos">487</span></a>
 </span><span id="Carg-488"><a href="#Carg-488"><span class="linenos">488</span></a><span class="sd">        Yields:</span>
@@ -2948,7 +2948,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#Carg.iter_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Carg.iter_params-485"><a href="#Carg.iter_params-485"><span class="linenos">485</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Carg.iter_params-485"><a href="#Carg.iter_params-485"><span class="linenos">485</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="Carg.iter_params-486"><a href="#Carg.iter_params-486"><span class="linenos">486</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the command argument.</span>
 </span><span id="Carg.iter_params-487"><a href="#Carg.iter_params-487"><span class="linenos">487</span></a>
 </span><span id="Carg.iter_params-488"><a href="#Carg.iter_params-488"><span class="linenos">488</span></a><span class="sd">        Yields:</span>
@@ -2985,7 +2985,7 @@ Args within groups should be joined without delimiter.</p>
     </div>
     <a class="headerlink" href="#ConditionalGroup"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="ConditionalGroup-496"><a href="#ConditionalGroup-496"><span class="linenos">496</span></a><span class="nd">@dataclass</span>
-</span><span id="ConditionalGroup-497"><a href="#ConditionalGroup-497"><span class="linenos">497</span></a><span class="k">class</span> <span class="nc">ConditionalGroup</span><span class="p">:</span>
+</span><span id="ConditionalGroup-497"><a href="#ConditionalGroup-497"><span class="linenos">497</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ConditionalGroup</span><span class="p">:</span>
 </span><span id="ConditionalGroup-498"><a href="#ConditionalGroup-498"><span class="linenos">498</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a group of command arguments.</span>
 </span><span id="ConditionalGroup-499"><a href="#ConditionalGroup-499"><span class="linenos">499</span></a>
 </span><span id="ConditionalGroup-500"><a href="#ConditionalGroup-500"><span class="linenos">500</span></a><span class="sd">    Arguments will only be emitted if at least one parameter within is defined, or if there are no parameters.</span>
@@ -2999,7 +2999,7 @@ Args within groups should be joined without delimiter.</p>
 </span><span id="ConditionalGroup-508"><a href="#ConditionalGroup-508"><span class="linenos">508</span></a><span class="sd">    Args within groups should be joined without delimiter.</span>
 </span><span id="ConditionalGroup-509"><a href="#ConditionalGroup-509"><span class="linenos">509</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="ConditionalGroup-510"><a href="#ConditionalGroup-510"><span class="linenos">510</span></a>
-</span><span id="ConditionalGroup-511"><a href="#ConditionalGroup-511"><span class="linenos">511</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span id="ConditionalGroup-511"><a href="#ConditionalGroup-511"><span class="linenos">511</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="ConditionalGroup-512"><a href="#ConditionalGroup-512"><span class="linenos">512</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the conditional group.</span>
 </span><span id="ConditionalGroup-513"><a href="#ConditionalGroup-513"><span class="linenos">513</span></a>
 </span><span id="ConditionalGroup-514"><a href="#ConditionalGroup-514"><span class="linenos">514</span></a><span class="sd">        Yields:</span>
@@ -3067,7 +3067,7 @@ Args within groups should be joined without delimiter.</p>
 
     </div>
     <a class="headerlink" href="#ConditionalGroup.iter_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ConditionalGroup.iter_params-511"><a href="#ConditionalGroup.iter_params-511"><span class="linenos">511</span></a>    <span class="k">def</span> <span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ConditionalGroup.iter_params-511"><a href="#ConditionalGroup.iter_params-511"><span class="linenos">511</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">iter_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Param</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span id="ConditionalGroup.iter_params-512"><a href="#ConditionalGroup.iter_params-512"><span class="linenos">512</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all parameters in the conditional group.</span>
 </span><span id="ConditionalGroup.iter_params-513"><a href="#ConditionalGroup.iter_params-513"><span class="linenos">513</span></a>
 </span><span id="ConditionalGroup.iter_params-514"><a href="#ConditionalGroup.iter_params-514"><span class="linenos">514</span></a><span class="sd">        Yields:</span>
@@ -3103,7 +3103,7 @@ Args within groups should be joined without delimiter.</p>
     </div>
     <a class="headerlink" href="#StdOutErrAsStringOutput"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="StdOutErrAsStringOutput-521"><a href="#StdOutErrAsStringOutput-521"><span class="linenos">521</span></a><span class="nd">@dataclass</span>
-</span><span id="StdOutErrAsStringOutput-522"><a href="#StdOutErrAsStringOutput-522"><span class="linenos">522</span></a><span class="k">class</span> <span class="nc">StdOutErrAsStringOutput</span><span class="p">:</span>
+</span><span id="StdOutErrAsStringOutput-522"><a href="#StdOutErrAsStringOutput-522"><span class="linenos">522</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StdOutErrAsStringOutput</span><span class="p">:</span>
 </span><span id="StdOutErrAsStringOutput-523"><a href="#StdOutErrAsStringOutput-523"><span class="linenos">523</span></a>    <span class="n">id_</span><span class="p">:</span> <span class="n">IdType</span>
 </span><span id="StdOutErrAsStringOutput-524"><a href="#StdOutErrAsStringOutput-524"><span class="linenos">524</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Unique ID of the output. Unique including param IDs.&quot;&quot;&quot;</span>
 </span><span id="StdOutErrAsStringOutput-525"><a href="#StdOutErrAsStringOutput-525"><span class="linenos">525</span></a>
@@ -3182,7 +3182,7 @@ Args within groups should be joined without delimiter.</p>
     </div>
     <a class="headerlink" href="#Interface"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Interface-533"><a href="#Interface-533"><span class="linenos">533</span></a><span class="nd">@dataclass</span>
-</span><span id="Interface-534"><a href="#Interface-534"><span class="linenos">534</span></a><span class="k">class</span> <span class="nc">Interface</span><span class="p">:</span>
+</span><span id="Interface-534"><a href="#Interface-534"><span class="linenos">534</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Interface</span><span class="p">:</span>
 </span><span id="Interface-535"><a href="#Interface-535"><span class="linenos">535</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an interface.&quot;&quot;&quot;</span>
 </span><span id="Interface-536"><a href="#Interface-536"><span class="linenos">536</span></a>
 </span><span id="Interface-537"><a href="#Interface-537"><span class="linenos">537</span></a>    <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span>
