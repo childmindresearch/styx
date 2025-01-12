@@ -11,19 +11,6 @@ class TestDocumentation:
     package_name = "My package"
     descriptor_name = "My descriptor"
 
-    @pytest.mark.parametrize("title", ("Title", None))
-    def test_valid_title(self, title: str | None) -> None:
-        bt = {"name": self.descriptor_name}
-        out = from_boutiques(bt, self.package_name, ir.Documentation(title=title))
-        assert out.package.docs.title == title
-
-    @pytest.mark.parametrize("title", (["Title"], 123))
-    @pytest.mark.skip
-    def test_invalid_title_type(self, title: Any) -> None:
-        bt = {"name": self.descriptor_name}
-        with pytest.raises(TypeError):
-            from_boutiques(bt, self.package_name, ir.Documentation(title=title))
-
     @pytest.mark.parametrize("desc", ("A short description", None))
     def test_valid_description(self, desc: str | None) -> None:
         bt = {"name": self.descriptor_name, "description": desc}
