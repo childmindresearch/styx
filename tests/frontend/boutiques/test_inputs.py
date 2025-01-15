@@ -2,7 +2,7 @@ import styx.ir.core as ir
 from styx.frontend.boutiques.core import from_boutiques
 
 
-class TestCommandLine:
+class TestInputs:
     package_name = "My package"
     descriptor_name = "My descriptor"
 
