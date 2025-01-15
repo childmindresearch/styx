@@ -28,19 +28,14 @@ docs = ["pdoc"]
 styx = "styx.main:main"
 
 [tool.pytest.ini_options]
-pythonpath = [
-  "src"
-]
+pythonpath = ["src"]
 
 [tool.mypy]
 ignore_missing_imports = true
 
 [tool.ruff]
 preview = true
-extend-exclude = [
-  "examples",
-  "src/styx/boutiques/model.py"
-]
+extend-exclude = ["examples", "src/styx/boutiques/model.py"]
 line-length = 120
 indent-width = 4
 src = ["src"]
@@ -62,7 +57,9 @@ unfixable = []
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = []
+"tests/**/*.py" = [
+  "ANN401"  # Dynamic type expression ('Any')
+]
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]
