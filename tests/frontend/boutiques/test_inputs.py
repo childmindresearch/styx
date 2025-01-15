@@ -2,7 +2,12 @@ import styx.ir.core as ir
 from styx.frontend.boutiques.core import from_boutiques
 
 
-class TestInputs:
+class TestPrimitiveParams:
+    """Main difference in primitive types between boutiques and IR are:
+    - IR has separate int and float types, boutiques just "Number"
+    - Boutiques "Flag" type maps to IR bool which is encoded differently
+    """
+
     package_name = "My package"
     descriptor_name = "My descriptor"
 
