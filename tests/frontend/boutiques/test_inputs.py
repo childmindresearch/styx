@@ -3,9 +3,12 @@ from styx.frontend.boutiques.core import from_boutiques
 
 
 class TestPrimitiveParams:
-    """Main difference in primitive types between boutiques and IR are:
+    """Test primitive param types.
+
+    Main difference in primitive types between boutiques and IR are:
+
     - IR has separate int and float types, boutiques just "Number"
-    - Boutiques "Flag" type maps to IR bool which is encoded differently
+    - Boutiques "Flag" type maps to IR bool which is encoded differently.
     """
 
     package_name = "My package"
@@ -120,4 +123,5 @@ class TestPrimitiveParams:
         assert isinstance(param.body, ir.Param.Bool)
         assert param.body.value_true == ["--x"]
         assert param.body.value_false == []
+        assert not param.nullable
         assert param.default_value is False  # check identity to ensure it's False and not None
