@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Mapping, Sequence, TypeAlias
 
 import styx.ir.core as ir
-from styx.backend.generic.linebuffer import LineBuffer
+from styx.backend.generic.linebuffer import LineBuffer, indent
 from styx.backend.generic.model import GenericArg, GenericDataClass, GenericFunc, GenericModule, GenericNamedTuple
 
 if typing.TYPE_CHECKING:
@@ -468,6 +468,42 @@ class LanguageProvider(ABC):
         """Collect outputs for a sub-struct."""
         ...
 
+    # @abstractmethod
+    def dict_declare(self, dict_symbol: str, items: list[tuple[ExprType, ExprType]] | None = None) -> LineBuffer:
+        """Construct dictionary."""
+        if items is None or len(items) == 0:
+            return [f"{dict_symbol} = {{}}"]
+        return [f"{dict_symbol} = {{", *indent([f"{key}: {value}," for key, value in items]), "}"]
+
+    # @abstractmethod
+    def dict_set(self, dict_symbol: str, key_expr: str, value_expr: str) -> LineBuffer:
+        return [f"{dict_symbol}[{key_expr}] = {value_expr}"]
+
+    # @abstractmethod
+    def dict_get(self, dict_symbol: str, key_expr: str) -> ExprType:
+        return f"{dict_symbol}[{key_expr}]"
+
+    # @abstractmethod
+    def dict_get_or(self, dict_symbol: str, key_expr: str, alt_expr: str | None = None) -> ExprType:
+        if alt_expr is None or alt_expr == self.expr_null():
+            return f"{dict_symbol}.get({key_expr})"
+        else:
+            return f"{dict_symbol}.get({key_expr}, {alt_expr})"
+
+    # @abstractmethod
+    def dict_has_key(self, dict_symbol: str, key_expr: str) -> ExprType:
+        return f"{key_expr} in {dict_symbol}"
+
+    def dict_declare_type(self, dict_symbol: str, items: list[tuple[ExprType, ExprType]] | None = None) -> LineBuffer:
+        """Construct dictionary."""
+        if items is None or len(items) == 0:
+            return [f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{}})"]
+        return [
+            f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{",
+            *indent([f"{key}: {value}," for key, value in items]),
+            "})",
+        ]
+
     # ------------------------------ IR param operations ------------------------------ #
 
     def param_default_value(self, param: ir.Param) -> str | None:
@@ -489,6 +525,19 @@ class LanguageProvider(ABC):
 
     @abstractmethod
     def param_var_is_set_by_user(
+        self,
+        param: ir.Param,
+        symbol: str,
+        enbrace_statement: bool = False,
+    ) -> str | None:
+        """Return a language expression that checks if the variable is set by the user.
+
+        Returns `None` if the param must always be specified.
+        """
+        ...
+
+    @abstractmethod
+    def param_is_set_by_user(
         self,
         param: ir.Param,
         symbol: str,

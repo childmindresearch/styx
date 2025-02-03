@@ -22,7 +22,7 @@ def _param_compile_constraint_checks(
     lang: LanguageProvider, buf: LineBuffer, param: ir.Param, lookup: LookupParam
 ) -> None:
     """Generate input constraint validation code for an input argument."""
-    py_symbol = lookup.py_symbol[param.base.id_]
+    py_symbol = lookup.expr_param_symbol_alias[param.base.id_]
 
     min_value: float | int | None = None
     max_value: float | int | None = None

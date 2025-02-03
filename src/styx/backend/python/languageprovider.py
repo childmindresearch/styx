@@ -194,11 +194,12 @@ class PythonLanguageProvider(LanguageProvider):
             opt = ""
             if struct.nullable:
                 opt = f" if {struct_symbol} else None"
-            # Need to check for attr because some alts might have outputs others not.
-            # todo: think about alternative solutions
-            return f'[i.outputs(execution) if hasattr(i, "outputs") else None for i in {struct_symbol}]{opt}'
+            return (
+                f'[dyn_outputs(i["__STYXTYPE__"])(i, execution) '
+                f'if dyn_outputs(i["__STYXTYPE__"]) else None for i in {struct_symbol}]{opt}'
+            )
 
-        o = f"{struct_symbol}.outputs(execution)"
+        o = f'dyn_outputs({struct_symbol}["__STYXTYPE__"])({struct_symbol}, execution)'
         if struct.nullable:
             o = f"{o} if {struct_symbol} else None"
         return o
@@ -422,7 +423,7 @@ class PythonLanguageProvider(LanguageProvider):
                         extra_args += ", mutable=True"
                     return MStr(f"execution.input_file({symbol}{extra_args})", False)
                 if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                    return MStr(f"{symbol}.run(execution)", True)
+                    return MStr(f'dyn_cargs({symbol}["__STYXTYPE__"])({symbol}, execution)', True)
                 assert False
 
             if param.list_.join is None:
@@ -440,7 +441,9 @@ class PythonLanguageProvider(LanguageProvider):
                         extra_args += ", mutable=True"
                     return MStr(f"[execution.input_file(f{extra_args}) for f in {symbol}]", True)
                 if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                    return MStr(f"[a for c in [s.run(execution) for s in {symbol}] for a in c]", True)
+                    return MStr(
+                        f'[a for c in [dyn_cargs(s["__STYXTYPE__"])(s, execution) for s in {symbol}] for a in c]', True
+                    )
                 assert False
 
             # arg.data.list_separator is not None
@@ -459,12 +462,31 @@ class PythonLanguageProvider(LanguageProvider):
                     extra_args += ", mutable=True"
                 return MStr(f"{sep_join}([execution.input_file(f{extra_args}) for f in {symbol}])", False)
             if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                return MStr(f"{sep_join}([a for c in [s.run(execution) for s in {symbol}] for a in c])", False)
+                return MStr(
+                    f'{sep_join}([a for c in [dyn_cargs(s["__STYXTYPE__"])(s, execution) '
+                    f"for s in {symbol}] for a in c])",
+                    False,
+                )
             assert False
 
         return _val()
 
     def param_var_is_set_by_user(self, param: ir.Param, symbol: str, enbrace_statement: bool = False) -> str | None:
+        if param.nullable:
+            if enbrace_statement:
+                return f"({symbol} is not None)"
+            return f"{symbol} is not None"
+
+        if isinstance(param.body, ir.Param.Bool):
+            if len(param.body.value_true) > 0 and len(param.body.value_false) == 0:
+                return symbol
+            if len(param.body.value_false) > 0 and len(param.body.value_true) == 0:
+                if enbrace_statement:
+                    return f"(not {symbol})"
+                return f"not {symbol}"
+        return None
+
+    def param_is_set_by_user(self, param: ir.Param, symbol: str, enbrace_statement: bool = False) -> str | None:
         if param.nullable:
             if enbrace_statement:
                 return f"({symbol} is not None)"

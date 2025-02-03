@@ -197,6 +197,17 @@ class Param(Generic[T]):
             for e in self.body.alts:
                 yield from e.iter_params_recursively(False)
 
+    def iter_structs_recursively(self, skip_self: bool = True) -> Generator[Param[Param.Struct], Any, None]:
+        """Iterate through all child-structs recursively."""
+        if not skip_self and isinstance(self.body, Param.Struct):
+            yield self  # type: ignore
+        if isinstance(self.body, Param.Struct):
+            for e in self.body.iter_params():
+                yield from e.iter_structs_recursively(False)
+        elif isinstance(self.body, Param.StructUnion):
+            for e in self.body.alts:
+                yield from e.iter_structs_recursively(False)
+
     @dataclass
     class StructUnion:
         """Represents a union of struct parameters."""

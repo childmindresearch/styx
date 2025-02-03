@@ -1,189 +1,111 @@
 import styx.ir.core as ir
 from styx.backend.generic.documentation import docs_to_docstring
-from styx.backend.generic.gen.constraints import struct_compile_constraint_checks
 from styx.backend.generic.gen.lookup import LookupParam
 from styx.backend.generic.gen.metadata import generate_static_metadata
 from styx.backend.generic.languageprovider import LanguageProvider, MStr
 from styx.backend.generic.linebuffer import LineBuffer
-from styx.backend.generic.model import GenericArg, GenericDataClass, GenericFunc, GenericModule, GenericNamedTuple
+from styx.backend.generic.model import GenericArg, GenericFunc, GenericModule, GenericNamedTuple
 from styx.backend.generic.scope import Scope
 from styx.backend.generic.utils import enquote, struct_has_outputs
 
 
-def _compile_struct(
-    lang: LanguageProvider,
-    struct: ir.Param[ir.Param.Struct],
-    interface_module: GenericModule,
-    lookup: LookupParam,
-    metadata_symbol: str,
-    root_function: bool,
-    stdout_as_string_output: ir.StdOutErrAsStringOutput | None = None,
-    stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
-) -> None:
-    has_outputs = root_function or struct_has_outputs(struct)
-
-    outputs_type = lookup.py_output_type[struct.base.id_]
-
-    func_cargs_building: GenericFunc
-    if root_function:
-        func_cargs_building = GenericFunc(
-            name=lookup.py_type[struct.base.id_],
-            return_type=outputs_type,
-            return_descr=f"NamedTuple of outputs (described in `{outputs_type}`).",
-            docstring_body=docs_to_docstring(struct.base.docs),
-        )
-        pyargs = func_cargs_building.args
-    else:
-        func_cargs_building = GenericFunc(
-            name="run",
-            docstring_body="Build command line arguments. This method is called by the main command.",
-            return_type=lang.type_string_list(),
-            return_descr="Command line arguments",
-            args=[
-                GenericArg(
-                    name=lang.expr_self(),
-                    type=None,
-                    default=None,
-                    docstring="The sub-command object.",
-                ),
-                GenericArg(
-                    name=lang.symbol_execution(),
-                    type=lang.type_execution(),
-                    default=None,
-                    docstring="The execution object.",
-                ),
-            ],
-        )
-        struct_class: GenericDataClass = GenericDataClass(
-            name=lookup.py_struct_type[struct.base.id_],
-            docstring=docs_to_docstring(struct.base.docs),
-            methods=[func_cargs_building],
-        )
-        if has_outputs:
-            func_outputs = GenericFunc(
-                name="outputs",
-                docstring_body="Collect output file paths.",
-                return_type=outputs_type,
-                return_descr=f"NamedTuple of outputs (described in `{outputs_type}`).",
-                args=[
-                    GenericArg(name=lang.expr_self(), type=None, default=None, docstring="The sub-command object."),
-                    GenericArg(
-                        name=lang.symbol_execution(),
-                        type=lang.type_execution(),
-                        default=None,
-                        docstring="The execution object.",
-                    ),
-                ],
-            )
-        pyargs = struct_class.fields
-
-    # Collect param python symbols
-    for elem in struct.body.iter_params():
-        symbol = lookup.py_symbol[elem.base.id_]
-        pyargs.append(
-            GenericArg(
-                name=symbol,
-                type=lookup.py_type[elem.base.id_],
-                default=lang.param_default_value(elem),
-                docstring=elem.base.docs.description,
-            )
-        )
-
-        if isinstance(elem.body, ir.Param.Struct):
-            _compile_struct(
-                lang=lang,
-                struct=elem,
-                interface_module=interface_module,
-                lookup=lookup,
-                metadata_symbol=metadata_symbol,
-                root_function=False,
-            )
-        elif isinstance(elem.body, ir.Param.StructUnion):
-            for child in elem.body.alts:
-                _compile_struct(
-                    lang=lang,
-                    struct=child,
-                    interface_module=interface_module,
-                    lookup=lookup,
-                    metadata_symbol=metadata_symbol,
-                    root_function=False,
-                )
-
-    struct_compile_constraint_checks(lang=lang, func=func_cargs_building, struct=struct, lookup=lookup)
-
-    if has_outputs:
-        _compile_outputs_class(
-            lang=lang,
-            struct=struct,
-            interface_module=interface_module,
-            lookup=lookup,
-            stdout_as_string_output=stdout_as_string_output,
-            stderr_as_string_output=stderr_as_string_output,
-        )
-
-    if root_function:
-        func_cargs_building.body.extend([
-            *lang.runner_declare("runner"),
-            *lang.execution_declare("execution", metadata_symbol),
-        ])
-
-    _compile_cargs_building(lang, struct, lookup, func_cargs_building, access_via_self=not root_function)
-
-    if root_function:
-        pyargs.append(
-            GenericArg(
-                name="runner",
-                type=lang.type_optional(lang.type_runner()),
-                default=lang.expr_null(),
-                docstring="Command runner",
-            )
-        )
-        _compile_outputs_building(
-            lang=lang,
-            struct=struct,
-            func=func_cargs_building,
-            lookup=lookup,
-            access_via_self=False,
-            stderr_as_string_output=stderr_as_string_output,
-            stdout_as_string_output=stdout_as_string_output,
-        )
-        func_cargs_building.body.extend([
-            *lang.execution_run(
-                execution_symbol="execution",
-                cargs_symbol="cargs",
-                stdout_output_symbol=lookup.py_output_field_symbol[stdout_as_string_output.id_]
-                if stdout_as_string_output
-                else None,
-                stderr_output_symbol=lookup.py_output_field_symbol[stderr_as_string_output.id_]
-                if stderr_as_string_output
-                else None,
-            ),
-            lang.return_statement("ret"),
-        ])
-        interface_module.funcs_and_classes.append(func_cargs_building)
-    else:
-        if has_outputs:
-            _compile_outputs_building(
-                lang=lang,
-                struct=struct,
-                func=func_outputs,
-                lookup=lookup,
-                access_via_self=True,
-            )
-            func_outputs.body.extend([lang.return_statement("ret")])
-            struct_class.methods.append(func_outputs)
-        func_cargs_building.body.extend([lang.return_statement("cargs")])
-        interface_module.funcs_and_classes.append(struct_class)
-        interface_module.exports.append(struct_class.name)
-
-
-def _compile_cargs_building(
+def _compile_build_params(
     lang: LanguageProvider,
     param: ir.Param[ir.Param.Struct],
     lookup: LookupParam,
-    func: GenericFunc,
-    access_via_self: bool,
-) -> None:
+) -> GenericFunc:
+    func = GenericFunc(
+        name=lookup.expr_func_build_params[param.base.id_],
+        docstring_body="Build parameters.",
+        return_type=lookup.expr_params_dict_type[param.base.id_],
+        return_descr="Parameter dictionary",
+        args=[],
+    )
+
+    for p in param.body.iter_params():
+        symbol = lookup.expr_param_symbol_alias[p.base.id_]
+        func.args.append(
+            GenericArg(
+                name=symbol,
+                type=lookup.expr_param_type[p.base.id_],
+                default=lang.param_default_value(p),
+                docstring=p.base.docs.description,
+            )
+        )
+
+    params_symbol = "params"
+
+    param_items: list[tuple[str, str]] = [(lang.expr_str("__STYXTYPE__"), lang.expr_str(param.base.name))]
+    for p in param.body.iter_params():
+        if p.nullable:
+            continue
+        param_items.append((lang.expr_str(p.base.name), lookup.expr_param_symbol_alias[p.base.id_]))
+
+    func.body.extend(lang.dict_declare(params_symbol, param_items))
+
+    for p in param.body.iter_params():
+        if not p.nullable:
+            continue
+        if (
+            param_is_set_expr := lang.param_var_is_set_by_user(p, lookup.expr_param_symbol_alias[p.base.id_], False)
+        ) is not None:
+            func.body.extend(
+                lang.if_else_block(
+                    param_is_set_expr,
+                    [
+                        *lang.dict_set(
+                            params_symbol, lang.expr_str(p.base.name), lookup.expr_param_symbol_alias[p.base.id_]
+                        )
+                    ],
+                )
+            )
+
+    func.body.append(lang.return_statement(params_symbol))
+
+    return func
+
+
+def _compile_param_dict_type(
+    lang: LanguageProvider,
+    param: ir.Param[ir.Param.Struct],
+    lookup: LookupParam,
+) -> list[str]:
+    param_items: list[tuple[str, str]] = [(lang.expr_str("__STYX_TYPE__"), lang.type_literal_union([param.base.name]))]
+    for p in param.body.iter_params():
+        _type = lookup.expr_param_type[p.base.id_]
+        if p.nullable:
+            _type = f"typing.NotRequired[{_type}]"
+        param_items.append((lang.expr_str(p.base.name), _type))
+
+    return lang.dict_declare_type(lookup.expr_params_dict_type[param.base.id_], param_items)
+
+
+def _compile_build_cargs(
+    lang: LanguageProvider,
+    param: ir.Param[ir.Param.Struct],
+    lookup: LookupParam,
+) -> GenericFunc:
+    func = GenericFunc(
+        name=lookup.expr_func_build_cargs[param.base.id_],
+        docstring_body="Build command-line arguments from parameters.",
+        return_type=lang.type_string_list(),
+        return_descr="Command-line arguments.",
+        args=[
+            GenericArg(
+                name="params",
+                type=lookup.expr_params_dict_type[param.base.id_],
+                default=None,
+                docstring="The parameters.",
+            ),
+            GenericArg(
+                name=lang.symbol_execution(),
+                type=lang.type_execution(),
+                default=None,
+                docstring="The execution object for resolving input paths.",
+            ),
+        ],
+    )
+
     func.body.extend(lang.cargs_declare("cargs"))
 
     for group in param.body.groups:
@@ -205,9 +127,8 @@ def _compile_cargs_building(
                     carg_exprs.append(MStr(lang.expr_literal(token), False))
                     carg_exprs_maybe_null.append(MStr(lang.expr_literal(token), False))
                     continue
-                elem_symbol = lookup.py_symbol[token.base.id_]
-                if access_via_self:
-                    elem_symbol = lang.expr_access_attr_via_self(elem_symbol)
+                # elem_symbol = lookup.py_symbol[token.base.id_]
+                elem_symbol = lang.dict_get_or("params", lang.expr_str(token.base.name))
                 param_as_mstr = lang.param_var_to_mstr(token, elem_symbol)
                 carg_exprs.append(param_as_mstr)
                 if (param_is_set_expr := lang.param_var_is_set_by_user(token, elem_symbol, False)) is not None:
@@ -249,6 +170,10 @@ def _compile_cargs_building(
         else:
             func.body.extend(buf_appending)
 
+    func.body.append(lang.return_statement("cargs"))
+
+    return func
+
 
 def _compile_outputs_class(
     lang: LanguageProvider,
@@ -259,8 +184,8 @@ def _compile_outputs_class(
     stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
 ) -> None:
     outputs_class: GenericNamedTuple = GenericNamedTuple(
-        name=lookup.py_output_type[struct.base.id_],
-        docstring=f"Output object returned when calling `{lookup.py_type[struct.base.id_]}(...)`.",
+        name=lookup.expr_struct_output_type[struct.base.id_],
+        docstring=f"Output object returned when calling `{lookup.expr_param_type[struct.base.id_]}(...)`.",
     )
     outputs_class.fields.append(
         GenericArg(
@@ -276,7 +201,7 @@ def _compile_outputs_class(
             continue
         outputs_class.fields.append(
             GenericArg(
-                name=lookup.py_output_field_symbol[stdout_stderr_output.id_],
+                name=lookup.expr_output_field_symbol[stdout_stderr_output.id_],
                 type=lang.type_string_list(),
                 default=None,
                 docstring=stdout_stderr_output.docs.description,
@@ -284,7 +209,7 @@ def _compile_outputs_class(
         )
 
     for output in struct.base.outputs:
-        output_symbol = lookup.py_output_field_symbol[output.id_]
+        output_symbol = lookup.expr_output_field_symbol[output.id_]
 
         # Optional if any of its param references is optional
         optional = False
@@ -309,13 +234,13 @@ def _compile_outputs_class(
     for sub_struct in struct.body.iter_params():
         if isinstance(sub_struct.body, ir.Param.Struct):
             if struct_has_outputs(sub_struct):
-                output_type = lookup.py_output_type[sub_struct.base.id_]
+                output_type = lookup.expr_struct_output_type[sub_struct.base.id_]
                 if sub_struct.list_:
                     output_type = lang.type_list(output_type)
                 if sub_struct.nullable:
                     output_type = lang.type_optional(output_type)
 
-                output_symbol = lookup.py_output_field_symbol[sub_struct.base.id_]
+                output_symbol = lookup.expr_output_field_symbol[sub_struct.base.id_]
 
                 input_type = lookup.py_struct_type[sub_struct.base.id_]
                 docs_append = ""
@@ -333,7 +258,7 @@ def _compile_outputs_class(
         elif isinstance(sub_struct.body, ir.Param.StructUnion):
             if any([struct_has_outputs(s) for s in sub_struct.body.alts]):
                 alt_types = [
-                    lookup.py_output_type[sub_command.base.id_]
+                    lookup.expr_struct_output_type[sub_command.base.id_]
                     for sub_command in sub_struct.body.alts
                     if struct_has_outputs(sub_command)
                 ]
@@ -345,7 +270,7 @@ def _compile_outputs_class(
                     if sub_struct.nullable:
                         output_type = lang.type_optional(output_type)
 
-                    output_symbol = lookup.py_output_field_symbol[sub_struct.base.id_]
+                    output_symbol = lookup.expr_output_field_symbol[sub_struct.base.id_]
 
                     alt_input_types = [
                         lookup.py_struct_type[sub_command.base.id_]
@@ -370,55 +295,70 @@ def _compile_outputs_class(
     interface_module.exports.append(outputs_class.name)
 
 
-def _compile_outputs_building(
+def _compile_func_build_outputs(
     lang: LanguageProvider,
-    struct: ir.Param[ir.Param.Struct],
-    func: GenericFunc,
+    param: ir.Param[ir.Param.Struct],
     lookup: LookupParam,
-    access_via_self: bool = False,
     stdout_as_string_output: ir.StdOutErrAsStringOutput | None = None,
     stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
-) -> None:
+) -> GenericFunc:
     """Generate the outputs building code."""
+    func = GenericFunc(
+        name=lookup.expr_func_build_outputs[param.base.id_],
+        docstring_body="Build outputs object containing output file paths and possibly stdout/stderr.",
+        return_type=lookup.expr_struct_output_type[param.base.id_],
+        return_descr="Outputs object.",
+        args=[
+            GenericArg(
+                name="params",
+                type=lookup.expr_params_dict_type[param.base.id_],
+                default=None,
+                docstring="The parameters.",
+            ),
+            GenericArg(
+                name=lang.symbol_execution(),
+                type=lang.type_execution(),
+                default=None,
+                docstring="The execution object for resolving input paths.",
+            ),
+        ],
+    )
+
     members = {}
 
     def _py_get_val(
         output_param_reference: ir.OutputParamReference,
     ) -> str:
-        param = lookup.param[output_param_reference.ref_id]
-        symbol = lookup.py_symbol[param.base.id_]
-
-        substitute = symbol
-        if access_via_self:
-            substitute = lang.expr_access_attr_via_self(substitute)
+        p = lookup.param[output_param_reference.ref_id]
+        symbol = lang.dict_get_or("params", lang.expr_str(p.base.name))
 
         if param.list_:
-            raise Exception(f"Output path template replacements cannot be lists. ({param.base.name})")
+            raise Exception(f"Output path template replacements cannot be lists. ({p.base.name})")
 
-        if isinstance(param.body, ir.Param.String):
-            return lang.expr_remove_suffixes(substitute, output_param_reference.file_remove_suffixes)
+        if isinstance(p.body, ir.Param.String):
+            return lang.expr_remove_suffixes(symbol, output_param_reference.file_remove_suffixes)
 
-        if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-            return lang.expr_numeric_to_str(substitute)
+        if isinstance(p.body, (ir.Param.Int, ir.Param.Float)):
+            return lang.expr_numeric_to_str(symbol)
 
-        if isinstance(param.body, ir.Param.File):
+        if isinstance(p.body, ir.Param.File):
             return lang.expr_remove_suffixes(
-                lang.expr_path_get_filename(substitute), output_param_reference.file_remove_suffixes
+                lang.expr_path_get_filename(symbol), output_param_reference.file_remove_suffixes
             )
 
-        if isinstance(param.body, ir.Param.Bool):
-            raise Exception(f"Unsupported input type for output path template of '{param.base.name}'.")
-        assert False
+        # if isinstance(p.body, ir.Param.Bool):
+        #    raise Exception(f"Unsupported input type for output path template of '{p.base.name}'.")
+        raise Exception(f"Unsupported output type for output path template of '{p.base.name}'.")
 
     for stdout_stderr_output in (stdout_as_string_output, stderr_as_string_output):
         if stdout_stderr_output is None:
             continue
-        output_symbol = lookup.py_output_field_symbol[stdout_stderr_output.id_]
+        output_symbol = lookup.expr_output_field_symbol[stdout_stderr_output.id_]
 
         members[output_symbol] = lang.expr_empty_str_list()
 
-    for output in struct.base.outputs:
-        output_symbol = lookup.py_output_field_symbol[output.id_]
+    for output in param.base.outputs:
+        output_symbol = lookup.expr_output_field_symbol[output.id_]
 
         output_segments: list[str] = []
         conditions = []
@@ -429,7 +369,8 @@ def _compile_outputs_building(
             output_segments.append(_py_get_val(token))
 
             ostruct = lookup.param[token.ref_id]
-            param_symbol = lookup.py_symbol[ostruct.base.id_]
+            # param_symbol = lookup.expr_param_symbol_alias[ostruct.base.id_]
+            param_symbol = lang.dict_get_or("params", lang.expr_str(ostruct.base.name))
             if (py_var_is_set_by_user := lang.param_var_is_set_by_user(ostruct, param_symbol, False)) is not None:
                 conditions.append(py_var_is_set_by_user)
 
@@ -443,7 +384,7 @@ def _compile_outputs_building(
             members[output_symbol] = lang.resolve_output_file("execution", lang.expr_concat_strs(output_segments))
 
     # sub struct outputs
-    for sub_struct in struct.body.iter_params():
+    for sub_struct in param.body.iter_params():
         has_outputs = False
         if isinstance(sub_struct.body, ir.Param.Struct):
             has_outputs = struct_has_outputs(sub_struct)
@@ -452,19 +393,317 @@ def _compile_outputs_building(
         if not has_outputs:
             continue
 
-        output_symbol = lookup.py_output_field_symbol[sub_struct.base.id_]
-        output_symbol_resolved = lookup.py_symbol[sub_struct.base.id_]
-        if access_via_self:
-            output_symbol_resolved = lang.expr_access_attr_via_self(output_symbol_resolved)
+        output_symbol = lookup.expr_output_field_symbol[sub_struct.base.id_]
+        output_symbol_resolved = lookup.expr_param_symbol_alias[sub_struct.base.id_]
 
         members[output_symbol] = lang.struct_collect_outputs(sub_struct, output_symbol_resolved)
 
     lang.generate_ret_object_creation(
         buf=func.body,
         execution_symbol="execution",
-        output_type=lookup.py_output_type[struct.base.id_],
+        output_type=lookup.expr_struct_output_type[param.base.id_],
         members=members,
     )
+    func.body.append(lang.return_statement("ret"))
+
+    return func
+
+
+def _compile_func_execute(
+    lang: LanguageProvider,
+    struct: ir.Param[ir.Param.Struct],
+    lookup: LookupParam,
+    metadata_symbol: str,
+    stdout_as_string_output: ir.StdOutErrAsStringOutput | None = None,
+    stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
+) -> GenericFunc:
+    struct_has_outputs(struct)
+
+    outputs_type = lookup.expr_struct_output_type[struct.base.id_]
+
+    func = GenericFunc(
+        name=lookup.expr_func_execute[struct.base.id_],
+        return_type=outputs_type,
+        return_descr=f"NamedTuple of outputs (described in `{outputs_type}`).",  # todo
+        docstring_body=docs_to_docstring(struct.base.docs),
+        args=[
+            GenericArg(
+                name="params",
+                type=lookup.expr_params_dict_type[struct.base.id_],
+                default=None,
+                docstring="The parameters.",
+            ),
+            GenericArg(
+                name=lang.symbol_execution(),
+                type=lang.type_execution(),
+                default=None,
+                docstring="The execution object.",
+            ),
+        ],
+    )
+
+    func.body.extend([
+        "# validate constraint checks (or after middlewares?)",
+        f"cargs = {lookup.expr_func_build_cargs[struct.base.id_]}(params, execution)",
+        f"ret = {lookup.expr_func_build_outputs[struct.base.id_]}(params, execution)",
+    ])
+
+    func.body.extend([
+        *lang.execution_run(
+            execution_symbol="execution",
+            cargs_symbol="cargs",
+            stdout_output_symbol=lookup.expr_output_field_symbol[stdout_as_string_output.id_]
+            if stdout_as_string_output
+            else None,
+            stderr_output_symbol=lookup.expr_output_field_symbol[stderr_as_string_output.id_]
+            if stderr_as_string_output
+            else None,
+        ),
+        lang.return_statement("ret"),
+    ])
+    return func
+
+
+def _compile_func_wrapper_root(
+    lang: LanguageProvider,
+    struct: ir.Param[ir.Param.Struct],
+    lookup: LookupParam,
+    metadata_symbol: str,
+    stdout_as_string_output: ir.StdOutErrAsStringOutput | None = None,
+    stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
+) -> GenericFunc:
+    outputs_type = lookup.expr_struct_output_type[struct.base.id_]
+
+    func = GenericFunc(
+        name=lookup.expr_param_type[struct.base.id_],
+        return_type=outputs_type,
+        return_descr=f"NamedTuple of outputs (described in `{outputs_type}`).",
+        docstring_body=docs_to_docstring(struct.base.docs),
+    )
+
+    pyargs = func.args
+
+    # Collect param python symbols
+    for elem in struct.body.iter_params():
+        symbol = lookup.expr_param_symbol_alias[elem.base.id_]
+        pyargs.append(
+            GenericArg(
+                name=symbol,
+                type=lookup.expr_param_type[elem.base.id_],
+                default=lang.param_default_value(elem),
+                docstring=elem.base.docs.description,
+            )
+        )
+
+        # if isinstance(elem.body, ir.Param.Struct):
+        # todo
+    # elif isinstance(elem.body, ir.Param.StructUnion):
+    # todo
+
+    func.body.extend([
+        *lang.runner_declare("runner"),
+        *lang.execution_declare("execution", metadata_symbol),
+    ])
+
+    args = [lookup.expr_param_symbol_alias[elem.base.id_] for elem in struct.body.iter_params()]
+
+    func.body.extend([
+        f"params = {lookup.expr_func_build_params[struct.base.id_]}({', '.join([a + '=' + a for a in args])})",
+        lang.return_statement(f"{lookup.expr_func_execute[struct.base.id_]}(params, execution)"),
+    ])
+
+    pyargs.append(
+        GenericArg(
+            name="runner",
+            type=lang.type_optional(lang.type_runner()),
+            default=lang.expr_null(),
+            docstring="Command runner",
+        )
+    )
+    return func
+
+
+def _compile_lookups(
+    lang: LanguageProvider,
+    struct: ir.Param[ir.Param.Struct],
+    lookup: LookupParam,
+) -> list[GenericFunc]:
+    # Execute function lookup
+    # func_get_execute = GenericFunc(
+    #    name="dyn_execute",
+    #    return_type=None,
+    #    docstring_body="Get execute function by command type.",
+    #    return_descr="Execute function.",
+    #    args=[
+    #        GenericArg(
+    #            name="t",
+    #            docstring="params[\"__STYXTYPE__\"]",
+    #            type=lang.type_str(),
+    #        )
+    #    ],
+    #    body=[
+    #        *lang.dict_declare("vt", [
+    #            (lang.expr_str(s.base.name), lookup.expr_func_execute[s.base.id_])
+    #            for s in struct.iter_structs_recursively(False)
+    #        ]),
+    #        lang.return_statement(lang.dict_get_or("vt", "t"))
+    #    ]
+    # )
+
+    # Build params function lookup
+    # func_get_build_params = GenericFunc(
+    #    name="dyn_build_params",
+    #    return_type=None,
+    #    docstring_body="Get build params function by command type.",
+    #    return_descr="Build params function.",
+    #    args=[
+    #        GenericArg(
+    #            name="t",
+    #            docstring="Command type",
+    #            type=lang.type_str(),
+    #        )
+    #    ],
+    #    body=[
+    #        *lang.dict_declare("vt", [
+    #            (lang.expr_str(s.base.name), lookup.expr_func_build_params[s.base.id_])
+    #            for s in struct.iter_structs_recursively(False)
+    #        ]),
+    #        lang.return_statement(lang.dict_get_or("vt", "t"))
+    #    ]
+    # )
+
+    # Build cargs function lookup
+    func_get_build_cargs = GenericFunc(
+        name="dyn_cargs",
+        return_type=None,
+        docstring_body="Get build cargs function by command type.",
+        return_descr="Build cargs function.",
+        args=[
+            GenericArg(
+                name="t",
+                docstring="Command type",
+                type=lang.type_str(),
+            )
+        ],
+        body=[
+            *lang.dict_declare(
+                "vt",
+                [
+                    (lang.expr_str(s.base.name), lookup.expr_func_build_cargs[s.base.id_])
+                    for s in struct.iter_structs_recursively(False)
+                ],
+            ),
+            lang.return_statement(lang.dict_get_or("vt", "t")),
+        ],
+    )
+
+    # Build outputs function lookup
+    func_get_build_outputs = GenericFunc(
+        name="dyn_outputs",
+        return_type=None,
+        docstring_body="Get build outputs function by command type.",
+        return_descr="Build outputs function.",
+        args=[
+            GenericArg(
+                name="t",
+                docstring="Command type",
+                type=lang.type_str(),
+            )
+        ],
+        body=[
+            *lang.dict_declare(
+                "vt",
+                [
+                    (lang.expr_str(s.base.name), lookup.expr_func_build_outputs[s.base.id_])
+                    for s in struct.iter_structs_recursively(False)
+                    if struct_has_outputs(s)
+                ],
+            ),
+            lang.return_statement(lang.dict_get_or("vt", "t")),
+        ],
+    )
+
+    # Get params dict type function
+    # func_get_params_dict_type = GenericFunc(
+    #    name="dyn_get_params_dict_type",
+    #    return_type=None,
+    #    docstring_body="Get params dictionary type by command type.",
+    #    return_descr="Params dictionary type.",
+    #    args=[
+    #        GenericArg(
+    #            name="t",
+    #            docstring="Command type",
+    #            type=lang.type_str(),
+    #        )
+    #    ],
+    #    body=[
+    #        *lang.dict_declare("vt", [
+    #            (lang.expr_str(s.base.name), lookup.expr_params_dict_type[s.base.id_])
+    #            for s in struct.iter_structs_recursively(False)
+    #        ]),
+    #        lang.return_statement(lang.dict_get_or("vt", "t"))
+    #    ]
+    # )
+
+    return [
+        # func_get_execute,
+        # func_get_build_params,
+        func_get_build_cargs,
+        func_get_build_outputs,
+        # func_get_params_dict_type,
+    ]
+
+
+def _compile_struct(
+    lang: LanguageProvider,
+    struct: ir.Param[ir.Param.Struct],
+    interface_module: GenericModule,
+    lookup: LookupParam,
+    metadata_symbol: str,
+    stdout_as_string_output: ir.StdOutErrAsStringOutput | None = None,
+    stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
+    root_struct: bool = False,
+) -> None:
+    for child in struct.body.iter_params():
+        if isinstance(child.body, ir.Param.Struct):
+            _compile_struct(
+                lang=lang,
+                struct=child,
+                interface_module=interface_module,
+                lookup=lookup,
+                metadata_symbol=metadata_symbol,
+            )
+        elif isinstance(child.body, child.StructUnion):
+            for e in child.body.alts:
+                _compile_struct(
+                    lang=lang,
+                    struct=e,
+                    interface_module=interface_module,
+                    lookup=lookup,
+                    metadata_symbol=metadata_symbol,
+                )
+
+    if struct_has_outputs(struct):
+        _compile_outputs_class(lang, struct, interface_module, lookup, stdout_as_string_output, stderr_as_string_output)
+
+    f = _compile_build_params(lang, struct, lookup)
+    interface_module.funcs_and_classes.append(f)
+    interface_module.exports.append(f.name)
+
+    interface_module.header.extend(_compile_param_dict_type(lang, struct, lookup))
+
+    f = _compile_build_cargs(lang, struct, lookup)
+    interface_module.funcs_and_classes.append(f)
+
+    if root_struct or struct_has_outputs(struct):
+        f = _compile_func_build_outputs(lang, struct, lookup, stdout_as_string_output, stderr_as_string_output)
+        interface_module.funcs_and_classes.append(f)
+
+    if root_struct:
+        f = _compile_func_execute(
+            lang, struct, lookup, metadata_symbol, stdout_as_string_output, stderr_as_string_output
+        )
+        interface_module.funcs_and_classes.append(f)
 
 
 def compile_interface(
@@ -502,13 +741,26 @@ def compile_interface(
         function_scope=function_scope,
     )
 
+    for f in _compile_lookups(lang, interface.command, lookup):
+        interface_module.funcs_and_classes.append(f)
+
     _compile_struct(
         lang=lang,
         struct=interface.command,
         interface_module=interface_module,
         lookup=lookup,
         metadata_symbol=metadata_symbol,
-        root_function=True,
         stdout_as_string_output=interface.stdout_as_string_output,
         stderr_as_string_output=interface.stderr_as_string_output,
+        root_struct=True,
     )
+
+    f = _compile_func_wrapper_root(
+        lang,
+        interface.command,
+        lookup,
+        metadata_symbol,
+        interface.stdout_as_string_output,
+        interface.stderr_as_string_output,
+    )
+    interface_module.funcs_and_classes.append(f)
