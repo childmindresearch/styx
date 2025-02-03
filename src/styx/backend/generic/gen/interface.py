@@ -683,7 +683,7 @@ def _compile_struct(
                     metadata_symbol=metadata_symbol,
                 )
 
-    if struct_has_outputs(struct):
+    if root_struct or struct_has_outputs(struct):
         _compile_outputs_class(lang, struct, interface_module, lookup, stdout_as_string_output, stderr_as_string_output)
 
     f = _compile_build_params(lang, struct, lookup)
