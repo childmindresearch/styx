@@ -242,7 +242,7 @@ def _compile_outputs_class(
 
                 output_symbol = lookup.expr_output_field_symbol[sub_struct.base.id_]
 
-                input_type = lookup.py_struct_type[sub_struct.base.id_]
+                input_type = lookup.expr_func_build_outputs[sub_struct.base.id_]
                 docs_append = ""
                 if sub_struct.list_:
                     docs_append = "This is a list of outputs with the same length and order as the inputs."
@@ -273,7 +273,7 @@ def _compile_outputs_class(
                     output_symbol = lookup.expr_output_field_symbol[sub_struct.base.id_]
 
                     alt_input_types = [
-                        lookup.py_struct_type[sub_command.base.id_]
+                        lookup.expr_params_dict_type[sub_command.base.id_]
                         for sub_command in sub_struct.body.alts
                         if struct_has_outputs(sub_command)
                     ]
@@ -332,7 +332,7 @@ def _compile_func_build_outputs(
         p = lookup.param[output_param_reference.ref_id]
         symbol = lang.dict_get_or("params", lang.expr_str(p.base.name))
 
-        if param.list_:
+        if p.list_:
             raise Exception(f"Output path template replacements cannot be lists. ({p.base.name})")
 
         if isinstance(p.body, ir.Param.String):
