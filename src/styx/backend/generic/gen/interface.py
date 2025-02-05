@@ -394,7 +394,7 @@ def _compile_func_build_outputs(
             continue
 
         output_symbol = lookup.expr_output_field_symbol[sub_struct.base.id_]
-        output_symbol_resolved = lookup.expr_param_symbol_alias[sub_struct.base.id_]
+        output_symbol_resolved = lang.dict_get_or("params", lang.expr_str(sub_struct.base.name))
 
         members[output_symbol] = lang.struct_collect_outputs(sub_struct, output_symbol_resolved)
 
@@ -691,6 +691,7 @@ def _compile_struct(
     interface_module.exports.append(f.name)
 
     interface_module.header.extend(_compile_param_dict_type(lang, struct, lookup))
+    interface_module.exports.append(lookup.expr_params_dict_type[struct.base.id_])
 
     f = _compile_build_cargs(lang, struct, lookup)
     interface_module.funcs_and_classes.append(f)
