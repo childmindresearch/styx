@@ -1,11 +1,16 @@
 import pathlib
 import typing
-from abc import ABC, abstractmethod
-from typing import Mapping, Sequence, TypeAlias
+from abc import abstractmethod
+from typing import Mapping, Sequence, TypeAlias, Protocol
 
 import styx.ir.core as ir
+
+if typing.TYPE_CHECKING:
+    from styx.backend.generic.gen.lookup import LookupParam
+else:
+    LookupParam = None
 from styx.backend.generic.linebuffer import LineBuffer, indent
-from styx.backend.generic.model import GenericArg, GenericDataClass, GenericFunc, GenericModule, GenericNamedTuple
+from styx.backend.generic.model import GenericArg, GenericFunc, GenericModule, GenericStructure
 
 if typing.TYPE_CHECKING:
     from styx.backend.generic.scope import Scope
@@ -26,9 +31,7 @@ class MStr(typing.NamedTuple):
     is_list: bool
 
 
-class LanguageProvider(ABC):
-    # ------------------------------ Types ------------------------------ #
-
+class LanguageTypeProvider(Protocol):
     @abstractmethod
     def type_str(self) -> TypeType:
         """String type."""
@@ -135,8 +138,8 @@ class LanguageProvider(ABC):
         """Type of string list. (e.g. for cargs)."""
         return self.type_list(self.type_str())
 
-    # ------------------------------ Symbols ------------------------------ #
 
+class LanguageSymbolProvider(Protocol):
     @abstractmethod
     def symbol_legal(self, name: str) -> bool:
         """Is a given string a legal symbol in this language."""
@@ -179,8 +182,8 @@ class LanguageProvider(ABC):
         """
         ...
 
-    # ------------------------------ Expressions ------------------------------ #
 
+class LanguageExprProvider(Protocol):
     @abstractmethod
     def expr_bool(self, obj: bool) -> ExprType:
         """Convert a bool to a language literal."""
@@ -262,19 +265,6 @@ class LanguageProvider(ABC):
         ...
 
     @abstractmethod
-    def expr_self(self) -> ExprType:
-        """Access self/this/..."""
-        ...
-
-    @abstractmethod
-    def expr_access_attr_via_self(
-        self,
-        attribute: str,
-    ) -> ExprType:
-        """Access class member. (self. / this. / ...)."""
-        ...
-
-    @abstractmethod
     def expr_conditions_join_and(
         self,
         condition_exprs: list[ExprType],
@@ -301,22 +291,12 @@ class LanguageProvider(ABC):
         ...
 
     @abstractmethod
-    def expr_empty_str(self) -> ExprType:
-        """Empty string expression."""
-        ...
-
-    @abstractmethod
-    def expr_empty_str_list(self) -> ExprType:
-        """Empty string list expression."""
-        ...
-
-    @abstractmethod
     def expr_null(self) -> ExprType:
         """Null value."""
         ...
 
-    # ------------------------------ Higher level code generation ------------------------------ #
 
+class LanguageHighLevelProvider(Protocol):
     @abstractmethod
     def if_else_block(self, condition: str, truthy: LineBuffer, falsy: LineBuffer | None = None) -> LineBuffer:
         """If/else block."""
@@ -333,13 +313,8 @@ class LanguageProvider(ABC):
         ...
 
     @abstractmethod
-    def generate_data_class(self, data_class: GenericDataClass) -> LineBuffer:
-        """Generate data class (fields and methods)."""
-        ...
-
-    @abstractmethod
-    def generate_named_tuple(self, data_class: GenericNamedTuple) -> LineBuffer:
-        """Generate named tuple (only fields, immutable)."""
+    def generate_structure(self, structure: GenericStructure) -> LineBuffer:
+        """Generate structure."""
         ...
 
     @abstractmethod
@@ -347,14 +322,12 @@ class LanguageProvider(ABC):
         """Generate module."""
         ...
 
-    def generate_model(self, m: GenericFunc | GenericDataClass | GenericNamedTuple) -> LineBuffer:
+    def generate_model(self, m: GenericFunc | GenericStructure) -> LineBuffer:
         if isinstance(m, GenericFunc):
             return self.generate_func(m)
-        if isinstance(m, GenericDataClass):
-            return self.generate_data_class(m)
-        if isinstance(m, GenericNamedTuple):
-            return self.generate_named_tuple(m)
-        assert False
+        if isinstance(m, GenericStructure):
+            return self.generate_structure(m)
+        raise TypeError(f"Unsupported type: {type(m)}")
 
     @abstractmethod
     def return_statement(self, value: ExprType) -> ExprType:
@@ -414,7 +387,7 @@ class LanguageProvider(ABC):
 
     def mstr_empty_literal_like(self, mstr: MStr) -> ExprType:
         """Empty string or string list expression depending on mstr.is_list."""
-        return self.expr_empty_str_list() if mstr.is_list else self.expr_empty_str()
+        return self.expr_list([]) if mstr.is_list else self.expr_str("")
 
     @abstractmethod
     def runner_symbol(self) -> ExprType:
@@ -468,44 +441,40 @@ class LanguageProvider(ABC):
         """Collect outputs for a sub-struct."""
         ...
 
-    # @abstractmethod
-    def dict_declare(self, dict_symbol: str, items: list[tuple[ExprType, ExprType]] | None = None) -> LineBuffer:
+    @abstractmethod
+    def dyn_declare(self, lookup: LookupParam, root_struct: ir.Param[ir.Param.Struct]) -> list[GenericFunc]:
+        """Declare functions needed for performing dynamic dispatch of subcommand carg and output building."""
+        ...
+
+    @abstractmethod
+    def param_dict_type_declare(self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct]) -> LineBuffer:
+        """Declare the type a subcommand parameter dictionary."""
+        ...
+
+    @abstractmethod
+    def param_dict_create(
+        self, name: str, param: ir.Param, items: list[tuple[ir.Param, ExprType]] | None = None
+    ) -> LineBuffer:
         """Construct dictionary."""
-        if items is None or len(items) == 0:
-            return [f"{dict_symbol} = {{}}"]
-        return [f"{dict_symbol} = {{", *indent([f"{key}: {value}," for key, value in items]), "}"]
+        ...
 
-    # @abstractmethod
-    def dict_set(self, dict_symbol: str, key_expr: str, value_expr: str) -> LineBuffer:
-        return [f"{dict_symbol}[{key_expr}] = {value_expr}"]
+    @abstractmethod
+    def param_dict_set(self, dict_symbol: str, param: ir.Param, value_expr: str) -> LineBuffer:
+        """Get a parameter from its dict."""
+        ...
 
-    # @abstractmethod
-    def dict_get(self, dict_symbol: str, key_expr: str) -> ExprType:
-        return f"{dict_symbol}[{key_expr}]"
+    @abstractmethod
+    def param_dict_get(self, name: str, param: ir.Param) -> ExprType:
+        """Get a parameter from its dict."""
+        ...
 
-    # @abstractmethod
-    def dict_get_or(self, dict_symbol: str, key_expr: str, alt_expr: str | None = None) -> ExprType:
-        if alt_expr is None or alt_expr == self.expr_null():
-            return f"{dict_symbol}.get({key_expr})"
-        else:
-            return f"{dict_symbol}.get({key_expr}, {alt_expr})"
+    @abstractmethod
+    def param_dict_get_or_null(self, name: str, param: ir.Param) -> ExprType:
+        """Get a parameter from its dict."""
+        ...
 
-    # @abstractmethod
-    def dict_has_key(self, dict_symbol: str, key_expr: str) -> ExprType:
-        return f"{key_expr} in {dict_symbol}"
 
-    def dict_declare_type(self, dict_symbol: str, items: list[tuple[ExprType, ExprType]] | None = None) -> LineBuffer:
-        """Construct dictionary."""
-        if items is None or len(items) == 0:
-            return [f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{}})"]
-        return [
-            f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{",
-            *indent([f"{key}: {value}," for key, value in items]),
-            "})",
-        ]
-
-    # ------------------------------ IR param operations ------------------------------ #
-
+class LanguageIrProvider(Protocol):
     def param_default_value(self, param: ir.Param) -> str | None:
         """Default value language literal if param has default value else None."""
         if param.default_value is ir.Param.SetToNone:
@@ -549,9 +518,46 @@ class LanguageProvider(ABC):
         """
         ...
 
-    # ------------------------------ Other ------------------------------ #
+    @abstractmethod
+    def build_params_and_execute(
+        self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct], execution_symbol: ExprType
+    ) -> LineBuffer: ...
 
+    @abstractmethod
+    def call_build_cargs(
+        self,
+        lookup: LookupParam,
+        struct: ir.Param[ir.Param.Struct],
+        params_symbol: ExprType,
+        execution_symbol: ExprType,
+        return_symbol: ExprType,
+    ) -> LineBuffer: ...
+
+    @abstractmethod
+    def call_build_outputs(
+        self,
+        lookup: LookupParam,
+        struct: ir.Param[ir.Param.Struct],
+        params_symbol: ExprType,
+        execution_symbol: ExprType,
+        return_symbol: ExprType,
+    ) -> LineBuffer: ...
+
+
+class LanguageStyxDefsProvider(Protocol):
     @classmethod
     def styxdefs_compat(cls) -> str:
         """Return what version of styxdefs generated wrappers will be compatible with."""
         return "^0.4.1"
+
+
+class LanguageProvider(
+    LanguageTypeProvider,
+    LanguageSymbolProvider,
+    LanguageIrProvider,
+    LanguageExprProvider,
+    LanguageHighLevelProvider,
+    LanguageStyxDefsProvider,
+    Protocol,
+):
+    pass

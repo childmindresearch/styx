@@ -1,9 +1,10 @@
 import pathlib
 import re
 
+from styx.backend.generic.gen.lookup import LookupParam
 from styx.backend.generic.languageprovider import TYPE_PYLITERAL, ExprType, LanguageProvider, MStr
 from styx.backend.generic.linebuffer import LineBuffer, blank_after, blank_before, comment, concat, expand, indent
-from styx.backend.generic.model import GenericArg, GenericDataClass, GenericFunc, GenericModule, GenericNamedTuple
+from styx.backend.generic.model import GenericArg, GenericFunc, GenericModule, GenericStructure
 from styx.backend.generic.scope import Scope
 from styx.backend.generic.string_case import pascal_case, screaming_snake_case, snake_case
 from styx.backend.generic.utils import enbrace, enquote, ensure_endswith, escape_backslash, linebreak_paragraph
@@ -11,6 +12,123 @@ from styx.ir import core as ir
 
 
 class PythonLanguageProvider(LanguageProvider):
+    def build_params_and_execute(
+        self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct], execution_symbol: ExprType
+    ) -> LineBuffer:
+        args = [lookup.expr_param_symbol_alias[elem.base.id_] for elem in struct.body.iter_params()]
+        return [
+            f"params = {lookup.expr_func_build_params[struct.base.id_]}({', '.join([a + '=' + a for a in args])})",
+            self.return_statement(f"{lookup.expr_func_execute[struct.base.id_]}(params, {execution_symbol})"),
+        ]
+
+    def call_build_cargs(
+        self,
+        lookup: LookupParam,
+        struct: ir.Param[ir.Param.Struct],
+        params_symbol: ExprType,
+        execution_symbol: ExprType,
+        return_symbol: ExprType,
+    ) -> LineBuffer:
+        return [
+            f"{return_symbol} = {lookup.expr_func_build_cargs[struct.base.id_]}({params_symbol}, {execution_symbol})"
+        ]
+
+    def call_build_outputs(
+        self,
+        lookup: LookupParam,
+        struct: ir.Param[ir.Param.Struct],
+        params_symbol: ExprType,
+        execution_symbol: ExprType,
+        return_symbol: ExprType,
+    ) -> LineBuffer:
+        return [
+            f"{return_symbol} = {lookup.expr_func_build_outputs[struct.base.id_]}({params_symbol}, {execution_symbol})"
+        ]
+
+    def param_dict_create(
+        self, name: str, param: ir.Param, items: list[tuple[ir.Param, ExprType]] | None = None
+    ) -> LineBuffer:
+        return [
+            f"{name} = {{",
+            *indent([f'"__STYXTYPE__": {self.expr_str(param.base.name)},']),
+            *indent([f"{self.expr_str(key.base.name)}: {value}," for key, value in items]),
+            "}",
+        ]
+
+    def param_dict_set(self, dict_symbol: str, param: ir.Param, value_expr: str) -> LineBuffer:
+        return [f"{dict_symbol}[{self.expr_str(param.base.name)}] = {value_expr}"]
+
+    def dyn_declare(self, lookup: LookupParam, root_struct: ir.Param[ir.Param.Struct]) -> list[GenericFunc]:
+        items = [
+            (self.expr_str(s.base.name), lookup.expr_func_build_cargs[s.base.id_])
+            for s in root_struct.iter_structs_recursively(False)
+        ]
+        func_get_build_cargs = GenericFunc(
+            name="dyn_cargs",
+            return_type="typing.Any",
+            docstring_body="Get build cargs function by command type.",
+            return_descr="Build cargs function.",
+            args=[
+                GenericArg(
+                    name="t",
+                    docstring="Command type",
+                    type="str",
+                )
+            ],
+            body=[f"{{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
+        )
+
+        # Build outputs function lookup
+        items = [
+            (self.expr_str(s.base.name), lookup.expr_func_build_outputs[s.base.id_])
+            for s in root_struct.iter_structs_recursively(False)
+        ]
+        func_get_build_outputs = GenericFunc(
+            name="dyn_outputs",
+            return_type="typing.Any",
+            docstring_body="Get build outputs function by command type.",
+            return_descr="Build outputs function.",
+            args=[
+                GenericArg(
+                    name="t",
+                    docstring="Command type",
+                    type="str",
+                )
+            ],
+            body=[f"{{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
+        )
+
+        return [
+            func_get_build_cargs,
+            func_get_build_outputs,
+        ]
+
+    def param_dict_type_declare(self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct]) -> LineBuffer:
+        param_items: list[tuple[str, str]] = [
+            (self.expr_str("__STYX_TYPE__"), self.type_literal_union([struct.base.name]))
+        ]
+        for p in struct.body.iter_params():
+            _type = lookup.expr_param_type[p.base.id_]
+            if p.nullable:
+                _type = f"typing.NotRequired[{_type}]"
+            param_items.append((self.expr_str(p.base.name), _type))
+
+        dict_symbol = lookup.expr_params_dict_type[struct.base.id_]
+
+        if param_items is None or len(param_items) == 0:
+            return [f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{}})"]
+        return [
+            f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{",
+            *indent([f"{key}: {value}," for key, value in param_items]),
+            "})",
+        ]
+
+    def param_dict_get(self, name: str, param: ir.Param) -> ExprType:
+        return f"{name}[{self.expr_str(param.base.name)}]"
+
+    def param_dict_get_or_null(self, name: str, param: ir.Param) -> ExprType:
+        return f"{name}.get({self.expr_str(param.base.name)})"
+
     # ------------------------------ Types ------------------------------ #
 
     def type_str(self) -> str:
@@ -148,12 +266,6 @@ class PythonLanguageProvider(LanguageProvider):
     def expr_path_get_filename(self, path_expr: str) -> str:
         return f"pathlib.Path({path_expr}).name"
 
-    def expr_self(self) -> str:
-        return "self"
-
-    def expr_access_attr_via_self(self, attribute: str) -> str:
-        return f"self.{attribute}"
-
     def expr_conditions_join_and(self, condition_exprs: list[str]) -> str:
         return " and ".join(condition_exprs)
 
@@ -173,12 +285,6 @@ class PythonLanguageProvider(LanguageProvider):
             return enbrace(ret, "(")
         return ret
 
-    def expr_empty_str(self) -> str:
-        return '""'
-
-    def expr_empty_str_list(self) -> str:
-        return "[]"
-
     # ------------------------------ Higher level code generation ------------------------------ #
 
     def wrapper_module_imports(self) -> LineBuffer:
@@ -186,7 +292,6 @@ class PythonLanguageProvider(LanguageProvider):
             "import typing",
             "import pathlib",
             "from styxdefs import *",
-            "import dataclasses",
         ]
 
     def struct_collect_outputs(self, struct: ir.Param[ir.Param.Struct], struct_symbol: str) -> str:
@@ -286,9 +391,9 @@ class PythonLanguageProvider(LanguageProvider):
             buf.extend(indent(["pass"]))
         return buf
 
-    def generate_data_class(self, data_class: GenericDataClass) -> LineBuffer:
+    def generate_structure(self, structure: GenericStructure) -> LineBuffer:
         # Sort fields so default arguments come last
-        data_class.fields.sort(key=lambda a: a.default is not None)
+        structure.fields.sort(key=lambda a: a.default is not None)
 
         def _arg_docstring(arg: GenericArg) -> LineBuffer:
             if not arg.docstring:
@@ -297,55 +402,18 @@ class PythonLanguageProvider(LanguageProvider):
                 f'"""{escape_backslash(arg.docstring)}"""', width=80 - 4, first_line_width=80 - 4
             )
 
-        args = concat([[self.generate_arg_declaration(f), *_arg_docstring(f)] for f in data_class.fields])
-        methods = concat([self.generate_func(method) for method in data_class.methods], [""])
+        args = concat([[self.generate_arg_declaration(f), *_arg_docstring(f)] for f in structure.fields])
 
         buf = [
-            "@dataclasses.dataclass",
-            f"class {data_class.name}:",
-            *indent([
-                *(
-                    [
-                        '"""',
-                        *linebreak_paragraph(
-                            escape_backslash(data_class.docstring), width=80 - 4, first_line_width=80 - 4
-                        ),
-                        '"""',
-                    ]
-                    if data_class.docstring
-                    else []
-                ),
-                *args,
-                *blank_before(methods),
-            ]),
+            f"class {structure.name}(typing.NamedTuple):",
         ]
-        return buf
-
-    def generate_named_tuple(self, data_class: GenericNamedTuple) -> LineBuffer:
-        # Sort fields so default arguments come last
-        data_class.fields.sort(key=lambda a: a.default is not None)
-
-        def _arg_docstring(arg: GenericArg) -> LineBuffer:
-            if not arg.docstring:
-                return []
-            return linebreak_paragraph(
-                f'"""{escape_backslash(arg.docstring)}"""', width=80 - 4, first_line_width=80 - 4
-            )
-
-        args = concat([[self.generate_arg_declaration(f), *_arg_docstring(f)] for f in data_class.fields])
-        methods = concat([self.generate_model(method) for method in data_class.methods], [""])
-
-        buf = [
-            f"class {data_class.name}(typing.NamedTuple):",
-        ]
-        if data_class.docstring:
+        if structure.docstring:
             buf.extend(
                 indent([
                     '"""',
-                    f"{escape_backslash(data_class.docstring)}",
+                    f"{escape_backslash(structure.docstring)}",
                     '"""',
                     *args,
-                    *blank_before(methods),
                 ])
             )
         return buf

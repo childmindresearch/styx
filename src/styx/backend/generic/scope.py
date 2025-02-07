@@ -7,14 +7,12 @@ class Scope:
     def __init__(self, parent: Scope | LanguageProvider) -> None:
         """Create a scope."""
         self.parent: Scope | None = None
-        if isinstance(parent, LanguageProvider):
-            self._lang = parent
-            self.parent = None
-        elif isinstance(parent, Scope):
+        if isinstance(parent, Scope):
             self._lang = parent._lang
             self.parent = parent
         else:
-            raise ValueError
+            self._lang = parent
+            self.parent = None
         self._symbols: set[str] = set()
 
     def __contains__(self, symbol: str) -> bool:

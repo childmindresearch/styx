@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Generic, TypeVar
 
 from styx.backend.generic.linebuffer import LineBuffer
 
@@ -21,17 +20,14 @@ class GenericArg:
     """The documentation string for the argument (optional)."""
 
 
-_ArgType = TypeVar("_ArgType", bound=GenericArg)
-
-
 @dataclass
-class GenericFunc(Generic[_ArgType]):
+class GenericFunc:
     """Represents a generic function with arguments, body, and return information."""
 
     name: str
     """The name of the function."""
 
-    args: list[_ArgType] = field(default_factory=list)
+    args: list[GenericArg] = field(default_factory=list)
     """A list of arguments (GenericArg) for the function."""
 
     docstring_body: str | None = None
@@ -47,12 +43,9 @@ class GenericFunc(Generic[_ArgType]):
     """The type of the function's return value (optional)."""
 
 
-_FuncType = TypeVar("_FuncType", bound=GenericFunc)
-
-
 @dataclass
-class GenericDataClass(Generic[_ArgType, _FuncType]):
-    """Represents a generic data class with fields and methods."""
+class GenericStructure:
+    """Represents a generic structure with fields."""
 
     name: str
     """The name of the data class."""
@@ -60,38 +53,12 @@ class GenericDataClass(Generic[_ArgType, _FuncType]):
     docstring: str | None
     """The documentation string for the class (optional)."""
 
-    fields: list[_ArgType] = field(default_factory=list)
+    fields: list[GenericArg] = field(default_factory=list)
     """A list of fields (GenericArg) for the data class."""
-
-    methods: list[_FuncType] = field(default_factory=list)
-    """A list of methods (GenericFunc) for the data class."""
-
-
-_DataClassType = TypeVar("_DataClassType", bound=GenericDataClass)
 
 
 @dataclass
-class GenericNamedTuple(Generic[_ArgType, _FuncType]):
-    """Represents a generic data class with fields and methods."""
-
-    name: str
-    """The name of the data class."""
-
-    docstring: str | None
-    """The documentation string for the class (optional)."""
-
-    fields: list[_ArgType] = field(default_factory=list)
-    """A list of fields (GenericArg) for the data class."""
-
-    methods: list[_FuncType] = field(default_factory=list)
-    """A list of methods (GenericFunc) for the data class."""
-
-
-_NamedTupleType = TypeVar("_NamedTupleType", bound=GenericNamedTuple)
-
-
-@dataclass
-class GenericModule(Generic[_ArgType, _DataClassType]):
+class GenericModule:
     """Represents a generic module containing functions, classes, and other elements."""
 
     imports: LineBuffer = field(default_factory=list)
@@ -100,7 +67,7 @@ class GenericModule(Generic[_ArgType, _DataClassType]):
     header: LineBuffer = field(default_factory=list)
     """The header of the module as a LineBuffer."""
 
-    funcs_and_classes: list[_ArgType | _DataClassType] = field(default_factory=list)
+    funcs_and_classes: list[GenericFunc | GenericStructure] = field(default_factory=list)
     """A list of functions and classes within the module."""
 
     footer: LineBuffer = field(default_factory=list)
