@@ -75,7 +75,7 @@ class PythonLanguageProvider(LanguageProvider):
                     type="str",
                 )
             ],
-            body=[f"{{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
+            body=[f"return {{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
         )
 
         # Build outputs function lookup
@@ -95,7 +95,7 @@ class PythonLanguageProvider(LanguageProvider):
                     type="str",
                 )
             ],
-            body=[f"{{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
+            body=[f"return {{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
         )
 
         return [
