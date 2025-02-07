@@ -2,7 +2,17 @@ import pathlib
 import re
 
 from styx.backend.generic.gen.lookup import LookupParam
-from styx.backend.generic.languageprovider import TYPE_PYLITERAL, ExprType, LanguageProvider, MStr
+from styx.backend.generic.languageprovider import (
+    TYPE_PYLITERAL,
+    ExprType,
+    LanguageProvider,
+    MStr,
+    LanguageTypeProvider,
+    LanguageSymbolProvider,
+    LanguageIrProvider,
+    LanguageExprProvider,
+    LanguageHighLevelProvider,
+)
 from styx.backend.generic.linebuffer import LineBuffer, blank_after, blank_before, comment, concat, expand, indent
 from styx.backend.generic.model import GenericArg, GenericFunc, GenericModule, GenericStructure
 from styx.backend.generic.scope import Scope
@@ -11,126 +21,7 @@ from styx.backend.generic.utils import enbrace, enquote, ensure_endswith, escape
 from styx.ir import core as ir
 
 
-class PythonLanguageProvider(LanguageProvider):
-    def build_params_and_execute(
-        self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct], execution_symbol: ExprType
-    ) -> LineBuffer:
-        args = [lookup.expr_param_symbol_alias[elem.base.id_] for elem in struct.body.iter_params()]
-        return [
-            f"params = {lookup.expr_func_build_params[struct.base.id_]}({', '.join([a + '=' + a for a in args])})",
-            self.return_statement(f"{lookup.expr_func_execute[struct.base.id_]}(params, {execution_symbol})"),
-        ]
-
-    def call_build_cargs(
-        self,
-        lookup: LookupParam,
-        struct: ir.Param[ir.Param.Struct],
-        params_symbol: ExprType,
-        execution_symbol: ExprType,
-        return_symbol: ExprType,
-    ) -> LineBuffer:
-        return [
-            f"{return_symbol} = {lookup.expr_func_build_cargs[struct.base.id_]}({params_symbol}, {execution_symbol})"
-        ]
-
-    def call_build_outputs(
-        self,
-        lookup: LookupParam,
-        struct: ir.Param[ir.Param.Struct],
-        params_symbol: ExprType,
-        execution_symbol: ExprType,
-        return_symbol: ExprType,
-    ) -> LineBuffer:
-        return [
-            f"{return_symbol} = {lookup.expr_func_build_outputs[struct.base.id_]}({params_symbol}, {execution_symbol})"
-        ]
-
-    def param_dict_create(
-        self, name: str, param: ir.Param, items: list[tuple[ir.Param, ExprType]] | None = None
-    ) -> LineBuffer:
-        return [
-            f"{name} = {{",
-            *indent([f'"__STYXTYPE__": {self.expr_str(param.base.name)},']),
-            *indent([f"{self.expr_str(key.base.name)}: {value}," for key, value in items]),
-            "}",
-        ]
-
-    def param_dict_set(self, dict_symbol: str, param: ir.Param, value_expr: str) -> LineBuffer:
-        return [f"{dict_symbol}[{self.expr_str(param.base.name)}] = {value_expr}"]
-
-    def dyn_declare(self, lookup: LookupParam, root_struct: ir.Param[ir.Param.Struct]) -> list[GenericFunc]:
-        items = [
-            (self.expr_str(s.base.name), lookup.expr_func_build_cargs[s.base.id_])
-            for s in root_struct.iter_structs_recursively(False)
-        ]
-        func_get_build_cargs = GenericFunc(
-            name="dyn_cargs",
-            return_type="typing.Any",
-            docstring_body="Get build cargs function by command type.",
-            return_descr="Build cargs function.",
-            args=[
-                GenericArg(
-                    name="t",
-                    docstring="Command type",
-                    type="str",
-                )
-            ],
-            body=[f"return {{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
-        )
-
-        # Build outputs function lookup
-        items = [
-            (self.expr_str(s.base.name), lookup.expr_func_build_outputs[s.base.id_])
-            for s in root_struct.iter_structs_recursively(False)
-        ]
-        func_get_build_outputs = GenericFunc(
-            name="dyn_outputs",
-            return_type="typing.Any",
-            docstring_body="Get build outputs function by command type.",
-            return_descr="Build outputs function.",
-            args=[
-                GenericArg(
-                    name="t",
-                    docstring="Command type",
-                    type="str",
-                )
-            ],
-            body=[f"return {{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
-        )
-
-        return [
-            func_get_build_cargs,
-            func_get_build_outputs,
-        ]
-
-    def param_dict_type_declare(self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct]) -> LineBuffer:
-        param_items: list[tuple[str, str]] = [
-            (self.expr_str("__STYX_TYPE__"), self.type_literal_union([struct.base.name]))
-        ]
-        for p in struct.body.iter_params():
-            _type = lookup.expr_param_type[p.base.id_]
-            if p.nullable:
-                _type = f"typing.NotRequired[{_type}]"
-            param_items.append((self.expr_str(p.base.name), _type))
-
-        dict_symbol = lookup.expr_params_dict_type[struct.base.id_]
-
-        if param_items is None or len(param_items) == 0:
-            return [f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{}})"]
-        return [
-            f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{",
-            *indent([f"{key}: {value}," for key, value in param_items]),
-            "})",
-        ]
-
-    def param_dict_get(self, name: str, param: ir.Param) -> ExprType:
-        return f"{name}[{self.expr_str(param.base.name)}]"
-
-    def param_dict_get_or_null(self, name: str, param: ir.Param) -> ExprType:
-        return f"{name}.get({self.expr_str(param.base.name)})"
-
-    # ------------------------------ Types ------------------------------ #
-
+class PythonLanguageTypeProvider(LanguageTypeProvider):
     def type_str(self) -> str:
         """String type."""
         return "str"
@@ -182,8 +73,8 @@ class PythonLanguageProvider(LanguageProvider):
     def type_string_list(self) -> str:
         return "list[str]"
 
-    # ------------------------------ Symbols ------------------------------ #
 
+class PythonLanguageSymbolProvider(LanguageSymbolProvider):
     def symbol_legal(self, name: str) -> bool:
         return name.isidentifier()
 
@@ -221,8 +112,153 @@ class PythonLanguageProvider(LanguageProvider):
     def symbol_var_case_from(self, name: str) -> str:
         return snake_case(self.symbol_from(name))
 
-    # ------------------------------ Expressions ------------------------------ #
 
+class PythonLanguageIrProvider(LanguageIrProvider):
+    def build_params_and_execute(
+        self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct], execution_symbol: ExprType
+    ) -> LineBuffer:
+        args = [lookup.expr_param_symbol_alias[elem.base.id_] for elem in struct.body.iter_params()]
+        return [
+            f"params = {lookup.expr_func_build_params[struct.base.id_]}({', '.join([a + '=' + a for a in args])})",
+            self.return_statement(f"{lookup.expr_func_execute[struct.base.id_]}(params, {execution_symbol})"),
+        ]
+
+    def call_build_cargs(
+        self,
+        lookup: LookupParam,
+        struct: ir.Param[ir.Param.Struct],
+        params_symbol: ExprType,
+        execution_symbol: ExprType,
+        return_symbol: ExprType,
+    ) -> LineBuffer:
+        return [
+            f"{return_symbol} = {lookup.expr_func_build_cargs[struct.base.id_]}({params_symbol}, {execution_symbol})"
+        ]
+
+    def call_build_outputs(
+        self,
+        lookup: LookupParam,
+        struct: ir.Param[ir.Param.Struct],
+        params_symbol: ExprType,
+        execution_symbol: ExprType,
+        return_symbol: ExprType,
+    ) -> LineBuffer:
+        return [
+            f"{return_symbol} = {lookup.expr_func_build_outputs[struct.base.id_]}({params_symbol}, {execution_symbol})"
+        ]
+
+    def param_var_to_mstr(self, param: ir.Param, symbol: str) -> MStr:
+        def _val() -> MStr:
+            if not param.list_:
+                if isinstance(param.body, ir.Param.String):
+                    return MStr(symbol, False)
+                if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
+                    return MStr(f"str({symbol})", False)
+                if isinstance(param.body, ir.Param.Bool):
+                    as_list = (len(param.body.value_true) > 1) or (len(param.body.value_false) > 1)
+                    if as_list:
+                        value_true: str | list[str] | None = param.body.value_true
+                        value_false: str | list[str] | None = param.body.value_false
+                    else:
+                        value_true = param.body.value_true[0] if len(param.body.value_true) > 0 else None
+                        value_false = param.body.value_false[0] if len(param.body.value_false) > 0 else None
+                    if len(param.body.value_true) > 0:
+                        if len(param.body.value_false) > 0:
+                            return MStr(
+                                f"({self.expr_literal(value_true)} if {symbol} else {self.expr_literal(value_true)})",
+                                as_list,
+                            )
+                        return MStr(self.expr_literal(value_true), as_list)
+                    assert len(param.body.value_false) > 0
+                    return MStr(self.expr_literal(value_false), as_list)
+                if isinstance(param.body, ir.Param.File):
+                    extra_args = ""
+                    if param.body.resolve_parent:
+                        extra_args += ", resolve_parent=True"
+                    if param.body.mutable:
+                        extra_args += ", mutable=True"
+                    return MStr(f"execution.input_file({symbol}{extra_args})", False)
+                if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
+                    return MStr(f'dyn_cargs({symbol}["__STYXTYPE__"])({symbol}, execution)', True)
+                assert False
+
+            if param.list_.join is None:
+                if isinstance(param.body, ir.Param.String):
+                    return MStr(symbol, True)
+                if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
+                    return MStr(f"map(str, {symbol})", True)
+                if isinstance(param.body, ir.Param.Bool):
+                    assert False, "TODO: Not implemented yet"
+                if isinstance(param.body, ir.Param.File):
+                    extra_args = ""
+                    if param.body.resolve_parent:
+                        extra_args += ", resolve_parent=True"
+                    if param.body.mutable:
+                        extra_args += ", mutable=True"
+                    return MStr(f"[execution.input_file(f{extra_args}) for f in {symbol}]", True)
+                if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
+                    return MStr(
+                        f'[a for c in [dyn_cargs(s["__STYXTYPE__"])(s, execution) for s in {symbol}] for a in c]', True
+                    )
+                assert False
+
+            # arg.data.list_separator is not None
+            sep_join = f"{enquote(param.list_.join)}.join"
+            if isinstance(param.body, ir.Param.String):
+                return MStr(f"{sep_join}({symbol})", False)
+            if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
+                return MStr(f"{sep_join}(map(str, {symbol}))", False)
+            if isinstance(param.body, ir.Param.Bool):
+                assert False, "TODO: Not implemented yet"
+            if isinstance(param.body, ir.Param.File):
+                extra_args = ""
+                if param.body.resolve_parent:
+                    extra_args += ", resolve_parent=True"
+                if param.body.mutable:
+                    extra_args += ", mutable=True"
+                return MStr(f"{sep_join}([execution.input_file(f{extra_args}) for f in {symbol}])", False)
+            if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
+                return MStr(
+                    f'{sep_join}([a for c in [dyn_cargs(s["__STYXTYPE__"])(s, execution) '
+                    f"for s in {symbol}] for a in c])",
+                    False,
+                )
+            assert False
+
+        return _val()
+
+    def param_var_is_set_by_user(self, param: ir.Param, symbol: str, enbrace_statement: bool = False) -> str | None:
+        if param.nullable:
+            if enbrace_statement:
+                return f"({symbol} is not None)"
+            return f"{symbol} is not None"
+
+        if isinstance(param.body, ir.Param.Bool):
+            if len(param.body.value_true) > 0 and len(param.body.value_false) == 0:
+                return symbol
+            if len(param.body.value_false) > 0 and len(param.body.value_true) == 0:
+                if enbrace_statement:
+                    return f"(not {symbol})"
+                return f"not {symbol}"
+        return None
+
+    def param_is_set_by_user(self, param: ir.Param, symbol: str, enbrace_statement: bool = False) -> str | None:
+        if param.nullable:
+            if enbrace_statement:
+                return f"({symbol} is not None)"
+            return f"{symbol} is not None"
+
+        if isinstance(param.body, ir.Param.Bool):
+            if len(param.body.value_true) > 0 and len(param.body.value_false) == 0:
+                return symbol
+            if len(param.body.value_false) > 0 and len(param.body.value_true) == 0:
+                if enbrace_statement:
+                    return f"(not {symbol})"
+                return f"not {symbol}"
+        return None
+
+
+class PythonLanguageExprProvider(LanguageExprProvider):
     def expr_bool(self, obj: bool) -> ExprType:
         """Convert a bool to a language literal."""
         return "True" if obj else "False"
@@ -285,8 +321,8 @@ class PythonLanguageProvider(LanguageProvider):
             return enbrace(ret, "(")
         return ret
 
-    # ------------------------------ Higher level code generation ------------------------------ #
 
+class PythonLanguageHighLevelProvider(LanguageHighLevelProvider):
     def wrapper_module_imports(self) -> LineBuffer:
         return [
             "import typing",
@@ -459,116 +495,6 @@ class PythonLanguageProvider(LanguageProvider):
             ")",
         ]
 
-    def param_var_to_mstr(self, param: ir.Param, symbol: str) -> MStr:
-        def _val() -> MStr:
-            if not param.list_:
-                if isinstance(param.body, ir.Param.String):
-                    return MStr(symbol, False)
-                if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-                    return MStr(f"str({symbol})", False)
-                if isinstance(param.body, ir.Param.Bool):
-                    as_list = (len(param.body.value_true) > 1) or (len(param.body.value_false) > 1)
-                    if as_list:
-                        value_true: str | list[str] | None = param.body.value_true
-                        value_false: str | list[str] | None = param.body.value_false
-                    else:
-                        value_true = param.body.value_true[0] if len(param.body.value_true) > 0 else None
-                        value_false = param.body.value_false[0] if len(param.body.value_false) > 0 else None
-                    if len(param.body.value_true) > 0:
-                        if len(param.body.value_false) > 0:
-                            return MStr(
-                                f"({self.expr_literal(value_true)} if {symbol} else {self.expr_literal(value_true)})",
-                                as_list,
-                            )
-                        return MStr(self.expr_literal(value_true), as_list)
-                    assert len(param.body.value_false) > 0
-                    return MStr(self.expr_literal(value_false), as_list)
-                if isinstance(param.body, ir.Param.File):
-                    extra_args = ""
-                    if param.body.resolve_parent:
-                        extra_args += ", resolve_parent=True"
-                    if param.body.mutable:
-                        extra_args += ", mutable=True"
-                    return MStr(f"execution.input_file({symbol}{extra_args})", False)
-                if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                    return MStr(f'dyn_cargs({symbol}["__STYXTYPE__"])({symbol}, execution)', True)
-                assert False
-
-            if param.list_.join is None:
-                if isinstance(param.body, ir.Param.String):
-                    return MStr(symbol, True)
-                if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-                    return MStr(f"map(str, {symbol})", True)
-                if isinstance(param.body, ir.Param.Bool):
-                    assert False, "TODO: Not implemented yet"
-                if isinstance(param.body, ir.Param.File):
-                    extra_args = ""
-                    if param.body.resolve_parent:
-                        extra_args += ", resolve_parent=True"
-                    if param.body.mutable:
-                        extra_args += ", mutable=True"
-                    return MStr(f"[execution.input_file(f{extra_args}) for f in {symbol}]", True)
-                if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                    return MStr(
-                        f'[a for c in [dyn_cargs(s["__STYXTYPE__"])(s, execution) for s in {symbol}] for a in c]', True
-                    )
-                assert False
-
-            # arg.data.list_separator is not None
-            sep_join = f"{enquote(param.list_.join)}.join"
-            if isinstance(param.body, ir.Param.String):
-                return MStr(f"{sep_join}({symbol})", False)
-            if isinstance(param.body, (ir.Param.Int, ir.Param.Float)):
-                return MStr(f"{sep_join}(map(str, {symbol}))", False)
-            if isinstance(param.body, ir.Param.Bool):
-                assert False, "TODO: Not implemented yet"
-            if isinstance(param.body, ir.Param.File):
-                extra_args = ""
-                if param.body.resolve_parent:
-                    extra_args += ", resolve_parent=True"
-                if param.body.mutable:
-                    extra_args += ", mutable=True"
-                return MStr(f"{sep_join}([execution.input_file(f{extra_args}) for f in {symbol}])", False)
-            if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
-                return MStr(
-                    f'{sep_join}([a for c in [dyn_cargs(s["__STYXTYPE__"])(s, execution) '
-                    f"for s in {symbol}] for a in c])",
-                    False,
-                )
-            assert False
-
-        return _val()
-
-    def param_var_is_set_by_user(self, param: ir.Param, symbol: str, enbrace_statement: bool = False) -> str | None:
-        if param.nullable:
-            if enbrace_statement:
-                return f"({symbol} is not None)"
-            return f"{symbol} is not None"
-
-        if isinstance(param.body, ir.Param.Bool):
-            if len(param.body.value_true) > 0 and len(param.body.value_false) == 0:
-                return symbol
-            if len(param.body.value_false) > 0 and len(param.body.value_true) == 0:
-                if enbrace_statement:
-                    return f"(not {symbol})"
-                return f"not {symbol}"
-        return None
-
-    def param_is_set_by_user(self, param: ir.Param, symbol: str, enbrace_statement: bool = False) -> str | None:
-        if param.nullable:
-            if enbrace_statement:
-                return f"({symbol} is not None)"
-            return f"{symbol} is not None"
-
-        if isinstance(param.body, ir.Param.Bool):
-            if len(param.body.value_true) > 0 and len(param.body.value_false) == 0:
-                return symbol
-            if len(param.body.value_false) > 0 and len(param.body.value_true) == 0:
-                if enbrace_statement:
-                    return f"(not {symbol})"
-                return f"not {symbol}"
-        return None
-
     def return_statement(self, value: str) -> str:
         return f"return {value}"
 
@@ -630,3 +556,98 @@ class PythonLanguageProvider(LanguageProvider):
 
     def resolve_output_file(self, execution_symbol: str, file_expr: str) -> str:
         return f"{execution_symbol}.output_file({file_expr})"
+
+    def param_dict_create(
+        self, name: str, param: ir.Param, items: list[tuple[ir.Param, ExprType]] | None = None
+    ) -> LineBuffer:
+        return [
+            f"{name} = {{",
+            *indent([f'"__STYXTYPE__": {self.expr_str(param.base.name)},']),
+            *indent([f"{self.expr_str(key.base.name)}: {value}," for key, value in items]),
+            "}",
+        ]
+
+    def param_dict_set(self, dict_symbol: str, param: ir.Param, value_expr: str) -> LineBuffer:
+        return [f"{dict_symbol}[{self.expr_str(param.base.name)}] = {value_expr}"]
+
+    def dyn_declare(self, lookup: LookupParam, root_struct: ir.Param[ir.Param.Struct]) -> list[GenericFunc]:
+        items = [
+            (self.expr_str(s.base.name), lookup.expr_func_build_cargs[s.base.id_])
+            for s in root_struct.iter_structs_recursively(False)
+        ]
+        func_get_build_cargs = GenericFunc(
+            name="dyn_cargs",
+            return_type="typing.Any",
+            docstring_body="Get build cargs function by command type.",
+            return_descr="Build cargs function.",
+            args=[
+                GenericArg(
+                    name="t",
+                    docstring="Command type",
+                    type="str",
+                )
+            ],
+            body=[f"return {{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
+        )
+
+        # Build outputs function lookup
+        items = [
+            (self.expr_str(s.base.name), lookup.expr_func_build_outputs[s.base.id_])
+            for s in root_struct.iter_structs_recursively(False)
+        ]
+        func_get_build_outputs = GenericFunc(
+            name="dyn_outputs",
+            return_type="typing.Any",
+            docstring_body="Get build outputs function by command type.",
+            return_descr="Build outputs function.",
+            args=[
+                GenericArg(
+                    name="t",
+                    docstring="Command type",
+                    type="str",
+                )
+            ],
+            body=[f"return {{", *indent([f"{key}: {value}," for key, value in items]), "}.get(t)"],
+        )
+
+        return [
+            func_get_build_cargs,
+            func_get_build_outputs,
+        ]
+
+    def param_dict_type_declare(self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct]) -> LineBuffer:
+        param_items: list[tuple[str, str]] = [
+            (self.expr_str("__STYX_TYPE__"), self.type_literal_union([struct.base.name]))
+        ]
+        for p in struct.body.iter_params():
+            _type = lookup.expr_param_type[p.base.id_]
+            if p.nullable:
+                _type = f"typing.NotRequired[{_type}]"
+            param_items.append((self.expr_str(p.base.name), _type))
+
+        dict_symbol = lookup.expr_params_dict_type[struct.base.id_]
+
+        if param_items is None or len(param_items) == 0:
+            return [f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{}})"]
+        return [
+            f"{dict_symbol} = typing.TypedDict('{dict_symbol}', {{",
+            *indent([f"{key}: {value}," for key, value in param_items]),
+            "})",
+        ]
+
+    def param_dict_get(self, name: str, param: ir.Param) -> ExprType:
+        return f"{name}[{self.expr_str(param.base.name)}]"
+
+    def param_dict_get_or_null(self, name: str, param: ir.Param) -> ExprType:
+        return f"{name}.get({self.expr_str(param.base.name)})"
+
+
+class PythonLanguageProvider(
+    PythonLanguageTypeProvider,
+    PythonLanguageIrProvider,
+    PythonLanguageExprProvider,
+    PythonLanguageSymbolProvider,
+    PythonLanguageHighLevelProvider,
+    LanguageProvider,
+):
+    pass
