@@ -9,7 +9,7 @@ if typing.TYPE_CHECKING:
     from styx.backend.generic.gen.lookup import LookupParam
 else:
     LookupParam = None
-from styx.backend.generic.linebuffer import LineBuffer, indent
+from styx.backend.generic.linebuffer import LineBuffer
 from styx.backend.generic.model import GenericArg, GenericFunc, GenericModule, GenericStructure
 
 if typing.TYPE_CHECKING:
@@ -293,6 +293,11 @@ class LanguageExprProvider(Protocol):
     @abstractmethod
     def expr_null(self) -> ExprType:
         """Null value."""
+        ...
+
+    @abstractmethod
+    def expr_line_comment(self, comment_: LineBuffer) -> LineBuffer:
+        """Line comment."""
         ...
 
 

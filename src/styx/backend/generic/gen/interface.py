@@ -427,7 +427,7 @@ def _compile_func_execute(
     )
 
     func.body.extend([
-        "# validate constraint checks (or after middlewares?)",
+        # lang.expr_line_comment("todo: validate constraint checks (or after middlewares?)"),
         *lang.call_build_cargs(lookup, struct, "params", "execution", "cargs"),
         *lang.call_build_outputs(lookup, struct, "params", "execution", "ret"),
     ])
