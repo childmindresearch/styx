@@ -5,20 +5,25 @@ from styx.backend.generic.gen.lookup import LookupParam
 from styx.backend.generic.languageprovider import (
     TYPE_PYLITERAL,
     ExprType,
-    LanguageProvider,
-    MStr,
-    LanguageTypeProvider,
-    LanguageSymbolProvider,
-    LanguageIrProvider,
     LanguageExprProvider,
     LanguageHighLevelProvider,
+    LanguageIrProvider,
+    LanguageProvider,
+    LanguageSymbolProvider,
+    LanguageTypeProvider,
+    MStr,
 )
-from styx.backend.generic.linebuffer import LineBuffer, blank_after, blank_before, comment, concat, expand, indent
+from styx.backend.generic.linebuffer import LineBuffer, blank_after, blank_before, comment, expand, indent
 from styx.backend.generic.model import GenericArg, GenericFunc, GenericModule, GenericStructure
 from styx.backend.generic.scope import Scope
-from styx.backend.generic.string_case import pascal_case, screaming_snake_case, snake_case
-from styx.backend.generic.utils import enbrace, enquote, ensure_endswith, escape_backslash, linebreak_paragraph, \
-    struct_has_outputs
+from styx.backend.generic.string_case import pascal_case, screaming_snake_case
+from styx.backend.generic.utils import (
+    enbrace,
+    enquote,
+    escape_backslash,
+    linebreak_paragraph,
+    struct_has_outputs,
+)
 from styx.ir import core as ir
 
 
@@ -57,17 +62,20 @@ class RLanguageTypeProvider(LanguageTypeProvider):
 
     def type_literal_union(self, obj: list[TYPE_PYLITERAL]) -> str:
         """Convert an object to a language literal union type.
-        Note: R doesn't have native union types, so we'll handle this differently"""
+        Note: R doesn't have native union types, so we'll handle this differently
+        """
         return f"Union[{', '.join(map(self.expr_literal, obj))}]"
 
     def type_list(self, type_element: str) -> str:
         """Convert a type symbol to a type of list of that type.
-        In R, vectors/lists are homogeneous by default"""
+        In R, vectors/lists are homogeneous by default
+        """
         return f"vector[{type_element}]"
 
     def type_optional(self, type_element: str) -> str:
         """Convert a type symbol to an optional of that type.
-        In R, NULL is used for optional values"""
+        In R, NULL is used for optional values
+        """
         return f"nullable[{type_element}]"
 
     def type_union(self, type_elements: list[str]) -> str:
@@ -82,7 +90,8 @@ class RLanguageTypeProvider(LanguageTypeProvider):
 class RLanguageSymbolProvider(LanguageSymbolProvider):
     def symbol_legal(self, name: str) -> bool:
         """Check if a symbol name is legal in R.
-        R allows dots in names and is more permissive than Python."""
+        R allows dots in names and is more permissive than Python.
+        """
         # R variable names can contain letters, numbers, dots and underscores
         # They must start with a letter or dot (if dot, the second character cannot be a number)
         if not name:
@@ -99,17 +108,49 @@ class RLanguageSymbolProvider(LanguageSymbolProvider):
 
         # R reserved words
         reserved_words = {
-            "if", "else", "repeat", "while", "function", "for", "in",
-            "next", "break", "TRUE", "FALSE", "NULL", "Inf", "NaN",
-            "NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_",
-            "..."
+            "if",
+            "else",
+            "repeat",
+            "while",
+            "function",
+            "for",
+            "in",
+            "next",
+            "break",
+            "TRUE",
+            "FALSE",
+            "NULL",
+            "Inf",
+            "NaN",
+            "NA",
+            "NA_integer_",
+            "NA_real_",
+            "NA_complex_",
+            "NA_character_",
+            "...",
         }
 
         # Common R base functions that might conflict
         base_functions = {
-            "c", "list", "data.frame", "matrix", "array", "factor",
-            "sum", "mean", "median", "sd", "var", "cor", "cov",
-            "plot", "print", "cat", "paste", "paste0", "sprintf"
+            "c",
+            "list",
+            "data.frame",
+            "matrix",
+            "array",
+            "factor",
+            "sum",
+            "mean",
+            "median",
+            "sd",
+            "var",
+            "cor",
+            "cov",
+            "plot",
+            "print",
+            "cat",
+            "paste",
+            "paste0",
+            "sprintf",
         }
 
         for word in reserved_words | base_functions:
@@ -119,7 +160,8 @@ class RLanguageSymbolProvider(LanguageSymbolProvider):
 
     def symbol_from(self, name: str) -> str:
         """Convert a name to a valid R symbol.
-        R is more permissive with names than Python, but we'll still sanitize."""
+        R is more permissive with names than Python, but we'll still sanitize.
+        """
         # Replace invalid characters with dots (R convention)
         name = re.sub(r"[^a-zA-Z0-9_.]", ".", name)
 
@@ -135,17 +177,20 @@ class RLanguageSymbolProvider(LanguageSymbolProvider):
 
     def symbol_constant_case_from(self, name: str) -> str:
         """Convert a name to a constant case.
-        R typically uses ALL_CAPS for constants."""
+        R typically uses ALL_CAPS for constants.
+        """
         return screaming_snake_case(self.symbol_from(name))
 
     def symbol_class_case_from(self, name: str) -> str:
         """Convert a name to a class case.
-        R typically uses PascalCase for S4 classes."""
+        R typically uses PascalCase for S4 classes.
+        """
         return pascal_case(self.symbol_from(name))
 
     def symbol_var_case_from(self, name: str) -> str:
         """Convert a name to a variable case.
-        R typically uses dot.case or snake_case for variables."""
+        R typically uses dot.case or snake_case for variables.
+        """
         # Using dot.case as it's more common in R
         name = self.symbol_from(name)
         # Convert snake_case to dot.case
@@ -161,7 +206,7 @@ class RLanguageIrProvider(LanguageIrProvider):
         args = [lookup.expr_param_symbol_alias[elem.base.id_] for elem in struct.body.iter_params()]
         return [
             f"params <- {lookup.expr_func_build_params[struct.base.id_]}({', '.join([f'{a}={a}' for a in args])})",
-            self.return_statement(f"{lookup.expr_func_execute[struct.base.id_]}(params, {execution_symbol})")
+            self.return_statement(f"{lookup.expr_func_execute[struct.base.id_]}(params, {execution_symbol})"),
         ]
 
     def call_build_cargs(
@@ -192,6 +237,7 @@ class RLanguageIrProvider(LanguageIrProvider):
 
     def param_var_to_mstr(self, param: ir.Param, symbol: str) -> MStr:
         """Convert parameter variables to R string representation."""
+
         def _val() -> MStr:
             if not param.list_:
                 if isinstance(param.body, ir.Param.String):
@@ -261,14 +307,11 @@ class RLanguageIrProvider(LanguageIrProvider):
                     extra_args += ", resolve.parent=TRUE"
                 if param.body.mutable:
                     extra_args += ", mutable=TRUE"
-                return MStr(
-                    f"{sep_join}(sapply({symbol}, function(f) execution$input.file(f{extra_args})))",
-                    False
-                )
+                return MStr(f"{sep_join}(sapply({symbol}, function(f) execution$input.file(f{extra_args})))", False)
             if isinstance(param.body, (ir.Param.Struct, ir.Param.StructUnion)):
                 return MStr(
                     f'{sep_join}(unlist(lapply({symbol}, function(s) dyn.cargs(s$"__STYXTYPE__")(s, execution))))',
-                    False
+                    False,
                 )
             assert False
 
@@ -322,7 +365,8 @@ class RLanguageExprProvider(LanguageExprProvider):
 
     def expr_list(self, obj: list[ExprType]) -> ExprType:
         """Convert a list to R vector/list.
-        In R, c() creates an atomic vector, list() creates a list."""
+        In R, c() creates an atomic vector, list() creates a list.
+        """
         return f"c({', '.join(obj)})"
 
     def expr_dict(self, obj: dict[ExprType, ExprType]) -> ExprType:
@@ -408,14 +452,22 @@ class RLanguageHighLevelProvider(LanguageHighLevelProvider):
         return [f"{execution_symbol} <- runner$start.execution({metadata_symbol})"]
 
     def execution_run(
-            self,
-            execution_symbol: str,
-            cargs_symbol: str,
-            stdout_output_symbol: str | None,
-            stderr_output_symbol: str | None,
+        self,
+        execution_symbol: str,
+        cargs_symbol: str,
+        stdout_output_symbol: str | None,
+        stderr_output_symbol: str | None,
     ) -> LineBuffer:
-        so = "" if stdout_output_symbol is None else f", handle.stdout=function(s) ret${stdout_output_symbol} <- c(ret${stdout_output_symbol}, s)"
-        se = "" if stderr_output_symbol is None else f", handle.stderr=function(s) ret${stderr_output_symbol} <- c(ret${stderr_output_symbol}, s)"
+        so = (
+            ""
+            if stdout_output_symbol is None
+            else f", handle.stdout=function(s) ret${stdout_output_symbol} <- c(ret${stdout_output_symbol}, s)"
+        )
+        se = (
+            ""
+            if stderr_output_symbol is None
+            else f", handle.stderr=function(s) ret${stderr_output_symbol} <- c(ret${stderr_output_symbol}, s)"
+        )
         return [f"{execution_symbol}$run({cargs_symbol}{so}{se})"]
 
     def generate_arg_declaration(self, arg: GenericArg) -> str:
@@ -490,7 +542,7 @@ class RLanguageHighLevelProvider(LanguageHighLevelProvider):
         )
 
         return blank_after([
-            *(['#\'', *linebreak_paragraph(escape_backslash(module.docstr)), '#\''] if module.docstr else []),
+            *(["#'", *linebreak_paragraph(escape_backslash(module.docstr)), "#'"] if module.docstr else []),
             *comment([
                 "This file was auto generated by Styx.",
                 "Do not edit this file directly.",
@@ -509,7 +561,7 @@ class RLanguageHighLevelProvider(LanguageHighLevelProvider):
         return [
             f"{metadata_symbol} <- list(",
             *indent([f"{k} = {self.expr_literal(v)}," for k, v in entries.items()]),
-            ")"
+            ")",
         ]
 
     def return_statement(self, value: str) -> str:
@@ -522,42 +574,37 @@ class RLanguageHighLevelProvider(LanguageHighLevelProvider):
         return [f"{cargs_symbol} <- list()"]
 
     def mstr_collapse(self, mstr: MStr, join: str = "") -> MStr:
-        return MStr(
-            f"paste({mstr.expr}, collapse={self.expr_str(join)})" if mstr.is_list else mstr.expr,
-            False
-        )
+        return MStr(f"paste({mstr.expr}, collapse={self.expr_str(join)})" if mstr.is_list else mstr.expr, False)
 
     def mstr_concat(self, mstrs: list[MStr], inner_join: str = "", outer_join: str = "") -> MStr:
         inner = list(self.mstr_collapse(mstr, inner_join) for mstr in mstrs)
         return MStr(
-            f"paste({', '.join(m.expr for m in inner)}, collapse={self.expr_str(outer_join)})" if outer_join else
-            f"paste0({', '.join(m.expr for m in inner)})",
-            False
+            f"paste({', '.join(m.expr for m in inner)}, collapse={self.expr_str(outer_join)})"
+            if outer_join
+            else f"paste0({', '.join(m.expr for m in inner)})",
+            False,
         )
 
     def mstr_cargs_add(self, cargs_symbol: str, mstr: MStr | list[MStr]) -> LineBuffer:
         if isinstance(mstr, list):
             elements = [val if not val_is_list else f"unlist({val})" for val, val_is_list in mstr]
-            return [
-                f"{cargs_symbol} <- append({cargs_symbol}, list(",
-                *indent(expand(",\n".join(elements))),
-                "))"
-            ]
+            return [f"{cargs_symbol} <- append({cargs_symbol}, list(", *indent(expand(",\n".join(elements))), "))"]
         if mstr.is_list:
             return [f"{cargs_symbol} <- append({cargs_symbol}, {mstr.expr})"]
         return [f"{cargs_symbol} <- append({cargs_symbol}, list({mstr.expr}))"]
 
-    def param_dict_create(self, name: str, param: ir.Param,
-                          items: list[tuple[ir.Param, ExprType]] | None = None) -> LineBuffer:
+    def param_dict_create(
+        self, name: str, param: ir.Param, items: list[tuple[ir.Param, ExprType]] | None = None
+    ) -> LineBuffer:
         return [
             f"{name} <- list(",
             *indent([f'"__STYXTYPE__" = {self.expr_str(param.base.name)}']),
-            *indent([f'{self.expr_str(key.base.name)} = {value}' for key, value in (items or [])]),
-            ")"
+            *indent([f"{self.expr_str(key.base.name)} = {value}" for key, value in (items or [])]),
+            ")",
         ]
 
     def param_dict_set(self, dict_symbol: str, param: ir.Param, value_expr: str) -> LineBuffer:
-        return [f'{dict_symbol}[[{self.expr_str(param.base.name)}]] <- {value_expr}']
+        return [f"{dict_symbol}[[{self.expr_str(param.base.name)}]] <- {value_expr}"]
 
     def dyn_declare(self, lookup: LookupParam, root_struct: ir.Param[ir.Param.Struct]) -> list[GenericFunc]:
         items = [
@@ -572,10 +619,10 @@ class RLanguageHighLevelProvider(LanguageHighLevelProvider):
             args=[GenericArg(name="t", docstring="Command type", type="character")],
             body=[
                 "dispatch.table <- list(",
-                *indent([f'{key} = {value},' for key, value in items]),
+                *indent([f"{key} = {value}," for key, value in items]),
                 ")",
                 "return(dispatch.table[[t]])",
-            ]
+            ],
         )
 
         items = [
@@ -591,10 +638,10 @@ class RLanguageHighLevelProvider(LanguageHighLevelProvider):
             args=[GenericArg(name="t", docstring="Command type", type="character")],
             body=[
                 "dispatch.table <- list(",
-                *indent([f'{key} = {value},' for key, value in items]),
+                *indent([f"{key} = {value}," for key, value in items]),
                 ")",
                 "return(dispatch.table[[t]])",
-            ]
+            ],
         )
 
         return [func_get_build_cargs, func_get_build_outputs]
@@ -609,7 +656,7 @@ class RLanguageHighLevelProvider(LanguageHighLevelProvider):
         return [
             f"validate.{dict_symbol} <- function(x) {{",
             "  required.fields <- c(",
-            *indent([f'{key},' for key, _ in param_items]),
+            *indent([f"{key}," for key, _ in param_items]),
             "  )",
             "  if (!all(required.fields %in% names(x))) {",
             '    stop("Missing required fields in parameter dictionary")',
@@ -619,44 +666,38 @@ class RLanguageHighLevelProvider(LanguageHighLevelProvider):
         ]
 
     def generate_ret_object_creation(
-            self,
-            buf: LineBuffer,
-            execution_symbol: str,
-            output_type: str,
-            members: dict[str, str],
+        self,
+        buf: LineBuffer,
+        execution_symbol: str,
+        output_type: str,
+        members: dict[str, str],
     ) -> LineBuffer:
-        buf.append(f"ret <- list(")
-        buf.extend(indent([f'root = {execution_symbol}$output.file(".")', ]))
+        buf.append("ret <- list(")
+        buf.extend(
+            indent([
+                f'root = {execution_symbol}$output.file(".")',
+            ])
+        )
         for member_symbol, member_expr in members.items():
             buf.extend(indent([f"{member_symbol} = {member_expr},"]))
-        buf.extend([
-            ")",
-            f'class(ret) <- "{output_type}"'
-        ])
+        buf.extend([")", f'class(ret) <- "{output_type}"'])
         return buf
 
     def resolve_output_file(self, execution_symbol: str, file_expr: str) -> str:
         return f"{execution_symbol}$output.file({file_expr})"
 
     def if_else_block(self, condition: str, truthy: LineBuffer, falsy: LineBuffer | None = None) -> LineBuffer:
-        buf = [
-            f"if ({condition}) {{",
-            *indent(truthy),
-            "}"
-        ]
+        buf = [f"if ({condition}) {{", *indent(truthy), "}"]
         if falsy:
-            buf.extend([
-                "else {",
-                *indent(falsy),
-                "}"
-            ])
+            buf.extend(["else {", *indent(falsy), "}"])
         return buf
 
     def param_dict_get(self, name: str, param: ir.Param) -> ExprType:
-        return f'{name}[[{self.expr_str(param.base.name)}]]'
+        return f"{name}[[{self.expr_str(param.base.name)}]]"
 
     def param_dict_get_or_null(self, name: str, param: ir.Param) -> ExprType:
-        return f'{name}[[{self.expr_str(param.base.name)}]] %||% NULL'
+        return f"{name}[[{self.expr_str(param.base.name)}]] %||% NULL"
+
 
 class RLanguageProvider(
     RLanguageTypeProvider,

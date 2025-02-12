@@ -1,7 +1,7 @@
 import pathlib
 import typing
 from abc import abstractmethod
-from typing import Mapping, Sequence, TypeAlias, Protocol
+from typing import Mapping, Protocol, Sequence, TypeAlias
 
 import styx.ir.core as ir
 

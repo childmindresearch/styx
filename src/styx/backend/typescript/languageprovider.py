@@ -1,25 +1,27 @@
 import pathlib
 import re
-from typing import Any
 
 from styx.backend.generic.gen.lookup import LookupParam
 from styx.backend.generic.languageprovider import (
     TYPE_PYLITERAL,
     ExprType,
-    LanguageProvider,
-    MStr,
-    LanguageTypeProvider,
-    LanguageSymbolProvider,
-    LanguageIrProvider,
     LanguageExprProvider,
     LanguageHighLevelProvider,
+    LanguageIrProvider,
+    LanguageProvider,
+    LanguageSymbolProvider,
+    LanguageTypeProvider,
+    MStr,
 )
-from styx.backend.generic.linebuffer import LineBuffer, blank_after, blank_before, comment, concat, expand, indent
+from styx.backend.generic.linebuffer import LineBuffer, blank_after, blank_before, comment, expand, indent
 from styx.backend.generic.model import GenericArg, GenericFunc, GenericModule, GenericStructure
 from styx.backend.generic.scope import Scope
 from styx.backend.generic.string_case import pascal_case, screaming_snake_case, snake_case
-from styx.backend.generic.utils import enbrace, enquote, ensure_endswith, escape_backslash, linebreak_paragraph, \
-    struct_has_outputs
+from styx.backend.generic.utils import (
+    enbrace,
+    enquote,
+    struct_has_outputs,
+)
 from styx.ir import core as ir
 
 
@@ -626,7 +628,8 @@ class TypeScriptLanguageHighLevelProvider(LanguageHighLevelProvider):
 
         outputs_items = [
             (self.expr_str(s.base.name), lookup.expr_func_build_outputs[s.base.id_])
-            for s in root_struct.iter_structs_recursively(False) if struct_has_outputs(s)
+            for s in root_struct.iter_structs_recursively(False)
+            if struct_has_outputs(s)
         ]
 
         func_get_build_outputs = GenericFunc(
