@@ -67,19 +67,19 @@ class LookupParam:
 
         struct = interface.command
         self.expr_params_dict_type[struct.base.id_] = scope.add_or_dodge(
-            lang.symbol_class_case_from(struct.base.name + "_Parameters")
+            lang.symbol_class_case_from(struct.body.name + "_Parameters")
         )
         self.expr_func_build_params[struct.base.id_] = scope.add_or_dodge(
-            lang.symbol_var_case_from(struct.base.name + "_params")
+            lang.symbol_var_case_from(struct.body.name + "_params")
         )
         self.expr_func_build_cargs[struct.base.id_] = scope.add_or_dodge(
-            lang.symbol_var_case_from(struct.base.name + "_cargs")
+            lang.symbol_var_case_from(struct.body.name + "_cargs")
         )
         self.expr_func_build_outputs[struct.base.id_] = scope.add_or_dodge(
-            lang.symbol_var_case_from(struct.base.name + "_outputs")
+            lang.symbol_var_case_from(struct.body.name + "_outputs")
         )
         self.expr_func_execute[struct.base.id_] = scope.add_or_dodge(
-            lang.symbol_var_case_from(struct.base.name + "_execute")
+            lang.symbol_var_case_from(struct.body.name + "_execute")
         )
         self.expr_struct_output_type[struct.base.id_] = package_scope.add_or_dodge(
             lang.symbol_class_case_from(f"{struct.body.name}_Outputs")

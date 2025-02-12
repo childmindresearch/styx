@@ -591,7 +591,7 @@ class TypeScriptLanguageHighLevelProvider(LanguageHighLevelProvider):
         return [
             f"const {name} = {{",
             *indent(
-                [f'"__STYXTYPE__": {self.expr_str(param.base.name)} as const,']
+                [f'"__STYXTYPE__": {self.expr_str(param.body.name)} as const,']
                 + [f"{self.expr_str(key.base.name)}: {value}," for key, value in (items or [])]
             ),
             "};",
@@ -602,7 +602,7 @@ class TypeScriptLanguageHighLevelProvider(LanguageHighLevelProvider):
 
     def dyn_declare(self, lookup: LookupParam, root_struct: ir.Param[ir.Param.Struct]) -> list[GenericFunc]:
         cargs_items = [
-            (self.expr_str(s.base.name), lookup.expr_func_build_cargs[s.base.id_])
+            (self.expr_str(s.body.name), lookup.expr_func_build_cargs[s.base.id_])
             for s in root_struct.iter_structs_recursively(False)
         ]
 
@@ -627,7 +627,7 @@ class TypeScriptLanguageHighLevelProvider(LanguageHighLevelProvider):
         )
 
         outputs_items = [
-            (self.expr_str(s.base.name), lookup.expr_func_build_outputs[s.base.id_])
+            (self.expr_str(s.body.name), lookup.expr_func_build_outputs[s.base.id_])
             for s in root_struct.iter_structs_recursively(False)
             if struct_has_outputs(s)
         ]
@@ -655,7 +655,7 @@ class TypeScriptLanguageHighLevelProvider(LanguageHighLevelProvider):
         return [func_get_build_cargs, func_get_build_outputs]
 
     def param_dict_type_declare(self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct]) -> LineBuffer:
-        param_items: list[tuple[str, str]] = [('"__STYXTYPE__"', self.type_literal_union([struct.base.name]))]
+        param_items: list[tuple[str, str]] = [('"__STYXTYPE__"', self.type_literal_union([struct.body.name]))]
 
         for p in struct.body.iter_params():
             _type = lookup.expr_param_type[p.base.id_]

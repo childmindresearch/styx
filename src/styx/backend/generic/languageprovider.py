@@ -458,7 +458,7 @@ class LanguageHighLevelProvider(Protocol):
 
     @abstractmethod
     def param_dict_create(
-        self, name: str, param: ir.Param, items: list[tuple[ir.Param, ExprType]] | None = None
+        self, name: str, param: ir.Param[ir.Param.Struct], items: list[tuple[ir.Param, ExprType]] | None = None
     ) -> LineBuffer:
         """Construct dictionary."""
         ...

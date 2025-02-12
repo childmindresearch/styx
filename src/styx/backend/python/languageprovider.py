@@ -568,11 +568,11 @@ class PythonLanguageHighLevelProvider(LanguageHighLevelProvider):
         return f"{execution_symbol}.output_file({file_expr})"
 
     def param_dict_create(
-        self, name: str, param: ir.Param, items: list[tuple[ir.Param, ExprType]] | None = None
+        self, name: str, param: ir.Param[ir.Param.Struct], items: list[tuple[ir.Param, ExprType]] | None = None
     ) -> LineBuffer:
         return [
             f"{name} = {{",
-            *indent([f'"__STYXTYPE__": {self.expr_str(param.base.name)},']),
+            *indent([f'"__STYXTYPE__": {self.expr_str(param.body.name)},']),
             *indent([f"{self.expr_str(key.base.name)}: {value}," for key, value in items]),
             "}",
         ]
@@ -582,7 +582,7 @@ class PythonLanguageHighLevelProvider(LanguageHighLevelProvider):
 
     def dyn_declare(self, lookup: LookupParam, root_struct: ir.Param[ir.Param.Struct]) -> list[GenericFunc]:
         items = [
-            (self.expr_str(s.base.name), lookup.expr_func_build_cargs[s.base.id_])
+            (self.expr_str(s.body.name), lookup.expr_func_build_cargs[s.base.id_])
             for s in root_struct.iter_structs_recursively(False)
         ]
         func_get_build_cargs = GenericFunc(
@@ -602,7 +602,7 @@ class PythonLanguageHighLevelProvider(LanguageHighLevelProvider):
 
         # Build outputs function lookup
         items = [
-            (self.expr_str(s.base.name), lookup.expr_func_build_outputs[s.base.id_])
+            (self.expr_str(s.body.name), lookup.expr_func_build_outputs[s.base.id_])
             for s in root_struct.iter_structs_recursively(False)
             if struct_has_outputs(s)
         ]
@@ -628,7 +628,7 @@ class PythonLanguageHighLevelProvider(LanguageHighLevelProvider):
 
     def param_dict_type_declare(self, lookup: LookupParam, struct: ir.Param[ir.Param.Struct]) -> LineBuffer:
         param_items: list[tuple[str, str]] = [
-            (self.expr_str("__STYX_TYPE__"), self.type_literal_union([struct.base.name]))
+            (self.expr_str("__STYX_TYPE__"), self.type_literal_union([struct.body.name]))
         ]
         for p in struct.body.iter_params():
             _type = lookup.expr_param_type[p.base.id_]

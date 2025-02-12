@@ -8,6 +8,7 @@ from typing import TypeVar
 
 import styx.ir.core as ir
 from styx.frontend.boutiques.utils import boutiques_split_command
+from styx.ir.normalize import normalize
 
 T = TypeVar("T")
 
@@ -481,18 +482,20 @@ def from_boutiques(
 
     dparam, dstruct = _struct_from_boutiques(tool, id_counter)
 
-    return ir.Interface(
-        uid=f"{hash_}.boutiques",
-        package=ir.Package(
-            name=package_name,
-            version=tool.get("tool-version"),
-            docker=docker,
-            docs=package_docs if package_docs else ir.Documentation(),
-        ),
-        command=ir.Param(
-            base=dparam,
-            body=dstruct,
-        ),
-        stderr_as_string_output=stderr_output,
-        stdout_as_string_output=stdout_output,
+    return normalize(
+        ir.Interface(
+            uid=f"{hash_}.boutiques",
+            package=ir.Package(
+                name=package_name,
+                version=tool.get("tool-version"),
+                docker=docker,
+                docs=package_docs if package_docs else ir.Documentation(),
+            ),
+            command=ir.Param(
+                base=dparam,
+                body=dstruct,
+            ),
+            stderr_as_string_output=stderr_output,
+            stdout_as_string_output=stdout_output,
+        )
     )
