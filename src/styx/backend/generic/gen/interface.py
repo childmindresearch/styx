@@ -430,9 +430,7 @@ def _compile_func_execute(
         # lang.expr_line_comment("todo: validate constraint checks (or after middlewares?)"),
         *lang.call_build_cargs(lookup, struct, "params", "execution", "cargs"),
         *lang.call_build_outputs(lookup, struct, "params", "execution", "ret"),
-    ])
-
-    func.body.extend([
+        *lang.execution_process_params("execution", "params"),
         *lang.execution_run(
             execution_symbol="execution",
             cargs_symbol="cargs",

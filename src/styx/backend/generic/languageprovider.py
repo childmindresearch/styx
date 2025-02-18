@@ -415,6 +415,15 @@ class LanguageHighLevelProvider(Protocol):
         ...
 
     @abstractmethod
+    def execution_process_params(
+        self,
+        execution_symbol: str,
+        params_symbol: str,
+    ) -> LineBuffer:
+        """Let the execution process the params."""
+        ...
+
+    @abstractmethod
     def execution_run(
         self,
         execution_symbol: str,
@@ -553,7 +562,7 @@ class LanguageStyxDefsProvider(Protocol):
     @classmethod
     def styxdefs_compat(cls) -> str:
         """Return what version of styxdefs generated wrappers will be compatible with."""
-        return "^0.4.1"
+        return "^0.5.0"
 
 
 class LanguageProvider(

@@ -413,6 +413,13 @@ class TypeScriptLanguageHighLevelProvider(LanguageHighLevelProvider):
     def execution_declare(self, execution_symbol: str, metadata_symbol: str) -> LineBuffer:
         return [f"const {execution_symbol} = runner.startExecution({metadata_symbol});"]
 
+    def execution_process_params(
+        self,
+        execution_symbol: str,
+        params_symbol: str,
+    ) -> LineBuffer:
+        return [f"{params_symbol} = {execution_symbol}.params({params_symbol})"]
+
     def execution_run(
         self,
         execution_symbol: str,
