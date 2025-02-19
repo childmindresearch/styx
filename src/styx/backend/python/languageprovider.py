@@ -126,7 +126,9 @@ class PythonLanguageIrProvider(LanguageIrProvider):
     ) -> LineBuffer:
         args = [lookup.expr_param_symbol_alias[elem.base.id_] for elem in struct.body.iter_params()]
         return [
-            f"params = {lookup.expr_func_build_params[struct.base.id_]}({', '.join([a + '=' + a for a in args])})",
+            f"params = {lookup.expr_func_build_params[struct.base.id_]}(",
+            *indent([f"{a}={a}," for a in args]),
+            ")",
             self.return_statement(f"{lookup.expr_func_execute[struct.base.id_]}(params, {execution_symbol})"),
         ]
 
