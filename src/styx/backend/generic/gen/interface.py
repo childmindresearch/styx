@@ -3,7 +3,7 @@ from styx.backend.generic.documentation import docs_to_docstring
 from styx.backend.generic.gen.lookup import LookupParam
 from styx.backend.generic.gen.metadata import generate_static_metadata
 from styx.backend.generic.languageprovider import LanguageProvider, MStr
-from styx.backend.generic.linebuffer import LineBuffer
+from styx.backend.generic.linebuffer import LineBuffer, blank_before
 from styx.backend.generic.model import GenericArg, GenericFunc, GenericModule, GenericStructure
 from styx.backend.generic.scope import Scope
 from styx.backend.generic.utils import enquote, struct_has_outputs
@@ -451,8 +451,6 @@ def _compile_func_wrapper_root(
     struct: ir.Param[ir.Param.Struct],
     lookup: LookupParam,
     metadata_symbol: str,
-    stdout_as_string_output: ir.StdOutErrAsStringOutput | None = None,
-    stderr_as_string_output: ir.StdOutErrAsStringOutput | None = None,
 ) -> GenericFunc:
     outputs_type = lookup.expr_struct_output_type[struct.base.id_]
 
@@ -539,7 +537,7 @@ def _compile_struct(
     interface_module.funcs_and_classes.append(f)
     interface_module.exports.append(f.name)
 
-    interface_module.header.extend(_compile_param_dict_type(lang, struct, lookup))
+    interface_module.header.extend(blank_before(_compile_param_dict_type(lang, struct, lookup), 2))
     interface_module.exports.append(lookup.expr_params_dict_type[struct.base.id_])
 
     f = _compile_build_cargs(lang, struct, lookup)
@@ -610,7 +608,5 @@ def compile_interface(
         interface.command,
         lookup,
         metadata_symbol,
-        interface.stdout_as_string_output,
-        interface.stderr_as_string_output,
     )
     interface_module.funcs_and_classes.append(f)
